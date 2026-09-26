@@ -1,43 +1,45 @@
-# 验证记录 · 2026-09-26
+# 最终验证 · 2026-09-27
 
-最终桌景、书页弯曲、书写笔、墨色与纹理缓存接入后，已重新运行 9 项独立游戏检查，全部通过且无引擎错误。Godot 4.7.2 主游戏子视口也完成 678 项素材集成检查。
+本次针对拼贴优先的演示、实物书桌、材料阅读、纸片操作、封信／漂流瓶流程及旧存档迁移进行实际 Godot 验证。下面仅列本次可核对的结果，不将旧版日志当成新版全量测试。
 
-## 已有自动化证据
+## 运行结果
 
-本机日志位于工作区 `outputs/`，不将测试缓存、数据库或玩家身份打入发行包。
+独立项目使用 Godot 4.5.1 Compatibility / NVIDIA GPU；主游戏使用 Godot 4.7.2。工作区 outputs/flat-depth-qa 保留以下日志，13 项独立游戏检查均 PASS，未出现 SCRIPT ERROR、ERROR 或退出资源泄漏警告。
 
-| 检查 | 已有结果与范围 | 日志 |
-| --- | --- | --- |
-| 素材库 | PASS；678 条目，渲染结果不同，逐项实际裁剪；中文原创印刷文案比例约 80.3% | `drawer-final-qa/library_test.log` |
-| 来源与字母 | PASS；216 项来源文件 SHA-256；大写 F、小写 f 与原图保留像素逐一比对，无缺失彩色像素块 | `drawer-final-qa/asset-audit.txt` |
-| 纸张 | PASS；24 款 A4 底纸、存档和信纸范围 | `drawer-final-qa/letter_paper_test.log` |
-| 写信 | PASS；实际 TextEdit 插入、墨色切换保留光标、笔尖跟随、删除不落墨、停笔抬起、存档与寄出 PNG 墨色检查 | `drawer-final-qa/letter_writing_test.log` |
-| 布局 | PASS；中英文 × 3 种窗口大小 × 8 种工具，共 48 组，检查实际控件尺寸及重叠 | `drawer-final-qa/ui_layout_test.log` |
-| 委托与绘画 | PASS；逐字对话、暂停和记录、追问及附件，纸面与材料绘画边界 | `drawer-final-qa/paint_dialogue_test.log` |
-| 素材册 | PASS；新弯曲纸页向前／向后翻动、纸声、动画退场，百叶窗开合和存档；预览翻页另由布局测试覆盖 | `drawer-final-qa/office_book_test.log` |
-| 收信与回信界面 | PASS；中英文、收件阅读、正文／作品切换、翻页和回复入口 | `drawer-final-qa/bottle_dock_ui_test.log` |
-| 漂流瓶 | PASS；卷纸、拔塞、连续插入、塞回和入海；含中间状态保存与失败重试 | `drawer-final-qa/bottle_ritual_test.log` |
-| HTTP 服务端 | 8 项测试通过；真实 HTTP 双玩家、并发、回复义务、分页、重启、认证与幂等 | `server-final-agent/test-service.log` |
-| 丢失响应重试 | PASS；真实 Godot HTTP 客户端对接 Waitress；首次响应丢失后仍只产生一封信，注册不自动重复，重试有上限 | `server-final-agent/test-client-retry.log` |
-| 完整网络流程 | NETWORK PASS；真实 Waitress 服务与两个 Godot 玩家身份，寄信、回复及回复义务检查 | `drawer-final-qa/network-full.log` |
-| 实体封信 | PASS；折信、连续遮挡入封、拖翻盖、划火柴、点蜡烛、融蜡、不可逆倒蜡判定、盖章、信箱、保存与下一委托 | `drawer-final-qa/finishing.log` |
-| 主游戏集成 | PASS；Godot 4.7.2 实际 GPU 子视口，678 素材渲染、裁剪、声音与宿主布局 | `drawer-final-qa/host-final.log` |
-| 纹理缓存 | PASS；48 张共享缓存、纸纹最长边 1024、照片 2048；52 字母与原导入像素一致；缓存移除不破坏已持有图片 | `asset-memory-agent/cache-library.log` |
-| 便携 Python | PASS；包内 Python 3.13.7 的 SQLite、SSL、HTTP 依赖及 Waitress 初始化；服务端 8 项测试通过 | `server-final-agent/bundled-python-import.log`、`bundled-python-service.log` |
-| 更新后启动 | PASS；资源元数据指纹使新增／修改素材重新导入；忽略导入缓存，失败不更新标记也不启动游戏 | `server-final-agent/import-signature.log` |
+| 日志 | 覆盖内容 |
+| --- | --- |
+| direct_workbench_test-polish.log | 打字机真实按键、剪字纸、替换与撤回；四角／边缘／旋转命中；3 种窗口；纯拼贴可寄 |
+| ui_layout_test-polish.log | 中英文 × 3 窗口 × 8 工具，48 组控件尺寸及重叠检查 |
+| office_book_test-polish.log | 素材本展开、前后翻页和纸声、百叶窗状态保存恢复 |
+| writing_system_test-polish.log | 原生编辑器提交、Unicode 字素队列、快速编辑、分页、重播、跳过与 Finish |
+| library_test-polish.log | 678 条目逐项渲染／裁剪，图像哈希全部不同；中文印刷素材比例 0.80049875 |
+| letter_paper_test-polish.log | 24 款 A4 底纸、边界及存档 |
+| paper_depth_test-polish.log | 层叠支撑高度、移出与放回、旋转／镜像后的光向、拿起落下和透明边缘 |
+| paint_dialogue_test-polish.log | 对话、追问、记录和附件；水粉的素材裁剪／纸面范围；胶水不锁定纸片 |
+| incoming_bottle_test-polish.log | 4 种窗口高度；拿瓶、拔塞、抛放／再拾起、左右倾倒、自动展平与拔塞录音 |
+| bottle_ritual_test-polish.log | 卷纸、拔塞、从瓶口插入、塞回、入海、保存和失败重试 |
+| sea_example_test-polish.log | 原信阅读、同布局回信预览、独立可编辑示例、完整装瓶与海浪、恢复原草稿 |
+| desk_lighting_test-polish.log | 昼夜／黄昏／雨天，百叶条纹与开窗光斑、动画变化；原有时间不被改写 |
+| demo_transition_test-polish.log | 示例只填一次；下一任务及重启保持空白；旧素材版本、旧纸面位置只迁移一次；先翻开再放大 |
 
-678 表示可用材料条目，不是 678 张独立下载原图。216 表示当前 open-pack 来源清单项数，不包括后续独立桌景美术的来源记录。字母的白色内部细节保留；本次不以换色数量代表新增独立原图。
+server-polish.log：9 项服务端测试 PASS，包括真实 HTTP 双玩家、完整 Unicode 正文与资料往返、发一回一、重复请求／并发及重启保存。
 
-## 可见画面与修复复验
+host-current.log：主游戏实际 GPU 子视口 PASS，抽样 24 张材料、宿主布局、声音和独立存档；观景台及玩家相片追加项的 ID 与来源可读性检查。基础库 678 张全量验证来自独立项目，上述主游戏复验不声称重新全量裁剪 678 张。
 
-已查看最终 GPU 截图中的书桌、打开的素材本、弯曲纸页、笔尖与墨色，并更新 `docs/preview.png`。翻页初次出现的退化四边形破面已改为独立三角面并复验无渲染错误；桌面分区绘制修正了下方物件落在桌沿上的问题。百叶窗拉绳的交互区避开右上声音按钮。
+tour-final-rehearsal.log：完整交互预演 PASS。正式录制 outputs/Solmere-Demo-20260927/recording-final.log 也为 DEMO_TOUR: PASS failures=0，包含折信、部分入封后自动落位、合翻盖、划火柴、点烛、勺内融蜡、倒蜡、压章、信箱，及收瓶／回信／放流和空白下一任务。
 
-已真实启动并切到前台的 Windows 可玩窗口显示新桌景和打开的素材本。检测到用户正在操作后保留该窗口，没有继续注入测试输入。程序化测试覆盖原生编辑器的插入、光标、墨色与导出；本轮不声称已人工验证 Windows 中文候选窗的完整输入过程。先前的内存分配失败通过显示尺寸纹理缓存处理，最终素材库、纸张与完整封信流程均重新通过。
+## 视频与可见画面
 
-同步远端已有主游戏改动后，书信模块内容保持一致，并补跑主游戏子视口快速集成复验：`host-after-rebase.log`，PASS，24 项抽样素材。
+最终视频为引擎 Movie Maker 实际运行画面和游戏音轨，不是预渲染 UI 模型。1440×900、30 fps、7028 帧、3 分 54.27 秒；H.264 + AAC 双声道 48 kHz。解码检查通过；音轨平均 -41.8 dB、峰值 -5.0 dB，保留安静停顿而非全程背景音乐。录制使用测试专属下午光照，不改变玩家或主世界的时间。
 
-## 验证边界
+已检查视频抽帧九宫格、最终桌面、回信、封信及下一任务画面。Windows 新版可玩窗口已实际打开、查看，点击进入取瓶并返回；其他精确鼠标行为由上述真实 Godot InputEvent 回归覆盖。系统显示缩放与多个并行游戏窗口限制了更多原生 UI 注入检查，因此不将程序化测试描述成人工全流程试玩。
 
-当前证据来自本机，未完成公网部署或独立第三方玩家联机；没有声称完整试玩 Kind Words 或 Paper Sky 原作。音频采用实录资源，但未完成所有音频设备的听感验证。保留的历史日志只用于追溯，含错误的日志不算通过，即使其中也出现 PASS 字样。4 张新桌景／书册／文具插画为图像工具制作，并非商业参考游戏提取物，也不标为 CC0，见 [制作记录](../assets/illustrated_office/PROVENANCE.md)。
+桌面视频：Solmere_完整试玩演示_20260927.mp4。SHA-256：98de5f5e07f8765d90f2ae5400c8a933518fb42fe2aed3a157ba8087cc87b2e1，与录制目录中的 MP4 一致。
 
-便携包由 `work/update_journal_package.py` 与 `work/zip_journal.py` 生成：保留引擎、启动入口和运行时，只清除明确列出的 5 个旧照片 PNG；ZIP 只纳入当前源码、运行时及发行元数据。最终 `VERSION.txt` 和 `source-manifest.json` 记录实际 Git 提交与每个源文件 SHA-256。源码有未提交修改、缺失文件或与便携目录内容不同，打包检查会停止。
+## 便携包与边界
+
+outputs/portable-final-qa 的资源重新导入及素材本 GPU 检查均 PASS。发行包仅包含源码、运行时、许可证及发行元数据，不含私人草稿、身份、测试数据库或引擎缓存；VERSION.txt 与 source-manifest.json 记录实际提交和逐文件 SHA-256。
+
+普通入口保持空白／恢复个人作品；新示例使用独立的 Solmere-Showcase-20260927 存档，旧示例存档不被覆盖。旧作品中的文字纸片继续使用旧素材版本，不因经典摘抄库更新而改变。
+
+没有公网部署或独立第三方联机测试；未人工验证 Windows 中文候选窗的完整交互、所有声卡的听感。字形为完整 Unicode 字素渐显加正常比例的悬笔跟随，不是每个汉字的真实笔顺描摹。未完整试玩 Kind Words / Paper Sky，未提取其资产。场景生成插画、原生 2D 对象及公共领域／开放许可材料的边界见各自来源记录。

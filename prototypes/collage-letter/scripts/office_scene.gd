@@ -9,8 +9,8 @@ static func paint(g) -> void:
 		# Keep the writing plane under every movable object, with only a narrow
 		# front edge. The source illustration and its alpha stay unchanged.
 		var unit:=room_art.get_size()/Vector2(1584,992)
-		g.draw_texture_rect_region(room_art,Rect2(0,0,1440,154),Rect2(Vector2(0,65)*unit,Vector2(1584,191)*unit))
-		g.draw_texture_rect_region(room_art,Rect2(0,154,1440,725),Rect2(Vector2(0,256)*unit,Vector2(1584,572)*unit))
+		g.draw_texture_rect_region(room_art,Rect2(0,0,1440,300),Rect2(Vector2(0,65)*unit,Vector2(1584,191)*unit))
+		g.draw_texture_rect_region(room_art,Rect2(0,300,1440,579),Rect2(Vector2(0,256)*unit,Vector2(1584,572)*unit))
 		g.draw_texture_rect_region(room_art,Rect2(0,879,1440,21),Rect2(Vector2(0,828)*unit,Vector2(1584,80)*unit))
 	else:paint_fallback(g)
 	paint_blind(g)
@@ -18,10 +18,6 @@ static func paint(g) -> void:
 	g.draw_colored_polygon(PackedVector2Array([Vector2(32,22),Vector2(399,19),Vector2(396,118),Vector2(34,122)]),Color("594d3e"))
 	g.draw_line(Vector2(38,27),Vector2(390,24),Color("a98762"),2,true)
 	g.draw_line(Vector2(38,115),Vector2(390,112),Color("3d3c34"),2,true)
-	# Slatted daylight falls beside the letter, never reducing text contrast.
-	for i in 4:
-		var x:=40+i*95.0
-		g.draw_colored_polygon(PackedVector2Array([Vector2(x,157),Vector2(x+37,157),Vector2(x+107,480),Vector2(x+70,480)]),Color(1,0.91,0.66,0.045*g.blinds_open))
 static func paint_fallback(g) -> void:
 	g.draw_rect(Rect2(0,0,1440,150),Color("b49176"))
 	g.draw_rect(Rect2(0,140,1440,14),Color("936f53"))
@@ -52,7 +48,7 @@ static func paint_fallback(g) -> void:
 
 static func paint_blind(g) -> void:
 	var down:float=1.0-g.blinds_open
-	var area:=Rect2(405,0,666,73) if room_art!=null else Rect2(451,0,540,134)
+	var area:=Rect2(405,0,666,143) if room_art!=null else Rect2(451,0,540,134)
 	var slat_h:=ceilf(area.size.y/11)+1
 	for i in 11:
 		var y:=i*(area.size.y-slat_h)/10.0*down
@@ -60,7 +56,7 @@ static func paint_blind(g) -> void:
 		g.draw_line(Vector2(area.position.x+1,y+slat_h-2),Vector2(area.end.x,y+slat_h-2),Color("9f8668"),1,true)
 		g.draw_line(Vector2(area.position.x+3,y+1),Vector2(area.end.x-2,y+1),Color("e1c8a0"),1,true)
 	for x in [area.position.x+53,area.end.x-56]:g.draw_line(Vector2(x,0),Vector2(x,slat_h+(area.size.y-slat_h)*down),Color("e7d2ae"),1.5,true)
-	var cord_y:float=50+g.blinds_open*77
+	var cord_y:float=156+g.blinds_open*111
 	g.draw_line(Vector2(1080,7),Vector2(1080,cord_y),Color("f2dfbc"),2,true)
 	g.draw_circle(Vector2(1080,cord_y+5),6,Color("98734e"))
 	g.draw_line(Vector2(1078,cord_y+2),Vector2(1078,cord_y+7),Color("d8b782"),2,true)

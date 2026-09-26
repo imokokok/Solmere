@@ -153,6 +153,12 @@ func advert() -> void:
 		if illustration: draw_texture_rect(illustration,Rect2(32,88,55,55),false,Color("f4e2bb"))
 	text(str(sheet_data.footer),Vector2(27,218),10,246,accent)
 func printed() -> void:
+	if sheet_data.get("classic",false):
+		text(str(sheet_data.headline),Vector2(28,39),12,242)
+		var english:bool=str(sheet_data.body).to_utf8_buffer().size()<str(sheet_data.body).length()*1.4
+		lines(str(sheet_data.body),Vector2(28,77),23 if english else 26,243,5)
+		text(str(sheet_data.footer),Vector2(28,218),11,242,Color("746750"))
+		return
 	var layout:=int(sheet_data.get("layout",0))%6
 	text(str(sheet_data.headline),Vector2(28,45),19,242)
 	if layout==1 or layout==5:

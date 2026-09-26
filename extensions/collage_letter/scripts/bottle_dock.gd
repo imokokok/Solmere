@@ -2,6 +2,10 @@ extends CanvasLayer
 const L=preload("res://extensions/collage_letter/scripts/localization.gd")
 const ReadingArt=preload("res://extensions/collage_letter/scripts/bottle_reading_art.gd")
 
+signal example_requested
+var g
+var example_revision:=0
+var pending_previews:=0
 signal compose_requested(parent: Dictionary)
 signal closed
 var client: Node
@@ -66,7 +70,9 @@ func open() -> void:
 	var popup:=view_picker.get_popup();popup.add_theme_font_override("font",font);popup.add_theme_font_size_override("font_size",18);popup.add_theme_color_override("font_color",Color("415d51"));popup.add_theme_color_override("font_hover_color",Color("31493f"))
 	var menu_skin:=StyleBoxFlat.new();menu_skin.bg_color=Color("ede0c4");menu_skin.set_corner_radius_all(6);menu_skin.set_content_margin_all(8);popup.add_theme_stylebox_override("panel",menu_skin)
 	var menu_hover:=StyleBoxFlat.new();menu_hover.bg_color=Color("c2c4a8");menu_hover.set_corner_radius_all(4);popup.add_theme_stylebox_override("hover",menu_hover)
-	connection.visible=client.token.is_empty();side_scroll.visible=not connection.visible
+	connection.visible=false;side_scroll.visible=true
+	add_example_row()
+	show_example(false)
 	if not client.token.is_empty():connect_now()
 
 func build_connection() -> void:
@@ -145,7 +151,7 @@ func refresh() -> void:
 	if not active:return
 	lock(false)
 	if not result.ok:message.text=L.t(result.get("error","暂时没有收到邮局的回应。"));return
-	clear(letters_box);row_buttons.clear();next_before=result.get("next_before")
+	clear(letters_box);row_buttons.clear();add_example_row();next_before=result.get("next_before")
 	debt_label.text=L.t("待完成：回复一封来信，才能再次自由发信。" if client.player.get("reply_required",false) else "可以自由发信，也可以继续回复海上的旧信。")
 	for letter in result.get("letters",[]):
 		var id: int=int(letter.id)
@@ -198,7 +204,7 @@ func render_letter() -> void:
 		var image:=Image.new()
 		if image.load_png_from_buffer(Marshalls.base64_to_raw(reading_letter.art_png))==OK:
 			var art:=TextureRect.new();art.name="ReceivedLetterArtwork";art.texture=ImageTexture.create_from_image(image);art.custom_minimum_size=Vector2(0,minf(594,408.0*image.get_height()/maxi(1,image.get_width())));art.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;art.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_box.add_child(art);return
-	var caption:=add_label(detail_box,reading_letter.get("caption",""),21,reading_letter.get("is_seed",false));caption.name="ReceivedLetterText"
+	show_readable_words(str(reading_letter.get("caption","")))
 
 func compose_new() -> void:
 	if client.player.is_empty() or client.player.get("reply_required",false):message.text=L.t("请先回复一封来信。");return
@@ -214,4 +220,41 @@ func close() -> void:
 	covered_controls.clear()
 	if is_instance_valid(root):root.queue_free()
 	# Let any awaited HTTP response finish before this controller is freed.
-	get_tree().create_timer(13).timeout.connect(queue_free)
+	if in_flight:get_tree().create_timer(13).timeout.connect(queue_free)
+	elif pending_previews==0:queue_free()
+
+func add_example_row() -> void:
+	if not is_instance_valid(g):return
+	for index in 3:
+		var cycle:int=index
+		var example:=add_button(letters_box,str(g.SeaExample.data(cycle)["name_"+L.language])+"\n"+str(g.SeaExample.data(cycle)["title_"+L.language]),func():g.sample_cycle=cycle;g.audio.play("PAPER_MOVE",.45);show_example(false),false,false)
+		example.name="LocalExampleLetter" if index==0 else "LocalExampleLetter"+str(index)
+		example.custom_minimum_size.y=84;example.add_theme_font_size_override("font_size",14)
+func show_example(reply:bool) -> void:
+	if not is_instance_valid(g):return
+	example_revision+=1;var revision:=example_revision
+	clear(detail_box);clear(reading_side);connection.hide();side_scroll.show()
+	add_label(reading_side,("预设回信" if L.language=="zh" else "Prepared reply") if reply else g.SeaExample.data(g.sample_cycle)["name_"+L.language],24,false)
+	add_label(reading_side,"事务所写作示例 · 虚构来信\n本地体验，不会发给真实玩家。" if L.language=="zh" else "An original fictional exchange.\nThis local example is not sent to real players.",15,false)
+	add_button(reading_side,("读原信" if reply else "查看预设回信") if L.language=="zh" else ("Read original" if reply else "View prepared reply"),func():show_example(not reply),false,false)
+	add_button(reading_side,"打开回信，卷起寄出" if L.language=="zh" else "Open reply and bottle it",func():close();example_requested.emit(),false,false).name="PrepareExampleReply"
+	var content:Dictionary=g.SeaExample.data(g.sample_cycle)
+	add_button(reading_side,"阅读文字" if L.language=="zh" else "Read the words",func():clear(detail_box);show_readable_words(content[("reply_" if reply else "incoming_")+L.language]),false,false)
+	message.text="先读一封信，再认真回一封；空瓶可以写自己的新信。" if L.language=="zh" else "Read a letter and leave a thoughtful reply. Use the empty bottle for a new letter."
+	pending_previews+=1
+	var encoded:String=await g.SeaExample.artwork(g,reply)
+	pending_previews-=1
+	if not active:
+		if pending_previews==0 and not in_flight:queue_free()
+		return
+	if revision!=example_revision:return
+	reading_letter={"art_png":encoded,"caption":content[("reply_" if reply else "incoming_")+L.language],"is_seed":true};render_letter()
+
+func show_readable_words(value:String) -> void:
+	var words=preload("res://extensions/collage_letter/scripts/letter_renderer.gd").new();words.name="ReceivedLetterText";words.custom_minimum_size=Vector2(360,480);words.size=Vector2(360,480);detail_box.add_child(words);words.load_text(value)
+	var nav:=HBoxContainer.new();detail_box.add_child(nav)
+	add_button(nav,"‹",func():words.turn_page(-1),false,false)
+	add_button(nav,"›",func():words.turn_page(1),false,false)
+	add_button(nav,"Replay Writing",func():words.play_letter_animation(value),false,false)
+	add_button(nav,"Skip",words.skip,false,false)
+	if is_instance_valid(g):words.audio=g.audio

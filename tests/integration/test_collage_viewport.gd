@@ -19,7 +19,13 @@ func run() -> void:
   if letter.ready_done: break
   await process_frame
  letter.smoke=true
- check(letter.ready_done and letter.materials.size()==678,"Original game with 678 replacement materials loads")
+ check(letter.ready_done and letter.materials.size()>=678,"Base library plus host photographs load")
+ var host_photos:Dictionary={}
+ for material in letter.source_materials.slice(678):
+  check(material.kind=="photo","Host additions remain in the photo category")
+  check(not host_photos.has(material.id),"Host photo source IDs are stable and unique")
+  host_photos[material.id]=true
+  if not str(material.get("image_path","")).is_empty():check(FileAccess.file_exists(material.image_path),"Host photo points at a readable original")
  check(letter.audio.pool.size()==10,"Fixed voice pool avoids accumulating audio nodes")
  for clip in letter.audio.bank.values():
   check(clip!=null and clip.get_length()>0,"Recorded sound loads")
@@ -57,7 +63,7 @@ func run() -> void:
  # Check every imported source on the renderer and through the real crop action.
  var image_hashes := {}
  var atlas := Image.create(180*10,144*68,false,Image.FORMAT_RGBA8)
- var source_limit: int=mini(24,letter.materials.size()) if OS.get_cmdline_user_args().has("--quick") else letter.materials.size()
+ var source_limit: int=24 if OS.get_cmdline_user_args().has("--quick") else 678
  for id in source_limit:
   letter.get_material_texture(id)
   await process_frame

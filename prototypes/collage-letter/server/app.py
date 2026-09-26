@@ -50,6 +50,9 @@ class Service:
             """)
             db.execute("INSERT OR IGNORE INTO players VALUES(?,?,?,?,?)",
                        ('station', 'unusable-station-token', '事务所 · 起航信', 0, 0))
+            columns = {row[1] for row in db.execute('PRAGMA table_info(letters)')}
+            if 'letter_data_json' not in columns:
+                db.execute("ALTER TABLE letters ADD COLUMN letter_data_json TEXT NOT NULL DEFAULT '{}'")
             for i, (title, caption) in enumerate([
                 ('给第一个捡到瓶子的人', '这是一封事务所准备的起航信。\n今天你注意到了什么不起眼的东西？\n可以给它留下一点位置。'),
                 ('窗边的空位', '这是一封事务所准备的起航信。\n如果给今天的天气配一种颜色，\n你会从哪张纸上裁下来？'),
@@ -166,13 +169,22 @@ class Service:
 
     @staticmethod
     def select(art):
-        return 'SELECT l.id,l.author,l.parent,l.title,l.caption,l.created,p.name'+(',l.art_png' if art else '')+', (SELECT COUNT(*) FROM letters r WHERE r.parent=l.id) AS reply_count FROM letters l JOIN players p ON p.id=l.author'
+        return 'SELECT l.id,l.author,l.parent,l.title,l.caption,l.created,l.letter_data_json,p.name'+(',l.art_png' if art else '')+', (SELECT COUNT(*) FROM letters r WHERE r.parent=l.id) AS reply_count FROM letters l JOIN players p ON p.id=l.author'
 
     @staticmethod
     def letter(row, player):
         result = dict(row)
         result['is_own'] = row['author']==player['id']
         result['is_seed'] = row['author']=='station'
+        data = json.loads(result.pop('letter_data_json', '{}'))
+        data.update(full_text=row['caption'], author_id=row['author'], reply_to=row['parent'],
+                    sender=row['name'], completed=True, sealed=True, sent=True)
+        data.setdefault('letter_id', str(row['id']))
+        data.setdefault('created_time', row['created'])
+        data.setdefault('letter_type', 'reply' if row['parent'] is not None else 'bottle')
+        data.setdefault('reply_chain_id', str(row['parent'] or row['id']))
+        result['letter_data'] = data
+        result['full_text'] = row['caption']
         return result
 
     def publish(self, db, player, body):
@@ -183,7 +195,18 @@ class Service:
         if parent is not None and (isinstance(parent,bool) or not isinstance(parent,int)):
             raise APIError(400,'回信目标有误。')
         title = self.text(body.get('title',''),40,True)
-        caption = self.text(body.get('caption',''),300)
+        caption = body.get('caption','')
+        if not isinstance(caption, str) or len(caption)>12000:
+            raise APIError(400, '信件正文最多 12000 字，请保留本地草稿后分信寄出。')
+        metadata = body.get('letter_data', {})
+        if not isinstance(metadata,dict):
+            raise APIError(400, '信件资料格式有误。')
+        metadata = {key:value for key,value in metadata.items() if key in {
+            'letter_id','recipient','created_time','letter_type','reply_chain_id','tone',
+            'required_keywords','forbidden_keywords'}}
+        if len(json.dumps(metadata,ensure_ascii=False))>16000:
+            raise APIError(400, '信件资料过长。')
+        metadata_json=json.dumps(metadata,ensure_ascii=False,sort_keys=True)
         png = body.get('art_png','')
         if not isinstance(png,str) or len(png)>MAX_PNG*4//3+8:
             raise APIError(413,'作品图片太大。')
@@ -195,9 +218,9 @@ class Service:
                     raise ValueError()
             except (ValueError, struct.error):
                 raise APIError(400,'作品需要有效且不超过 1536 像素的 PNG。')
-        if not png and not caption:
+        if not png and not caption.strip():
             raise APIError(400,'空信不能投进海里，请留下作品或文字。')
-        payload_hash = hashlib.sha256(json.dumps([parent,title,caption,png],ensure_ascii=False).encode()).hexdigest()
+        payload_hash = hashlib.sha256(json.dumps([parent,title,caption,png]+([metadata_json] if metadata else []),ensure_ascii=False).encode()).hexdigest()
         db.execute('BEGIN IMMEDIATE')
         try:
             existing = db.execute('SELECT id,payload_hash FROM letters WHERE author=? AND request_id=?',(player['id'],request_id)).fetchone()
@@ -218,8 +241,8 @@ class Service:
                     raise APIError(403,'请回复其他寄信人的信，不能用自己的信抵扣回信。')
                 if db.execute('SELECT 1 FROM letters WHERE author=? AND parent=?',(player['id'],parent)).fetchone():
                     raise APIError(409,'你已经回复过这封信，请选另一封。')
-            cursor = db.execute('INSERT INTO letters(author,parent,title,caption,art_png,created,request_id,payload_hash) VALUES(?,?,?,?,?,?,?,?)',
-                                (player['id'],parent,title,caption,png,time.time(),request_id,payload_hash))
+            cursor = db.execute('INSERT INTO letters(author,parent,title,caption,art_png,created,request_id,payload_hash,letter_data_json) VALUES(?,?,?,?,?,?,?,?,?)',
+                                (player['id'],parent,title,caption,png,time.time(),request_id,payload_hash,metadata_json))
             db.execute('UPDATE players SET debt=? WHERE id=?',(int(parent is None),player['id']))
             current = db.execute('SELECT * FROM players WHERE id=?',(player['id'],)).fetchone()
             db.commit()

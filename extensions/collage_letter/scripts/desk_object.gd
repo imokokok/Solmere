@@ -2,11 +2,10 @@ extends Button
 ## Individually interactive original stationery silhouettes, not an image of a desk.
 const Paper=preload("res://extensions/collage_letter/scripts/letter_paper.gd")
 const AssetTexture=preload("res://extensions/collage_letter/scripts/asset_texture.gd")
-const FOLIO_PATH="res://extensions/collage_letter/assets/illustrated_office/folio-v2.png"
 const TOOLS_PATH="res://extensions/collage_letter/assets/illustrated_office/tool-roll-v2.png"
-var folio_art: Texture2D
 var tools_art: Texture2D
 var kind: String="folio"
+var bottle_edition:=0
 var caption: String=""
 var font: Font
 var accent:=Color("788b80")
@@ -19,7 +18,7 @@ func poly(points: Array, color: Color) -> void:draw_colored_polygon(PackedVector
 func shadow(points: Array, offset: Vector2=Vector2(4,6)) -> void:
 	var cast: Array=[]
 	for point in points:cast.append(point+offset)
-	poly(cast,Color(0.25,0.19,0.13,0.16))
+	poly(cast,Color(0.25,0.19,0.13,0.23))
 func stitches(a: Vector2,b: Vector2,color: Color) -> void:
 	var steps:=maxi(1,int(a.distance_to(b)/7))
 	for i in steps:draw_line(a.lerp(b,float(i)/steps),a.lerp(b,(i+0.47)/steps),color,0.8,true)
@@ -29,12 +28,7 @@ func _draw() -> void:
 	var w:=size.x;var h:=size.y
 	match kind:
 		"folio":
-			if folio_art==null and ResourceLoader.exists(FOLIO_PATH):folio_art=AssetTexture.get_texture(FOLIO_PATH)
-			if folio_art!=null:
-				var source:=Rect2(folio_art.get_size()*Vector2(25.0/1177,48.0/1336),folio_art.get_size()*Vector2(1140.0/1177,1220.0/1336))
-				var art_rect:=draw_fitted_art(folio_art,source)
-				centered_caption(art_rect.position+art_rect.size*Vector2(0.467,0.282),17)
-			else:draw_folio_fallback(w,h)
+			draw_folio(w,h)
 		"tray":
 			var tray: Array=[Vector2(4,18),Vector2(w-9,7),Vector2(w,h-12),Vector2(11,h)]
 			shadow(tray);poly(tray,Color("927456"))
@@ -65,38 +59,35 @@ func _draw() -> void:
 				draw_arc(Vector2(23,y),6,PI*0.56,PI*1.72,14,Color("958569"),1.5,true)
 				draw_line(Vector2(22,y-6),Vector2(26,y-6),Color("cfbda0"),1,true)
 			poly([Vector2(w-37,h-22),Vector2(w-25,h-23),Vector2(w-25,h+4),Vector2(w-31,h-1),Vector2(w-37,h+5)],Color("bb846b"))
-			label_at(caption,Vector2(40,h*0.54),15)
-		"pen":
-			draw_set_transform(Vector2(w*0.50,h*0.44)+lift,0.23)
-			draw_line(Vector2(0,-h*0.34),Vector2(0,h*0.30),Color("4d635c"),12,true)
-			draw_line(Vector2(-3,-h*0.33),Vector2(-3,h*0.28),Color("839487"),2,true)
-			draw_line(Vector2(0,-h*0.13),Vector2(0,-h*0.10),Color("d5ba82"),13,true)
-			draw_line(Vector2(3,-h*0.32),Vector2(3,-h*0.18),Color("d5ba82"),2,true)
-			poly([Vector2(-5,h*0.30),Vector2(0,h*0.40),Vector2(5,h*0.30)],Color("ccb789"))
-			draw_line(Vector2(0,h*0.32),Vector2(0,h*0.39),Color("51554a"),1,true)
-			draw_set_transform(lift);label_at(caption,Vector2(7,h-3),15)
+			label_at(caption,Vector2(32,h*0.54),11)
+		"bottle_full","bottle_empty":
+			draw_set_transform(lift+Vector2(w*0.5,0),0,Vector2(w/114.0,(h-22)/152.0))
+			var glass:=PackedVector2Array([Vector2(-13,23),Vector2(13,23),Vector2(14,48),Vector2(34,66),Vector2(38,132),Vector2(31,146),Vector2(-31,146),Vector2(-38,132),Vector2(-34,66),Vector2(-14,48)])
+			shadow(Array(glass),Vector2(3,4));poly(Array(glass),Color("95b9aa"))
+			if kind=="bottle_full":
+				draw_style_box(preload("res://extensions/collage_letter/scripts/journal_style.gd").rounded(Color("e8dbbd"),5),Rect2(-9,55,18,76));draw_line(Vector2(3,60),Vector2(3,123),Color("b8a484"),1,true)
+			poly(Array(glass),Color(0.66,0.78,0.69,0.20));var rim:=glass.duplicate();rim.append(glass[0]);draw_polyline(rim,Color("628c7f"),1.4,true)
+			if kind=="bottle_full":
+				var roll_color:Color=[Color("e4d6b7"),Color("d1d7bf"),Color("dcc7b4")][bottle_edition%3]
+				draw_colored_polygon(PackedVector2Array([Vector2(-12,58),Vector2(9,55),Vector2(13,128),Vector2(-8,132)]),roll_color)
+				draw_line(Vector2(5,60),Vector2(9,125),Color("b0a17e"),1,true)
+				draw_line(Vector2(-9,88),Vector2(11,86),Color("a48662"),2,true)
+			draw_line(Vector2(-26,71),Vector2(-24,123),Color("dae5ca"),3,true)
+			draw_style_box(preload("res://extensions/collage_letter/scripts/journal_style.gd").rounded(Color("b18b5f"),3),Rect2(-14,8,28,20))
+			for i in 5:draw_circle(Vector2(-9+i*4,13+i%2*7),0.9,Color("805f43"))
+			draw_set_transform(lift);centered_caption(Vector2(w/2,h-5),13)
+		"typewriter":
+			preload("res://extensions/collage_letter/scripts/typewriter_art.gd").paint(self,Rect2(lift,Vector2(w,h-12)))
+			label_at(caption,Vector2(w*0.38,h-2),15)
 		"tools":
-			if tools_art==null and ResourceLoader.exists(TOOLS_PATH):tools_art=AssetTexture.get_texture(TOOLS_PATH)
-			if tools_art!=null:
-				var source:=Rect2(tools_art.get_size()*Vector2(70.0/1153,176.0/1364),tools_art.get_size()*Vector2(1016.0/1153,1072.0/1364))
-				var art_rect:=draw_fitted_art(tools_art,source)
-				centered_caption(art_rect.position+art_rect.size*Vector2(0.55,0.73),15)
-			else:draw_tool_roll(w,h)
+			draw_stationery_box(Rect2(0,0,w,h),false)
+			centered_caption(Vector2(w*0.5,h*0.55),17)
 		"envelope":
-			Paper.paint(self,Rect2(11,15,w-20,h-21),2)
-			Paper.paint(self,Rect2(9,12,w-20,h-21),1)
-			poly([Vector2(12,15),Vector2(w*0.50,h*0.60),Vector2(w-14,14)],Color(0.74,0.66,0.49,0.13))
-			draw_polyline(PackedVector2Array([Vector2(12,14),Vector2(w*0.50,h*0.57),Vector2(w-14,13)]),Color("b5a88c"),1.3,true)
-			draw_line(Vector2(12,h-12),Vector2(w*0.37,h*0.44),Color("c5b797"),1,true)
-			draw_line(Vector2(w-13,h-12),Vector2(w*0.65,h*0.44),Color("c5b797"),1,true)
-			var seal:=Vector2(w*0.50,h*0.57)
-			draw_circle(seal+Vector2(1,2),12,Color(0.32,0.21,0.15,0.16))
-			var wax: Array=[]
-			for i in 28:wax.append(seal+Vector2(cos(i*TAU/28),sin(i*TAU/28))*(11+sin(i*2.3)*0.8))
-			poly(wax,Color("ae7258"));draw_arc(seal,7,0,TAU,24,Color("d5a583"),1,true)
-			draw_line(seal+Vector2(-2,4),seal+Vector2(2,-4),Color("854f40"),1,true)
-			draw_line(seal+Vector2.ZERO,seal+Vector2(-3,-2),Color("854f40"),1,true)
-			label_at(caption,Vector2(20,h-21),14)
+			Paper.paint(self,Rect2(6,7,w-12,h-16),2)
+			draw_line(Vector2(17,20),Vector2(28,20),Color("9b7453"),1.5,true)
+			draw_circle(Vector2(19,20),2.5,Color("715a43"))
+			centered_caption(Vector2(w/2,h/2),20)
+
 	draw_set_transform(Vector2.ZERO)
 	if has_focus():draw_arc(size/2,minf(w,h)*0.43,0.1,TAU-0.1,32,Color("e9c687"),1.4,true)
 func draw_fitted_art(texture: Texture2D,source: Rect2) -> Rect2:
@@ -109,14 +100,27 @@ func centered_caption(center: Vector2,font_size: int) -> void:
 	if font:
 		var width:=font.get_string_size(caption,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size).x
 		label_at(caption,center+Vector2(-width*0.5,font_size*0.34),font_size)
-func draw_folio_fallback(w: float,h: float) -> void:
-	poly([Vector2(8,19),Vector2(w-2,11),Vector2(w-6,h-8),Vector2(13,h)],Color(0.24,0.18,0.13,0.18))
-	for i in 3:Paper.paint(self,Rect2(16+i*3,15+i*3,w-31,h-32),2+i,false)
-	poly([Vector2(3,34),Vector2(20,31),Vector2(20,5),Vector2(w*0.53,0),Vector2(w*0.60,28),Vector2(w-8,24),Vector2(w-3,h-17),Vector2(9,h-5)],Color("b89870"))
-	draw_line(Vector2(22,41),Vector2(25,h-15),Color("977956"),2,true)
-	draw_line(Vector2(10,h*0.62),Vector2(w-5,h*0.60),Color("e1c69a"),2,true)
-	Paper.paint(self,Rect2(w*0.23,h*0.29,w*0.58,48),1,false)
-	label_at(caption,Vector2(w*0.25,h*0.29+30),17)
+func draw_folio(w: float,h: float) -> void:
+	draw_set_transform(Vector2.ZERO,0,Vector2(w/366.0,h/520.0))
+	var skin:=preload("res://extensions/collage_letter/scripts/journal_style.gd").rounded(Color("809383"),8)
+	skin.shadow_color=Color(0.23,0.18,0.12,0.23);skin.shadow_size=5;skin.shadow_offset=Vector2(4,6)
+	draw_style_box(skin,Rect2(0,0,366,520))
+	for i in range(4,0,-1):
+		Paper.paint(self,Rect2(17+i,10+i*1.5,337-i,493),1,false)
+	draw_style_box(preload("res://extensions/collage_letter/scripts/journal_style.gd").rounded(Color("809383"),7),Rect2(0,0,361,510))
+	draw_rect(Rect2(8,9,22,493),Color("a66f50"))
+	draw_line(Vector2(34,15),Vector2(34,495),Color("667b69"),3,true)
+	draw_polyline(PackedVector2Array([Vector2(42,14),Vector2(348,14),Vector2(348,496),Vector2(43,496)]),Color("a4b49a"),1.5,true)
+	for entry in [["bd886e",139],["73939c",288],["cfb47e",438]]:draw_rect(Rect2(359,entry[1],12,27),Color(entry[0]))
+	Paper.paint(self,Rect2(92,113,182,63),1,false)
+	if font:draw_string(font,Vector2(135,154),caption,HORIZONTAL_ALIGNMENT_LEFT,170,25,Color("465d50"))
+	draw_line(Vector2(172,395),Vector2(199,308),Color("d1d4af"),2,true)
+	for i in 4:
+		var q:=Vector2(180+i*5,367-i*17)
+		poly([q,q+Vector2(-25,-10),q+Vector2(-30,-26),q+Vector2(-9,-20)],Color("c3cba6"))
+		poly([q+Vector2(3,-8),q+Vector2(26,-37),q+Vector2(31,-28),q+Vector2(24,-13)],Color("c3cba6"))
+	draw_polyline(PackedVector2Array([Vector2(362,265),Vector2(379,289),Vector2(395,331),Vector2(382,316),Vector2(379,289),Vector2(389,361)]),Color("d9ceaf"),5,true)
+	draw_set_transform(Vector2.ZERO)
 func draw_tool_roll(w: float,h: float) -> void:
 	var cloth: Array=[Vector2(2,26),Vector2(w-13,14),Vector2(w-4,h-10),Vector2(10,h)]
 	shadow(cloth);poly(cloth,Color("728a80"))
@@ -150,3 +154,6 @@ func draw_tool_roll(w: float,h: float) -> void:
 	label_at(caption,Vector2(20,h-25),15)
 func label_at(value: String, at: Vector2, font_size: int) -> void:
 	if font:draw_string(font,at,value,HORIZONTAL_ALIGNMENT_LEFT,-1,font_size,Color("484e43"))
+
+func draw_stationery_box(rect:Rect2,opened:bool) -> void:
+	preload("res://extensions/collage_letter/scripts/stationery_box.gd").paint(self,rect,opened)

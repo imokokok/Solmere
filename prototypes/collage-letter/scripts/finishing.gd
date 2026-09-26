@@ -44,7 +44,7 @@ func _init(host: Node2D) -> void: g=host
 func active() -> bool: return g.stage in ["ENVELOPE","WAX_SEAL","SEND"]
 func hint() -> String:
 	if g.stage=="ENVELOPE":
-		return "拖住折好的信，向下滑入信封；纸张会被信封前层遮住。" if not inserted else "拖住上方三角翻盖，向下拉到封口。"
+		return "把折好的信放进信封，轻轻送入一半就好。" if not inserted else "拖住上方三角翻盖，向下拉到封口。"
 	if g.stage=="SEND":
 		if closing: return "正在关上信箱，交给邮差。"
 		if mailed>=1: return "信已放进信箱。将打开的箱盖向下拉，完成投递。"
@@ -87,8 +87,8 @@ func input(p: Vector2, down: bool) -> void:
 			elif inserted and p.distance_to(Vector2(720,270+flap*255))<125: drag="flap"
 		else:
 			if drag=="letter":
-				inserted=absf(letter_pos.x-720)<80 and letter_pos.y>=630
-				if inserted: letter_pos=Vector2(720,650);g.envelope_inserted=true;g.audio.play("ENVELOPE_INSERT")
+				inserted=absf(letter_pos.x-720)<80 and letter_pos.y>=535
+				if inserted: g.envelope_inserted=true;g.audio.play("ENVELOPE_INSERT")
 			elif drag=="flap" and flap>=0.94:
 				flap=1;g.stage="WAX_SEAL";g.flap_visual=1;g.audio.play("ENVELOPE_CLOSE");g.build_ui()
 			drag="";say();g.changed()
@@ -138,6 +138,8 @@ func mail_input(p: Vector2, down: bool) -> void:
 func tick(delta: float) -> void:
 	time+=delta
 	if not active(): return
+	if inserted and g.stage=="ENVELOPE":letter_pos=letter_pos.lerp(Vector2(720,650),1-exp(-delta*8))
+	if phase in ["STAMP","COOL"]:spoon=spoon.lerp(Vector2(340,380),1-exp(-delta*5))
 	if match_lit:
 		match_life-=delta
 		if match_life<=0: match_lit=false
@@ -175,7 +177,7 @@ func poly(points: Array, color: String) -> void: g.painted_polygon(PackedVector2
 func flame(at: Vector2, scale: float = 1.0) -> void:
 	var sway:=sin(time*7.3)*4+sin(time*13)*2
 	for layer in 3:
-		var factor: float=[1.0,0.65,0.34][layer]*scale
+		var factor: float=[1.0,0.65,0.34][layer]*scale*(0.97+sin(time*5.8+layer)*.055)
 		var points:=PackedVector2Array()
 		for i in 25:
 			var a:=TAU*i/24.0
@@ -192,7 +194,8 @@ func bead(at: Vector2, size: float = 1.0, seed_value: int = 0) -> void:
 	ellipse(at+Vector2(-1,-2)*size,Vector2(6,3)*size,Color("b6634a"))
 	g.draw_line(at+Vector2(-4,-3)*size,at+Vector2(1,-4)*size,Color("d18d6a"),1.2)
 func candle_art() -> void:
-	ellipse(Vector2(160,617),Vector2(48,13),Color("796552"))
+	ellipse(Vector2(165,632),Vector2(57,14),Color(0.2,0.15,0.1,0.18))
+	ellipse(Vector2(160,625),Vector2(51,12),Color("495f55"))
 	ellipse(Vector2(160,610),Vector2(42,10),Color("b89b68"))
 	g.painted_polygon(soft_contour(PackedVector2Array([Vector2(130,481),Vector2(158,477),Vector2(191,482),Vector2(190,542),Vector2(188,601),Vector2(164,608),Vector2(133,603),Vector2(131,536)])),Color("ddc9a0"),0.24)
 	g.draw_rect(Rect2(136,482,12,122),Color("f4e3bf"))
@@ -203,6 +206,11 @@ func candle_art() -> void:
 	for n in 3:
 		g.draw_line(Vector2(139+n*16,483),Vector2(139+n*16,501+n*9),Color("f4e3bf"),5,true)
 	g.draw_line(Vector2(160,480),WICK,Color("50453a"),3,true)
+	poly([Vector2(116,576),Vector2(122,619),Vector2(143,628),Vector2(180,628),Vector2(199,617),Vector2(205,575)],"708575")
+	ellipse(Vector2(160,576),Vector2(44,10),Color("acb59a"))
+	ellipse(Vector2(160,575),Vector2(35,6),Color("d7c397"))
+	g.draw_arc(Vector2(211,594),17,-PI*.5,PI*.5,24,Color("aab394"),5,true)
+	g.draw_line(Vector2(128,587),Vector2(131,612),Color("96a28a"),3,true)
 	if candle: flame(WICK)
 func stamp_art(at: Vector2) -> void:
 	ellipse(at+Vector2(6,9),Vector2(41,12),Color(0.2,0.15,0.1,0.15))
@@ -245,7 +253,7 @@ func wax_art() -> void:
 func envelope(at: Vector2 = Vector2(720,545), scale: float = 1.0, show_letter: bool = false) -> void:
 	g.draw_set_transform(at-Vector2(720,545)*scale,0,Vector2.ONE*scale)
 	g.paper(Rect2(500,430,440,245),Color("cbc5b6"))
-	if flap<1:
+	if flap<=0:
 		envelope_paper([Vector2(500,430),Vector2(940,430),Vector2(720,270+flap*255)],"e6e3d6")
 		g.draw_line(Vector2(505,431),Vector2(720,274+flap*250),Color("b19a73"),1.5)
 	g.draw_rect(Rect2(510,431,420,213),Color("e3cfa8") if flap>=0.95 else Color("ae9879"))
@@ -304,7 +312,9 @@ func draw() -> void:
 			ellipse(spoon-Vector2(0,1),Vector2(27,13),Color("a65343"))
 			for n in 6: bead(spoon+Vector2((n%3-1)*15,(n/3)*9-6),maxf(0.05,0.8*(1-heat)),n)
 		# Front rim stays in front of the wax; the bowl never disappears under it.
-		g.draw_arc(spoon,35,0.05,PI-0.05,28,Color("d8c9a9"),2,true)
+		var rim:=PackedVector2Array()
+		for i in 25:rim.append(spoon+Vector2(cos(PI*i/24.0)*36,sin(PI*i/24.0)*19+2))
+		g.draw_polyline(rim,Color("b9ab8d"),3,true)
 		if phase=="POURING": g.draw_line(spoon+Vector2(0,8),pool,Color("b96649"),3+sin(pour*PI)*3,true)
 		if phase=="POUR": g.draw_arc(SEAM,25,0,TAU,48,Color(0.55,0.32,0.2,0.45),1,true)
 		stamp_art(stamp)
@@ -312,12 +322,16 @@ func draw() -> void:
 		if phase=="MELT" or (phase=="STAMP" and drag=="stamp"):
 			g.draw_rect(Rect2(528,742,385,6),Color("b5aa93"))
 			g.draw_rect(Rect2(528,742,385*(heat if phase=="MELT" else minf(1,press_time)),6),Color("a65343"))
-		g.text_at("浇注标准：对准封口 · 蜡粒完全融化 · 一次倒完",Vector2(465,780),16)
+
 	elif g.stage=="SEND": draw_mailbox()
-	g.text_at(hint(),Vector2(375,172),18)
+	var hint_skin:=preload("res://scripts/journal_style.gd").rounded(Color("efe3c8"),7)
+	g.draw_style_box(hint_skin,Rect2(345,184,750,60))
+	g.draw_string(g.font,Vector2(368,221),g.L.t(hint()),HORIZONTAL_ALIGNMENT_LEFT,708,17,Color("403f32"))
 func draw_mailbox() -> void:
 	# Back, letter, then front lip. The envelope and attached wax share one transform.
-	g.paper(Rect2(915,376,335,310),Color("456466"))
+	ellipse(Vector2(1090,700),Vector2(190,22),Color(0.2,0.17,0.12,0.19))
+	poly([Vector2(911,374),Vector2(1252,374),Vector2(1280,397),Vector2(1280,675),Vector2(1250,693),Vector2(911,687)],"334f50")
+	g.draw_style_box(preload("res://scripts/journal_style.gd").rounded(Color("456466"),12),Rect2(915,376,335,310))
 	g.draw_rect(Rect2(940,394,285,193),Color("263f42"))
 	var lid_y:=376-mailbox*120
 	poly([Vector2(915,376),Vector2(1250,376),Vector2(1235,lid_y),Vector2(930,lid_y)],"6e8d88")
@@ -331,7 +345,12 @@ func draw_mailbox() -> void:
 		g.draw_rect(Rect2(915,376,335,112),Color("6e8d88"))
 		g.draw_line(Vector2(950,430),Vector2(1217,430),Color("304d50"),8,true)
 		g.draw_circle(Vector2(1080,462),7,Color("ba9a62"))
-	g.text_at("信箱",Vector2(1056,731),20)
+	g.draw_line(Vector2(929,501),Vector2(929,670),Color("8fa298"),2,true)
+	for x in [935,1228]:
+		for y in [507,665]:g.draw_circle(Vector2(x,y),3,Color("a2af9c"))
+	g.draw_rect(Rect2(1037,638,88,26),Color("355452"))
+	g.draw_circle(Vector2(1080,652),4,Color("b5a174"))
+	g.text_at("SOLMERE · POST",Vector2(987,730),17)
 
 func soft_contour(points: PackedVector2Array) -> PackedVector2Array:
 	var result:=PackedVector2Array()

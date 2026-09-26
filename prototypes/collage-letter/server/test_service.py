@@ -44,6 +44,18 @@ class BottleTests(unittest.TestCase):
         return self.call('/v1/letters',token,{'title':'一封信','caption':caption,'parent_id':parent,
             'request_id':key or f'test-request-{self.sequence:06d}'})
 
+    def test_full_unicode_letter_and_metadata_survive_roundtrip(self):
+        text='  亲爱的你：\n'+('海边的风 é 👩‍👩‍👧‍👦 🇨🇳\n'*100)+'\n  '
+        code, sent=self.call('/v1/letters',self.a,{'title':'长信', 'caption':text,
+            'request_id':'unicode-long-letter-001', 'letter_data':{'letter_id':'original-id',
+            'recipient':'远方的你','tone':'gentle','required_keywords':['海边']}})
+        self.assertEqual(code,200)
+        code, received=self.call('/v1/letters/'+str(sent['letter_id']),self.b)
+        self.assertEqual(received['letter']['full_text'],text)
+        self.assertEqual(received['letter']['letter_data']['recipient'],'远方的你')
+        self.assertEqual(received['letter']['letter_data']['letter_id'],'original-id')
+        self.assertTrue(received['letter']['letter_data']['sent'])
+
     def test_send_reply_send_and_inbox(self):
         code,original=self.post(self.a)
         self.assertEqual(code,200)

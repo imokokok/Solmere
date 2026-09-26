@@ -45,7 +45,7 @@ func _draw() -> void:
 			draw_colored_polygon(PackedVector2Array([Vector2(-7,3),Vector2(22,1),Vector2(19,12),Vector2(-7,14)]),Color("d5ad70"))
 			draw_circle(Vector2(-5,0),14,Color("fff3d9"));draw_circle(Vector2(-5,0),11,Color("80b5a3"));draw_circle(Vector2(-5,0),6,Color("b68c69"));draw_arc(Vector2(-5,0),8,0,TAU,32,Color("ecdfb9"),1,true)
 			for x in [4,10,16]:draw_line(Vector2(x,4),Vector2(x-2,10),Color("f6e6bd"),2,true)
-		"pen":
+		"pen","write":
 			draw_line(Vector2(-11,11),Vector2(11,-12),Color("e1ae5b"),8,true)
 			draw_line(Vector2(-10,9),Vector2(11,-12),Color("ffe3a6"),2,true)
 			draw_colored_polygon(PackedVector2Array([Vector2(-15,10),Vector2(-18,19),Vector2(-8,15)]),Color("f5dcaa"))

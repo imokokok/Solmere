@@ -2,9 +2,9 @@
   {
     "name_zh": "林舟",
     "name_en": "Lin Zhou",
-    "request_zh": "写给小满：在海盐镇过得很开心。用暖色、自然纸边和这里的照片，让她收到一点我的新生活。",
+    "request_zh": "写给小满：在Solmere过得很开心。用暖色、自然纸边和这里的照片，让她收到一点我的新生活。",
     "request_en": "For Xiaoman: life in Solmere has been happy. Warm colours, natural paper edges and these photos will bring her a little of my new life.",
-    "reply_zh": "小满说，她把信放在书桌旁，像是跟着照片到海盐镇走了一圈。",
+    "reply_zh": "小满说，她把信放在书桌旁，像是跟着照片到Solmere走了一圈。",
     "reply_en": "Xiaoman put the letter by her desk. She said the photos felt like a little walk through Solmere.",
     "attachments": [
       620,
@@ -31,9 +31,14 @@
       },
       {
         "speaker": "npc",
-        "text": "我来到海盐镇已经有一段时间了，以前总是和朋友用手机聊天。她最近迷上了拼贴，我想把开心的日子用她喜欢的方式寄给她。她叫小满。",
+        "text": "我来到Solmere已经有一段时间了，以前总是和朋友用手机聊天。她最近迷上了拼贴，我想把开心的日子用她喜欢的方式寄给她。她叫小满。",
         "reply": "嗯，我明白了。",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "她上次寄我的信，连咖啡杯垫都贴进去了。我一直放在抽屉最上面。我的字写起来太像工作汇报了，想请你帮我也留下一点生活的样子。",
+        "reply": "我会把这个细节留下。"
       },
       {
         "speaker": "npc",
@@ -67,6 +72,11 @@
         "text": "I have lived in Solmere for a while. My friend and I usually chat on our phones. She has taken up collage, so I want to send my happy days in a way she enjoys. Her name is Xiaoman.",
         "reply": "I understand.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "Her last letter had a coffee coaster pasted into it. I keep it in the top drawer. My own writing sounds like a report; could you help me leave a little everyday life on the page?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -123,6 +133,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我不太敢直接敲新邻居的门，怕他们正忙。把面包袋上的小麦图剪下来，留张不催人回应的欢迎信，好不好？",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -153,6 +168,11 @@
         "text": "Welcome a new neighbor with warm colors. Leave room to write an address.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I hesitate to knock in case they are busy. Could we cut the wheat from a bread bag and leave a welcome that asks for nothing back?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -209,6 +229,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我年轻时出海也怕得很，却一直装作不怕。对着学徒总说不出这句话。你能用我留下的潮汐表，帮我把它说轻一点吗？",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -239,6 +264,11 @@
         "text": "For a new sailor. Use sea colors, but avoid the usual good-luck phrases.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I pretended not to be afraid on my first voyage. I cannot seem to tell my apprentice. Could my old tide table help say it quietly?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -295,6 +325,11 @@
       },
       {
         "speaker": "npc",
+        "text": "他把花店门口那棵树救活了，不肯收钱。我想把去年掉的叶子夹进信里，免得一句谢谢听起来太轻。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -325,6 +360,11 @@
         "text": "Thank a retiring gardener. Include plants; avoid age and grand speeches.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "He saved the tree outside and would not take money. I kept last year’s leaves; could we put one in the thanks?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -381,6 +421,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我们因为一件小事赌气，他没来演出。我留了旁边那个座位的票，不知道怎样说：下次还给你留。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -411,6 +456,11 @@
         "text": "A keepsake for a friend who missed the show. Add a music scrap and a ticket.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "We quarrelled and he missed the show. I kept the ticket beside mine. I do not know how to say I will save that seat again.",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -467,6 +517,11 @@
       },
       {
         "speaker": "npc",
+        "text": "她说没关系，可那只杯子是她从家里带来的。我不想买一只就当没发生过。碎片不能寄，杯子以前那张照片可以吗？",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -497,6 +552,11 @@
         "text": "I broke my roommate's cup. Help me apologize honestly, without excuses.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "She said it was fine, but the cup came from home. A replacement cannot make it unhappen. Could we use the photo of it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -553,6 +613,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我喜欢你把平常东西留下来的方式。这件事当面说总有些不好意思，想请你帮我用纸片慢慢说。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -583,6 +648,11 @@
         "text": "Encourage a young regular at the bookstall. Bright colors, no report-card tone.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I like the way you keep ordinary things. I find this hard to say in person; could the scraps help me say it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -639,6 +709,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我喜欢你把平常东西留下来的方式。这件事当面说总有些不好意思，想请你帮我用纸片慢慢说。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -669,6 +744,11 @@
         "text": "Thank the friend who watched my shop. Plain paper and a little doodle, please.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I like the way you keep ordinary things. I find this hard to say in person; could the scraps help me say it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -725,6 +805,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我喜欢你把平常东西留下来的方式。这件事当面说总有些不好意思，想请你帮我用纸片慢慢说。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -755,6 +840,11 @@
         "text": "Invite the neighbors to a picnic. Lively like a flyer, without a sales pitch.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I like the way you keep ordinary things. I find this hard to say in person; could the scraps help me say it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -811,6 +901,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我喜欢你把平常东西留下来的方式。这件事当面说总有些不好意思，想请你帮我用纸片慢慢说。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -841,6 +936,11 @@
         "text": "Write to my sister away from home. Include a town photo and a sense of daily life.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I like the way you keep ordinary things. I find this hard to say in person; could the scraps help me say it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -897,6 +997,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我喜欢你把平常东西留下来的方式。这件事当面说总有些不好意思，想请你帮我用纸片慢慢说。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -927,6 +1032,11 @@
         "text": "Thank a friend for lending tools. Keep it simple; letter cutouts are welcome.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I like the way you keep ordinary things. I find this hard to say in person; could the scraps help me say it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",
@@ -983,6 +1093,11 @@
       },
       {
         "speaker": "npc",
+        "text": "我喜欢你把平常东西留下来的方式。这件事当面说总有些不好意思，想请你帮我用纸片慢慢说。",
+        "reply": "我会把这个细节留下。"
+      },
+      {
+        "speaker": "npc",
         "text": "这几张照片也交给你。你可以裁下一部分，或者给它们添一点颜色。",
         "reply": "做好后，我会帮您寄出。"
       },
@@ -1013,6 +1128,11 @@
         "text": "A note for tomorrow's shift. Small reminders and kindness, without drama.",
         "reply": "I have your photographs.",
         "questions": true
+      },
+      {
+        "speaker": "npc",
+        "text": "I like the way you keep ordinary things. I find this hard to say in person; could the scraps help me say it?",
+        "reply": "We will keep that detail."
       },
       {
         "speaker": "npc",

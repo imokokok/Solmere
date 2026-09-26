@@ -29,7 +29,9 @@ func run()->void:
 	var journal=card.get_child(card.get_child_count()-1)
 	await capture("conversation-history")
 	journal.on_close.call();check(card.step==cursor and not card.reading_history,"Closing history preserves dialogue progress")
-	for i in 7:card.advance()
+	for i in card.lines.size()*2:
+		if not game.conversation_open:break
+		card.advance()
 	await process_frame
 	check(game.accepted_commission==0 and not game.conversation_open and game.drawer_group=="客户","Accepting reveals the attached materials in the drawer")
 	check(game.desk.visible and game.pieces_root.visible,"Leaving commission restores the playable desk")
@@ -51,13 +53,12 @@ func run()->void:
 	game.save_game(true);game.load_game(true);sheet=game.pieces_root.get_child(0)
 	check(sheet.texture.get_image().get_data()==after.get_data() and is_equal_approx(sheet.rotation,0.22),"Paint and transformed paper survive reload together")
 	game.select(sheet);game.apply_glue(sheet.position,0.12)
-	check(sheet.glue_coverage==0,"Glue cannot be applied on the printed front")
-	game.turn_selected();check(sheet.back_visible,"Turning reveals the paper back")
+	check(sheet.glue_coverage>0 and not sheet.back_visible,"Optional glue works without flipping the paper")
 	for y in 5:
 		for x in 6:game.apply_glue(sheet.to_global(sheet.bounds().position+sheet.bounds().size*Vector2((x+0.5)/6.0,(y+0.5)/5.0)),0.12)
-	check(sheet.glue_coverage>=0.6 and not sheet.is_glued,"Brushed back is coated but is not attached while face down")
-	await capture("glued-back")
-	game.turn_selected();check(sheet.is_glued and not sheet.back_visible,"Placing the coated back fixes the paper")
+	check(sheet.is_glued and not sheet.back_visible,"Glue records adhesion without hiding the front")
+	var before_scale:Vector2=sheet.scale;game.transform_selected(1.12,0.1)
+	check(sheet.scale!=before_scale,"Previously glued pieces remain editable")
 	game.save_game(true);game.load_game(true)
 	check(game.commission_history["0"].any(func(entry):return entry.key=="answer_0_zh"),"Dialogue history survives reloading the draft")
 	sheet=game.pieces_root.get_child(0)

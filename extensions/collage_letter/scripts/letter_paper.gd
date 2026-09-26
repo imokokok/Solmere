@@ -31,9 +31,14 @@ static func paint(node: CanvasItem, rect: Rect2, style: int, shadow: bool=true) 
 	var coords:=PackedVector2Array()
 	for p in poly:coords.append((p-rect.position)/rect.size)
 	if shadow:
-		var shade:=PackedVector2Array()
-		for p in poly:shade.append(p+Vector2(2,3))
-		node.draw_colored_polygon(shade,Color(0.30,0.23,0.16,0.15))
+		for layer in range(3,0,-1):
+			var shade:=PackedVector2Array()
+			for p in poly:shade.append(p+Vector2(1.5+layer,2.2+layer*1.9))
+			node.draw_colored_polygon(shade,Color(0.24,0.18,0.12,0.045+0.012*(4-layer)))
+		var thickness:=PackedVector2Array()
+		for p in poly:thickness.append(p+Vector2(.7,1.6 if style!=6 else .3))
+		node.draw_colored_polygon(thickness,Color("b9ac90"))
+
 	node.draw_colored_polygon(poly,Color(0.99,0.96,0.88,0.42 if style==6 else 1.0))
 	node.draw_polygon(poly,PackedColorArray([Color(1,1,1,0.15 if style==6 else (0.63 if style>=9 and style<=20 else 0.77))]),coords,texture(style))
 	# An opaque warm wash keeps the photographic scan quiet in the illustrated world.

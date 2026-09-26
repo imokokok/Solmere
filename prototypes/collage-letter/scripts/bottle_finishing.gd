@@ -12,6 +12,8 @@ var started_above_mouth:=false
 var insertion: float=0
 var time: float=0
 var drift: float=0
+var wave_clock:=0.0
+var splash:=0.0
 const SHEET=Rect2(350,270,280,396)
 const MOUTH=Vector2(1000,350)
 const FIBRE=preload("res://assets/open_pack/paper/Papier13.png")
@@ -28,6 +30,10 @@ func hint() -> String:
 	return ""
 func tick(dt: float) -> void:
 	time+=dt
+	if phase in ["SEA","WAIT"]:
+		wave_clock-=dt
+		if wave_clock<=0:wave_clock=4.0;g.audio.play("SEA_WAVE",0.35)
+	if phase=="WAIT":splash+=dt
 	if phase=="WAIT":drift=minf(1,drift+dt*0.28)
 func input(at: Vector2, down: bool) -> void:
 	if g.busy:return
@@ -66,7 +72,10 @@ func move(at: Vector2) -> void:
 			roll_at=target.clamp(Vector2(190,215),Vector2(1170,710));insertion=0;started_above_mouth=false
 	elif drag=="bottle":bottle_at=(at+drag_offset).clamp(Vector2(180,280),Vector2(1370,660))
 func publish() -> void:
-	phase="WAIT";drift=0;g.say(hint());g.save_game()
+	phase="WAIT";drift=0;splash=0;g.say(hint());g.save_game();g.audio.play("SEA_WAVE",0.55)
+	g.busy=true
+	await g.get_tree().create_timer(3.6).timeout
+	g.busy=false
 	await g.send_bottle()
 	if g.stage=="BOTTLE":
 		phase="SEA";drift=0;bottle_at=Vector2(1000,530);g.save_game();g.build_ui()
@@ -123,7 +132,7 @@ func draw() -> void:
 		g.text_at("↑",Vector2(480,SHEET.position.y+remaining+35),24)
 	elif insertion==0 and phase in ["UNCORK","INSERT"]:paper_roll(roll_at)
 	var offset:=bottle_at-Vector2(1000,530)
-	if phase=="WAIT":offset+=Vector2(drift*45,-drift*32+sin(time)*2)
+	if phase=="WAIT":offset+=Vector2(drift*100,-drift*50+sin(time)*3)
 	g.draw_set_transform(offset)
 	var shadow:=PackedVector2Array()
 	for i in 32:shadow.append(Vector2(1004,709)+Vector2(cos(i*TAU/32)*76,sin(i*TAU/32)*11))
@@ -140,5 +149,10 @@ func draw() -> void:
 	g.draw_line(Vector2(975,361),Vector2(1025,361),Color("7b9f8c"),1.5,true)
 	if phase in ["SEA","WAIT"]:cork()
 	g.draw_set_transform(Vector2.ZERO)
+	if phase=="WAIT" and splash<2.0:
+		for ring in 3:
+			var radius:float=18+splash*51+ring*12;var curve:=PackedVector2Array()
+			for i in 45:curve.append(bottle_at+Vector2(0,135)+Vector2(cos(i*TAU/44)*radius,sin(i*TAU/44)*radius*0.30))
+			g.draw_polyline(curve,Color(0.91,0.95,0.84,(1.0-splash/2.0)*0.55),2,true)
 	if phase not in ["SEA","WAIT"]:cork()
 	if phase=="INSERT" and not started_above_mouth:g.draw_arc(Vector2(1000,219),28,0.15,PI-0.15,24,Color(0.40,0.55,0.42,0.3),1.5,true)

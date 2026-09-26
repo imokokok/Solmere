@@ -79,7 +79,7 @@ func advance() -> void:
 	if question_return:question_return=false;show_step();body.visible_characters=body.text.length();finished_typing();return
 	if step<lines.size()-1:step+=1;show_step();g.audio.play("DIALOGUE_ADVANCE",0.45)
 	else:
-		g.accepted_commission=g.commission_index;g.shelf_open=false;g.tools_open=false;g.tool="write";g.drawer_group="客户";g.drawer_page=0;g.save_game();close()
+		g.accepted_commission=g.commission_index;g.shelf_open=false;g.tools_open=false;g.tool="move";g.drawer_group="客户";g.drawer_page=0;g.save_game();close()
 func ask(index: int) -> void:
 	question_index=index
 	var data: Dictionary=g.commissions[g.commission_index%g.commissions.size()]

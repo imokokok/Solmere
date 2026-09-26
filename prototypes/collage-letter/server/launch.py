@@ -56,11 +56,11 @@ def ensure_local_server():
             time.sleep(.1)
 
 
-def launch(profile=None):
+def launch(profile=None, showcase=False):
     config=configparser.ConfigParser()
     config.read(ROOT/'network.cfg',encoding='utf-8')
     url=config.get('server','url',fallback='http://127.0.0.1:8787').strip('"')
-    if url.rstrip('/')=='http://127.0.0.1:8787':
+    if not showcase and url.rstrip('/')=='http://127.0.0.1:8787':
         ensure_local_server()
     bundled=ROOT/'runtime/Godot.exe'
     engine=str(bundled) if bundled.exists() else os.environ.get('GODOT_BIN') or shutil.which('godot') or shutil.which('godot4')
@@ -90,6 +90,8 @@ def launch(profile=None):
     command=[engine,'--path',str(ROOT)]
     if profile:
         command+=['--',f'--profile={profile}']
+    if showcase:
+        command+=['--showcase','--lang=zh']
     with (STATE/f'game-{profile or "default"}.log').open('w',encoding='utf-8') as log:
         subprocess.Popen(command,cwd=ROOT,stdout=log,stderr=log)
 
@@ -97,11 +99,14 @@ def launch(profile=None):
 if __name__=='__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--demo',action='store_true')
+    parser.add_argument('--showcase',action='store_true')
     parser.add_argument('--server-only',action='store_true')
     args=parser.parse_args()
     if args.server_only:
         ensure_local_server()
     elif args.demo:
         launch('Player-A'); launch('Player-B')
+    elif args.showcase:
+        launch('Solmere-Showcase-20260927',showcase=True)
     else:
         launch()

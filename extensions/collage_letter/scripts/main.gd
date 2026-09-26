@@ -6,6 +6,7 @@ const BottleFinishing=preload("res://extensions/collage_letter/scripts/bottle_fi
 const PaperArt = preload("res://extensions/collage_letter/scripts/paper_art.gd")
 const Piece = preload("res://extensions/collage_letter/scripts/collage_piece.gd")
 const BottleClient = preload("res://extensions/collage_letter/scripts/bottle_client.gd")
+const SeaExample=preload("res://extensions/collage_letter/scripts/sea_example.gd")
 const BottleDock = preload("res://extensions/collage_letter/scripts/bottle_dock.gd")
 const Audio = preload("res://extensions/collage_letter/scripts/audio_manager.gd")
 const DeskDrawers=preload("res://extensions/collage_letter/scripts/desk_drawers.gd")
@@ -18,13 +19,13 @@ const ToolButton = preload("res://extensions/collage_letter/scripts/journal_tool
 const INK = Color("465951")
 const LETTER_INKS = [Color("465951"),Color("344d70"),Color("343b3c"),Color("795544"),Color("783f4a")]
 const RUST = Color("ab6759")
-const LETTER = Rect2(522,174,396,560) # A4, 210:297 (rounded to canvas pixels).
+const LETTER = Rect2(543,306,354,500) # A4, 210:297 (rounded to canvas pixels).
 const MATERIAL_TYPES = {"图案":"decoration","纸张":"paper","文字":"print","票据":"ticket","乐谱":"score","画作":"art","广告":"advert","照片":"photo","字母":"letter"}
 var desk
 var paint
 var shelf_open:=false
 var tools_open:=false
-var drawer_group:="图案"
+var drawer_group:="字母"
 var drawer_page:=0
 var source_preview_id: int=-1
 var source_overrides: Dictionary={}
@@ -34,9 +35,20 @@ var commission_history: Dictionary={}
 var commission_steps: Dictionary={}
 var history_open:=false
 var blinds_open: float=0.75
+var example_return:Dictionary={}
+var sample_reply_due:=false
+var sample_cycle:=0
+var showcase_seen:=false
+var typewriter_text: String=""
+var typewriter_open:=false
+var typewriter_previous:Dictionary={}
 var letter_text: String=""
 var letter_ink_color: Color=INK
-var letter_text_node: Label
+var letter_text_node
+var letter_paper_root: Node2D
+var letter_data: Dictionary=preload("res://extensions/collage_letter/scripts/letter_data.gd").fresh()
+var writing_preferences: Dictionary={"speed":"Normal","volume":0.55,"reduce_motion":false}
+var sent_letters: Array=[]
 var glue_drawing:=false
 var glue_last:=Vector2.ZERO
 var save_path := "user://letter_v1.json"
@@ -76,7 +88,8 @@ var save_clock := 0.0
 var entry: LineEdit
 var tape_start := Vector2.ZERO
 var tape_drawing := false
-var letter_preview: ImageTexture
+var letter_preview: Texture2D
+var live_document: Node
 var preview_path := "user://letter_preview.png"
 var status_label: Label
 var phase_label: Label
@@ -152,25 +165,32 @@ func _ready() -> void:
 	font.allow_system_fallback = true
 	audio = Audio.new()
 	add_child(audio)
-	letter_text_node=Label.new();letter_text_node.position=LETTER.position+Vector2(28,35);letter_text_node.size=LETTER.size-Vector2(56,70)
-	letter_text_node.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;letter_text_node.clip_text=true;letter_text_node.mouse_filter=Control.MOUSE_FILTER_IGNORE
-	letter_text_node.add_theme_font_override("font",font);letter_text_node.add_theme_font_size_override("font_size",19);letter_text_node.add_theme_constant_override("line_spacing",5);letter_text_node.add_theme_color_override("font_color",letter_ink_color);add_child(letter_text_node)
+	letter_paper_root=Node2D.new();letter_paper_root.name="LetterPaper";add_child(letter_paper_root)
+	letter_text_node=preload("res://extensions/collage_letter/scripts/letter_renderer.gd").new();letter_text_node.name="LetterRenderer"
+	letter_text_node.position=LETTER.position+Vector2(28,35);letter_text_node.size=LETTER.size-Vector2(56,70);letter_text_node.audio=audio;letter_paper_root.add_child(letter_text_node)
 	pieces_root = Node2D.new()
-	add_child(pieces_root)
+	letter_paper_root.add_child(pieces_root)
+	pieces_root.child_entered_tree.connect(func(piece):
+		if not piece.has_meta("letter_page"):piece.set_meta("letter_page",letter_text_node.page))
+	pieces_root.child_order_changed.connect(func():sync_letter_pages.call_deferred())
 	overlay=load("res://extensions/collage_letter/scripts/work_overlay.gd").new()
 	overlay.game=self;overlay.z_index=80;add_child(overlay)
+	var handles=preload("res://extensions/collage_letter/scripts/piece_handles.gd").new();handles.name="PieceHandles";handles.game=self;handles.z_index=90;add_child(handles)
 	desk_texture=load("res://extensions/collage_letter/assets/open_pack/desk-wood.png")
 	desk_grain=load("res://extensions/collage_letter/assets/open_pack/desk-light-wood.png")
 	paper_grain=load("res://extensions/collage_letter/assets/open_pack/paper/Papier6.png")
 	ui = CanvasLayer.new()
 	add_child(ui)
+	var daylight=preload("res://extensions/collage_letter/scripts/desk_lighting.gd").new();daylight.name="DeskLighting";daylight.game=self;add_child(daylight)
 	textures.resize(materials.size())
 	for i in materials.size():
 		if i>=sources.size(): sources.append(Rect2(62,190,300,240))
 	update_material_slots()
 	await get_tree().process_frame
 	await RenderingServer.frame_post_draw
-	load_game()
+	load_game();load_voyage()
+	if stage!="WORKBENCH":
+		live_document=preload("res://extensions/collage_letter/scripts/letter_document.gd").new();add_child(live_document);await live_document.build(self);letter_preview=live_document.first_page()
 	if stage=="DIALOGUE": stage="WORKBENCH"
 	pieces_root.visible=stage=="WORKBENCH"
 	update_material_slots()
@@ -178,9 +198,9 @@ func _ready() -> void:
 	flap_visual = 1.0 if stage in ["WAX_SEAL","SEND","END"] else 0.0
 	build_ui()
 	ready_done = true
-	if stage=="WORKBENCH" and letter_mode=="npc" and accepted_commission!=commission_index and not "--smoke-test" in OS.get_cmdline_user_args():
-		conversation_open=true;build_ui()
-	if hint.is_empty():say("拉动信纸旁的小标签打开素材夹或文具盒。点击素材可裁剪，拖动可整张拿取。")
+	if get_viewport()==get_tree().root:DisplayServer.window_set_title("Solmere · 拼贴书信"+ (" · 示例" if "--showcase" in OS.get_cmdline_user_args() else ""))
+	if "--showcase" in OS.get_cmdline_user_args() and not showcase_seen and letter_text.is_empty() and pieces_root.get_child_count()==0:preload("res://extensions/collage_letter/scripts/showcase_draft.gd").apply(self)
+	if hint.is_empty():say("点开桌上的素材夹，剪下字母与小镇剪报，拼成想说的话。")
 	queue_redraw()
 	if "--smoke-test" in OS.get_cmdline_user_args():
 		smoke = true
@@ -241,8 +261,10 @@ func button(text: String, rect: Rect2, action: Callable, active: bool = false) -
 
 func build_ui() -> void:
 	pieces_root.visible=stage=="WORKBENCH" and not conversation_open
-	letter_text_node.text=letter_text;letter_text_node.visible=stage=="WORKBENCH" and not conversation_open and tool!="write"
-	letter_text_node.add_theme_color_override("font_color",letter_ink_color)
+	letter_text_node.text=letter_text;letter_text_node.visible=stage=="WORKBENCH" and not conversation_open
+	letter_text_node.set_ink(letter_ink_color)
+	letter_text_node.pen_visible=tool=="write" and stage=="WORKBENCH"
+	apply_writing_preferences()
 	for child in ui.get_children():
 		ui.remove_child(child)
 		child.queue_free()
@@ -257,12 +279,9 @@ func build_ui() -> void:
 			else:
 				var card:=CommissionDialog.new();card.g=self;card.desk=desk;ui.add_child(card)
 		queue_redraw();return
-	button("English" if L.language=="zh" else "Chinese",Rect2(1030,35,140,32),switch_language)
-	label_at("海盐书信事务所",Rect2(65,28,360,39),26)
-	label_at("COLLAGE LETTER   /   把捡到的语言，寄给某个人",Rect2(67,70,330,25),11)
-	button("声音" if not audio.muted else "静音",Rect2(1220,39,70,34),func(): audio.toggle(); build_ui())
+	label_at("Solmere 书信事务所",Rect2(51,33,340,44),25,Color("f3e2c1"))
 	button("操作说明",Rect2(1300,39,94,34),func(): help_open = not help_open; build_ui())
-	phase_label = label_at(phase_title(),Rect2(65,106,360,29),16,INK)
+	phase_label = label_at(phase_title(),Rect2(53,79,336,28),14,Color("d8c5a3"))
 	status_label = label_at(hint,Rect2(58,866,1320,26),14)
 	if stage in ["DIALOGUE","WORKBENCH","END"]:
 		button("海边 · 漂流瓶邮局",Rect2(1175,85,219,32),open_bottles)
@@ -292,6 +311,7 @@ func build_ui() -> void:
 			ui.add_child(title_entry)
 
 	elif stage == "END":
+		if not example_return.is_empty():button("返回原信" if L.language=="zh" else "Return to draft",Rect2(550,687,220,42),func():SeaExample.return_to_letter(self))
 		label_at("信已经出发。",Rect2(540,262,700,55),36)
 		label_at(final_feedback,Rect2(540,350,800,140),23)
 		label_at("没有评分。你留下的排列、图像和空白，就是这封信。",Rect2(540,543,800,40),18)
@@ -304,7 +324,7 @@ func build_ui() -> void:
 		panel.color = Color("f6efdb")
 		ui.add_child(panel)
 		label_at("桌边操作指南",Rect2(392,216,650,44),28)
-		label_at("① 刻刀：在纸张上拖方框，或按住划出自由轮廓。\n② 纸片：翻到背面涂胶，再翻回正面放上信纸。\n③ 胶带：沿纸片边缘拖出一条装饰胶带。\n④ 素材按类型分类；字母可直接拿取，涂鸦笔按住绘画。\n⑤ 漂流瓶：自由发信、读旧信、回复其他寄信人。\n\n滚轮缩放 · Q / E 旋转 · Delete 删除 · 右键返回移动\n发出新漂流瓶后，需要回复一封来信，才能再发新信。\n自动保存作品和回信对象；发信失败可以原样重试。",Rect2(392,287,670,340),20)
+		label_at("① 刻刀：在纸张上拖方框，或按住划出自由轮廓。\n② 纸片：选中后拖角缩放、拖边拉伸，圆柄旋转。\n③ 胶带：沿纸片边缘拖出一条装饰胶带。\n④ 素材按类型分类；字母可直接拿取，涂鸦笔按住绘画。\n⑤ 漂流瓶：自由发信、读旧信、回复其他寄信人。\n\n滚轮缩放 · Q / E 旋转 · Delete 删除 · 右键返回移动\n发出新漂流瓶后，需要回复一封来信，才能再发新信。\n自动保存作品和回信对象；发信失败可以原样重试。",Rect2(392,287,670,340),20)
 		button("回到桌边",Rect2(804,630,230,43),func(): help_open=false; build_ui(),true)
 	queue_redraw()
 
@@ -331,7 +351,6 @@ func _draw() -> void:
 		draw_polyline(contour,Color(0.31,0.23,0.17,0.16),2,true)
 	OfficeScene.paint(self)
 	if stage=="WORKBENCH" and conversation_open:return
-	if stage!="WORKBENCH":Journal.heading(self)
 	if stage == "WORKBENCH":
 		LetterPaper.paint(self,LETTER,letter_paper_style)
 		if cutting_source >= 0 and path.size()>1:
@@ -436,14 +455,14 @@ func set_tool(value: String) -> void:
 	dragging = false
 	cutting_source = -1
 	tape_drawing = false
-	say({"move":"拖动纸片，松手放好。Q / E 旋转，滚轮缩放，随时重新排列。","rect":"刻刀方框裁切：在纸张上按住左键拖动，松开切下。","free":"刻刀自由裁切：按住左键沿边缘划一圈，松开闭合。","tape":"按住左键拉出胶带，松开截断；胶带可以重新摆放。","pen":"按住鼠标在信纸上涂鸦。松手留下笔迹，可以移动、缩放或删除。","brush":"先蘸颜料；整页模式可画过纸片，只涂素材会锁住边缘。","glue":"在纸片上涂抹胶棒，涂够后按牢；揭起后可以重排。"}[tool])
+	say({"move":"选中素材后，拖角缩放、拖边调整宽高，拖圆柄旋转。","rect":"刻刀方框裁切：在纸张上按住左键拖动，松开切下。","free":"刻刀自由裁切：按住左键沿边缘划一圈，松开闭合。","tape":"按住左键拉出胶带，松开截断；胶带可以重新摆放。","pen":"按住鼠标在信纸上涂鸦。松手留下笔迹，可以移动、缩放或删除。","brush":"先蘸颜料；整页模式可画过纸片，只涂素材会锁住边缘。","glue":"在素材上轻轻涂抹即可，不需要翻面；随时可以重新排列。"}[tool])
 	build_ui()
 
 func pick(point: Vector2) -> Node2D:
 	var children := pieces_root.get_children()
 	children.reverse()
 	for piece in children:
-		if piece.hit(point):
+		if piece.visible and piece.hit(point):
 			return piece
 	return null
 
@@ -458,6 +477,7 @@ func select(piece: Node2D) -> void:
 
 func _input(event: InputEvent) -> void:
 	if stage!="WORKBENCH" or conversation_open:return
+	if event is InputEventMouse:event=make_input_local(event)
 	if event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and not event.pressed:
 		if paint and paint.active:paint.move(event.position);paint.end()
 		if glue_drawing:glue_drawing=false;changed()
@@ -481,7 +501,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event is InputEventKey and event.pressed and stage == "WORKBENCH":
 		if selected and is_instance_valid(selected):
-			if selected.is_glued and event.keycode in [KEY_Q,KEY_E]:say("纸片已涂胶固定，先点揭起再移动。");return
 			match event.keycode:
 				KEY_Q: selected.rotation -= 0.075; changed()
 				KEY_E: selected.rotation += 0.075; changed()
@@ -492,7 +511,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			set_tool("move")
 			return
 		if stage == "WORKBENCH" and selected and event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN]:
-			if selected.is_glued:say("纸片已涂胶固定，先点揭起再移动。");return
 			var factor := 1.07 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.0/1.07
 			if absf(selected.scale.x*factor) >= 0.25 and absf(selected.scale.x*factor) <= 3.0:
 				selected.scale *= factor
@@ -530,11 +548,8 @@ func _unhandled_input(event: InputEvent) -> void:
 					for id in [primary,secondary]:
 						if materials[id].kind=="letter" and sources[id].has_point(mouse):
 							take_letter(id,mouse);break
-				if selected and selected.is_glued:
-					say("纸片已涂胶固定，先点揭起再移动。")
-					build_ui();return
 				if selected:
-					selected.lift=1.0
+					selected.raise_paper()
 					dragging = true
 					drag_offset = selected.position-mouse
 					audio.play("PAPER_MOVE")
@@ -562,6 +577,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			if dragging and selected:
 				selected.position = mouse+drag_offset
 				selected.position = selected.position.clamp(Vector2(25,130),Vector2(1415,770))
+				refresh_paper_stack()
 			if cutting_source >= 0:
 				var bound: Rect2 = sources[cutting_source]
 				var clamped := mouse.clamp(bound.position+Vector2(1,1),bound.end-Vector2(1,1))
@@ -618,7 +634,7 @@ func finish_cut(mouse: Vector2) -> void:
 	if source_overrides.has(L.language+":"+str(source)):piece.painted_png=Marshalls.raw_to_base64(piece.texture.get_image().save_png_to_buffer())
 	for point in roughen(poly):
 		piece.polygon.append(point-center)
-		piece.uv.append((point-bound.position).clamp(Vector2.ZERO,Vector2(300,240))/Vector2(300,240))
+		piece.uv.append((point-bound.position).clamp(Vector2.ZERO,bound.size)/bound.size)
 	piece.position = Vector2(680+randf_range(-80,80),430+randf_range(-70,70))
 	piece.rotation = randf_range(-0.04,0.04)
 	pieces_root.add_child(piece)
@@ -653,7 +669,7 @@ func finish_tape(mouse: Vector2) -> void:
 	audio.play("TAPE_TEAR")
 	get_tree().create_timer(0.16).timeout.connect(func(): audio.play("TAPE_STICK"))
 	set_tool("move")
-	say("胶带贴好了。选中它后可旋转或用滚轮改变大小。")
+	say("胶带贴好了。选中后拖角调整大小，拖圆柄旋转。")
 
 func add_handwriting() -> void:
 	var value := entry.text.strip_edges()
@@ -690,6 +706,10 @@ func delete_selected() -> void:
 func _process(delta: float) -> void:
 	if not ready_done:
 		return
+	for piece in pieces_root.get_children():piece.visible=int(piece.get_meta("letter_page",0))==letter_text_node.page
+	if stage=="ENVELOPE":letter_text_node.state=letter_text_node.State.INSERTING
+	elif stage=="SEND":letter_text_node.state=letter_text_node.State.SEALED
+	elif stage=="END":letter_text_node.state=letter_text_node.State.SENT
 	elapsed += delta
 	save_clock += delta
 	if save_clock > 3:
@@ -706,30 +726,29 @@ func complete_letter() -> void:
 	var count := 0
 	if not letter_text.strip_edges().is_empty():
 		count=1
-		if letter_text_node.get_line_count()>19:
-			say("正文超过一页了，请稍作删减再寄出。" if L.language=="zh" else "The text runs beyond one page. Please shorten it before posting.");return
 	for piece in pieces_root.get_children():
 		if LETTER.has_point(piece.position):
-			if piece.source_id>=0 and (piece.back_visible or not (piece.is_glued or piece.is_taped)):
-				select(piece);tools_open=true;set_tool("glue")
-				say("还有松放的素材。请先在背面刷胶后放好，或用胶带固定。" if L.language=="zh" else "Some pieces are still loose. Glue their backs and place them, or secure them with tape.");return
 			count += 1
 	if count == 0:
-		say("信纸还空着。拿起笔，写一点想对那个人说的话吧。" if L.language=="zh" else "The page is empty. Pick up the pen and write a few words for someone.")
+		say("信纸还空着。写一点想说的话，或挑选素材开始拼贴吧。" if L.language=="zh" else "The page is empty. Write a few words or choose a piece to start your collage.")
 		return
 	select(null)
 	busy=true
+	letter_text_node.text=letter_text
+	letter_text_node.request_finish()
+	if is_instance_valid(desk) and is_instance_valid(desk.writing):desk.writing.editable=false
+	await letter_text_node.finished
+	letter_data["completed"]=true
+	letter_text_node.page=0
 	tool = "move"
 	build_ui()
-	await RenderingServer.frame_post_draw
-	var viewport_image := get_viewport().get_texture().get_image()
-	var ratio := Vector2(viewport_image.get_size())/Vector2(1440,900)
-	var crop := Rect2i(LETTER.position*ratio,LETTER.size*ratio)
-	var image := viewport_image.get_region(crop)
-	if not smoke:
-		image.save_png(preview_path)
-	letter_preview = ImageTexture.create_from_image(image)
+	if is_instance_valid(live_document):live_document.queue_free()
+	live_document=preload("res://extensions/collage_letter/scripts/letter_document.gd").new();add_child(live_document)
+	await live_document.build(self)
+	letter_preview=live_document.first_page()
+	if not smoke:letter_preview.get_image().save_png(preview_path)
 	stage = "FOLDING"
+	letter_text_node.state=letter_text_node.State.FOLDING
 	if letter_mode!="npc":stage="BOTTLE";bottle_finish=BottleFinishing.new(self)
 	fold = 0
 	fold_visual = 0
@@ -789,7 +808,7 @@ func send_letter() -> void:
 	build_ui()
 
 func restart() -> void:
-	letter_text="";letter_text_node.text="";history_open=false
+	letter_text="";letter_text_node.load_text("");letter_data=preload("res://extensions/collage_letter/scripts/letter_data.gd").fresh();history_open=false
 	for piece in pieces_root.get_children():
 		pieces_root.remove_child(piece)
 		piece.queue_free()
@@ -829,8 +848,15 @@ func export_art() -> void:
 
 func changed() -> void:
 	pieces_root.visible = stage=="WORKBENCH" and not conversation_open
+	refresh_paper_stack()
 	queue_redraw()
 	save_game()
+
+func refresh_paper_stack() -> void:
+	var below: Array=[]
+	for piece in pieces_root.get_children():
+		piece.refresh_stack(below)
+		below.append(piece)
 
 func animate_property(property: String, target: float, duration: float, after: Callable = Callable()) -> void:
 	busy=true
@@ -850,6 +876,7 @@ func _host_save_data() -> Dictionary:
 func save_game(force: bool = false) -> void:
 	if smoke and not force:
 		return
+	if stage=="END":archive_current_letter()
 	var all: Array = []
 	for piece in pieces_root.get_children():
 		all.append(piece.serialize())
@@ -858,11 +885,12 @@ func save_game(force: bool = false) -> void:
 		points.append([p.x,p.y])
 	var painted_sources: Dictionary={}
 	for key in source_overrides:painted_sources[key]=Marshalls.raw_to_base64(source_overrides[key].get_image().save_png_to_buffer())
-	var data := {"version":3,"source_overrides":painted_sources,"accepted_commission":accepted_commission,"letter_paper_style":letter_paper_style,"finishing":finishing.serialize(),"commission_index":commission_index,"letter_mode":letter_mode,"reply_parent":reply_parent,"letter_title":letter_title,"bottle_request_id":bottle_request_id,"bottle_published_id":bottle_published_id,"compose_server":compose_server,"category":category,"material_page":material_page,"album_source":album_source,"photo_source":photo_source,"task":"summer_still_here","stage":stage,"dialogue":dialogue,"pieces":all,"fold":fold,"inserted":envelope_inserted,"wax_step":wax_step,"wax_progress":wax_progress,"seal_style":seal_style,"seal_points":points,"feedback":final_feedback,"muted":audio.muted,"photos":[{"id":materials[album_source].asset,"title":materials[album_source].title}],"owned_sources":[0,1,2,3,4]}
+	var data := {"version":4,"paper_layout":2,"showcase_seen":showcase_seen,"source_overrides":painted_sources,"accepted_commission":accepted_commission,"letter_paper_style":letter_paper_style,"finishing":finishing.serialize(),"commission_index":commission_index,"letter_mode":letter_mode,"reply_parent":reply_parent,"letter_title":letter_title,"bottle_request_id":bottle_request_id,"bottle_published_id":bottle_published_id,"compose_server":compose_server,"category":category,"material_page":material_page,"album_source":album_source,"photo_source":photo_source,"task":"summer_still_here","stage":stage,"dialogue":dialogue,"pieces":all,"fold":fold,"inserted":envelope_inserted,"wax_step":wax_step,"wax_progress":wax_progress,"seal_style":seal_style,"seal_points":points,"feedback":final_feedback,"muted":audio.muted,"photos":[{"id":materials[album_source].asset,"title":materials[album_source].title}],"owned_sources":[0,1,2,3,4]}
 	data.merge(_host_save_data(),true)
 	var file := FileAccess.open(save_path+".tmp",FileAccess.WRITE)
 	data["commission_history"]=commission_history;data["commission_steps"]=commission_steps
-	data["letter_text"]=letter_text;data["letter_ink_color"]=letter_ink_color.to_html(false);data["blinds_open"]=blinds_open
+	data["example_return"]=example_return;data["sample_reply_due"]=sample_reply_due;data["sample_cycle"]=sample_cycle;data["typewriter_text"]=typewriter_text;data["typewriter_previous"]=typewriter_previous;data["letter_text"]=letter_text;data["letter_ink_color"]=letter_ink_color.to_html(false);data["blinds_open"]=blinds_open
+	data["letter_data"]=current_letter_data();data["writing_preferences"]=writing_preferences;data["sent_letters"]=sent_letters;data["letter_page"]=letter_text_node.page
 	data["bottle_finishing"]=bottle_finish.serialize()
 	if file:
 		file.store_string(JSON.stringify(data))
@@ -877,7 +905,7 @@ func load_game(force: bool = false) -> void:
 	if not FileAccess.file_exists(save_path):
 		return
 	var data = JSON.parse_string(FileAccess.get_file_as_string(save_path))
-	if not data is Dictionary or int(data.get("version",0)) not in [1,2,3]:
+	if not data is Dictionary or int(data.get("version",0)) not in [1,2,3,4]:
 		say("存档无法读取，已开始新的委托。")
 		return
 	for piece in pieces_root.get_children():
@@ -887,11 +915,17 @@ func load_game(force: bool = false) -> void:
 	seal_points.clear()
 	accepted_commission=int(data.get("accepted_commission",-1))
 	commission_history=data.get("commission_history",{});commission_steps=data.get("commission_steps",{})
-	letter_text=str(data.get("letter_text",""));letter_text_node.text=letter_text
+	showcase_seen=bool(data.get("showcase_seen",false))
+	example_return=data.get("example_return",{});sample_reply_due=bool(data.get("sample_reply_due",false));sample_cycle=int(data.get("sample_cycle",0))
+	typewriter_text=str(data.get("typewriter_text",""));typewriter_previous=data.get("typewriter_previous",{})
+	letter_data=preload("res://extensions/collage_letter/scripts/letter_data.gd").restore(data.get("letter_data",{}))
+	writing_preferences.merge(data.get("writing_preferences",{}),true);sent_letters=data.get("sent_letters",[])
+	letter_text=str(data.get("letter_data",{}).get("full_text",data.get("letter_text","")));letter_text_node.load_text(letter_text)
+	letter_text_node.page=clampi(int(data.get("letter_page",0)),0,letter_text_node.page_count-1)
 	letter_ink_color=INK
 	for color in LETTER_INKS:
 		if color.to_html(false)==str(data.get("letter_ink_color",INK.to_html(false))):letter_ink_color=color;break
-	letter_text_node.add_theme_color_override("font_color",letter_ink_color)
+	letter_text_node.set_ink(letter_ink_color)
 	blinds_open=clampf(float(data.get("blinds_open",0.75)),0,1)
 	source_overrides.clear()
 	for key in data.get("source_overrides",{}):
@@ -936,11 +970,13 @@ func load_game(force: bool = false) -> void:
 		generate_seal()
 	for record in data.get("pieces",[]):
 		var piece := Piece.new()
+		piece.set_meta("letter_page",int(record.get("letter_page",0)))
 		piece.source_id=int(record.get("source",0))
 		piece.font=font
+		piece.material_revision=int(record.get("material_revision",1))
 		if piece.source_id>=0 and piece.source_id<textures.size():
 			piece.source_language=str(record.get("source_language","en"))
-			piece.texture=get_material_texture(piece.source_id,piece.source_language)
+			piece.texture=get_material_texture(piece.source_id,piece.source_language,piece.material_revision)
 		for p in record.get("polygon",[]):
 			piece.polygon.append(Vector2(p[0],p[1]))
 		for p in record.get("uv",[]):
@@ -951,10 +987,13 @@ func load_game(force: bool = false) -> void:
 		piece.position=Vector2(record.position[0],record.position[1])
 		piece.rotation=float(record.rotation)
 		piece.scale=Vector2(record.scale[0],record.scale[1])
+		if int(data.get("paper_layout",1))<2:
+			piece.position=LETTER.position+(piece.position-Vector2(522,174))*LETTER.size/Vector2(396,560)
+			piece.scale*=LETTER.size/Vector2(396,560)
 		piece.paper_thickness=clampf(float(record.get("paper_thickness",0.8)),0.25,1.8)
 		piece.is_glued=bool(record.get("glued",false))
 		piece.glue_coverage=float(record.get("glue_coverage",0))
-		piece.back_visible=bool(record.get("back_visible",false))
+		piece.back_visible=false # Legacy drafts always reopen face up; never lock their edits.
 		for mark in record.get("glue_marks",[]):piece.glue_marks.append(Vector2(mark[0],mark[1]))
 		piece.painted_png=str(record.get("painted_png",""))
 		if not piece.painted_png.is_empty():
@@ -968,9 +1007,12 @@ func load_game(force: bool = false) -> void:
 		piece.pen_width=float(record.get("pen_width",3))
 		for p in record.get("strokes",[]): piece.strokes.append(Vector2(p[0],p[1]))
 		pieces_root.add_child(piece)
+	sync_letter_pages()
+	letter_text_node.page=clampi(int(data.get("letter_page",0)),0,letter_text_node.page_count-1)
 	if not smoke and FileAccess.file_exists(preview_path):
 		letter_preview=ImageTexture.create_from_image(Image.load_from_file(preview_path))
 	pieces_root.visible=stage=="WORKBENCH"
+	refresh_paper_stack()
 	say("已恢复上次的信件。慢慢来，桌上的纸都还在。")
 
 func _notification(what: int) -> void:
@@ -1083,9 +1125,9 @@ func open_material_catalog() -> void:
 	counter.text="%d / %d · %d" % [catalog_page+1,pages,ids.size()]+L.t(" 份")
 	counter.position=Vector2(620,744);counter.add_theme_font_override("font",font);counter.add_theme_color_override("font_color",INK);catalog_layer.add_child(counter)
 
-func get_material_texture(id: int, locale: String = "") -> Texture2D:
+func get_material_texture(id: int, locale: String = "",revision:int=2) -> Texture2D:
 	if locale.is_empty(): locale=L.language
-	var key:=locale+":"+str(id)
+	var key:=locale+":"+str(id)+(":legacy" if revision<2 else "")
 	if source_overrides.has(key):return source_overrides[key]
 	if not texture_cache.has(key):
 		var viewport:=SubViewport.new()
@@ -1094,7 +1136,11 @@ func get_material_texture(id: int, locale: String = "") -> Texture2D:
 		viewport.render_target_update_mode=SubViewport.UPDATE_ONCE
 		add_child(viewport)
 		var art:=PaperArt.new()
-		art.kind=id;art.sheet_data=L.material(source_materials[id],locale);art.font=font
+		var raw:Dictionary=source_materials[id]
+		if revision<2:
+			var legacy:Dictionary=JSON.parse_string(FileAccess.get_file_as_string("res://extensions/collage_letter/assets/materials_legacy.json"))
+			raw=legacy.get(str(id),raw)
+		art.kind=id;art.sheet_data=L.material(raw,locale);art.font=font
 		viewport.add_child(art)
 		texture_cache[key]=viewport.get_texture()
 		texture_viewports[key]=viewport
@@ -1115,7 +1161,7 @@ func prune_material_textures(keep_key: String = "") -> void:
 			protected[L.language+":"+card.name.trim_prefix("Material_")]=true
 	for piece in pieces_root.get_children():
 		if piece.source_id>=0:
-			protected[piece.source_language+":"+str(piece.source_id)]=true
+			protected[piece.source_language+":"+str(piece.source_id)+(":legacy" if piece.material_revision<2 else "")]=true
 	if is_instance_valid(catalog_layer):
 		for card in catalog_layer.find_children("Material_*","Button",true,false):
 			protected[L.language+":"+card.name.trim_prefix("Material_")]=true
@@ -1139,7 +1185,7 @@ func switch_language() -> void:
 	materials.clear();textures.fill(null)
 	for raw in source_materials: materials.append(L.material(raw,L.language))
 	update_material_slots();build_ui()
-	if get_viewport()==get_tree().root: DisplayServer.window_set_title(L.t("拼贴书信 · 海盐书信事务所"))
+	if get_viewport()==get_tree().root: DisplayServer.window_set_title(L.t("拼贴书信 · Solmere 书信事务所"))
 
 func update_material_slots() -> void:
 	var ids:=material_ids()
@@ -1171,6 +1217,19 @@ func cycle_photo() -> void:
 	changed()
 	build_ui()
 
+func receive_bottle() -> void:
+	if busy or dock_open:return
+	dock_open=true
+	var ritual=preload("res://extensions/collage_letter/scripts/incoming_bottle.gd").new();ritual.name="IncomingBottle";ritual.g=self;add_child(ritual)
+func compose_from_empty_bottle() -> void:
+	if sample_reply_due or bottle.player.get("reply_required",false):
+		say("先给收到的来信回一封，再让新的漂流瓶出发。" if L.language=="zh" else "Reply to a received letter before sending another new one.");receive_bottle();return
+	if not bottle.player.is_empty():start_bottle({});return
+	SeaExample.start_reply(self)
+	letter_mode="local_bottle";letter_text="";typewriter_text=""
+	for piece in pieces_root.get_children():pieces_root.remove_child(piece);piece.queue_free()
+	selected=null;letter_title="来自 Solmere 的信" if L.language=="zh" else "A letter from Solmere";set_tool("move");changed()
+	say("本地漂流体验：写完一封新信后，再回复一封来信。可在海上来信的邮局设置中连接其他玩家。" if L.language=="zh" else "Local voyage: reply to a received letter after sending a new one. Connect to other players in Post Office Settings.")
 func open_bottles() -> void:
 	if busy or dock_open:
 		return
@@ -1180,10 +1239,11 @@ func open_bottles() -> void:
 	save_game()
 	dock_open=true
 	var dock:=BottleDock.new()
-	dock.client=bottle
+	dock.g=self;dock.client=bottle
 	dock.font=font
 	add_child(dock)
 	dock.compose_requested.connect(start_bottle)
+	dock.example_requested.connect(func():SeaExample.start_reply(self))
 	dock.closed.connect(func(): dock_open=false)
 	dock.open()
 
@@ -1209,6 +1269,10 @@ func send_bottle() -> void:
 	if not letter_preview:
 		say("没有找到信件作品，请回到桌边完成这封信。" if L.language=="zh" else "Return to the desk and finish your letter first.")
 		return
+	if letter_mode in ["example","local_bottle"]:
+		sample_reply_due=letter_mode=="local_bottle";sample_cycle+=1;save_voyage()
+		final_feedback=("回信已在本地示例中寄出。\n谢谢你认真读完这封信。" if letter_mode=="example" else "新信已在本地漂流体验中寄出。\n下一步：打开有纸卷的瓶子，回一封来信。") if L.language=="zh" else "Your local voyage is complete. Read a letter and leave someone a reply."
+		stage="END";changed();audio.play("MAIL_DROP",0.4);build_ui();return
 	if not compose_server.is_empty() and compose_server!=bottle.base_url:
 		say("这封草稿属于另一个邮局，请重新连接原邮局后再寄出。")
 		return
@@ -1232,7 +1296,7 @@ func send_bottle() -> void:
 	if art.get_width()>700 or art.get_height()>900:
 		var fit:=minf(700.0/art.get_width(),900.0/art.get_height())
 		art.resize(roundi(art.get_width()*fit),roundi(art.get_height()*fit),Image.INTERPOLATE_LANCZOS)
-	var payload: Dictionary={"request_id":bottle_request_id,"title":letter_title.strip_edges(),"caption":letter_text,"art_png":Marshalls.raw_to_base64(art.save_png_to_buffer())}
+	var payload: Dictionary={"request_id":bottle_request_id,"title":letter_title.strip_edges(),"caption":letter_text,"letter_data":current_letter_data(),"art_png":Marshalls.raw_to_base64(art.save_png_to_buffer())}
 	payload["parent_id"]=int(reply_parent.id) if letter_mode=="reply" else null
 	var result: Dictionary=await bottle.publish(payload)
 	busy=false
@@ -1339,7 +1403,7 @@ func take_letter(id: int, at: Vector2) -> void:
 	piece.position=at;piece.scale=Vector2(0.45,0.45)
 	pieces_root.add_child(piece);select(piece);set_tool("move")
 	audio.play("PAPER_MOVE")
-	say("字母已拿到信纸上。拖动排列，滚轮缩放，Q / E 旋转。")
+	say("字母已拿到信纸上。选中后拖角缩放、拖边调整宽高，圆柄旋转。")
 	changed();build_ui()
 
 func painted_polygon(points: PackedVector2Array, color: Color, grain: float = 0.14) -> void:
@@ -1353,7 +1417,7 @@ func painted_polygon(points: PackedVector2Array, color: Color, grain: float = 0.
 
 func choose_letter_ink(index: int) -> void:
 	letter_ink_color=LETTER_INKS[clampi(index,0,LETTER_INKS.size()-1)]
-	letter_text_node.add_theme_color_override("font_color",letter_ink_color)
+	letter_text_node.set_ink(letter_ink_color)
 	if is_instance_valid(desk):desk.refresh_writing_ink()
 	save_game()
 
@@ -1379,29 +1443,53 @@ func take_material_whole(id: int, at: Vector2) -> void:
 	piece.alpha_hit=true;piece.position=at;piece.scale=Vector2.ONE*0.68;piece.paper_thickness=1.3 if materials[id].kind in ["photo","art"] else 0.65
 	var override_key:=L.language+":"+str(id)
 	if source_overrides.has(override_key):piece.painted_png=Marshalls.raw_to_base64(piece.texture.get_image().save_png_to_buffer())
-	pieces_root.add_child(piece);select(piece);set_tool("move");changed()
+	pieces_root.add_child(piece);select(piece);set_tool("move");audio.play("PAPER_MOVE",0.5);changed()
 func apply_glue(at: Vector2, amount: float) -> void:
 	var piece=pick(at)
 	if not piece or piece.source_id<0:return
-	if not piece.back_visible:
-		say("先选中素材，在文具盒里翻到背面，再刷胶。");return
 	if amount<=0:return
-	piece.add_glue(at);piece.glue_flash=0.8
-	say(("背面涂胶 %d%% · 翻回正面放下" if L.language=="zh" else "Back glued %d%% · Turn face up to place")%int(piece.glue_coverage*100));changed()
-func turn_selected() -> void:
-	if not is_instance_valid(selected) or selected.source_id<0:return
-	if selected.is_glued:
-		selected.is_glued=false;selected.glue_coverage=0;selected.glue_marks.clear();selected.back_texture=null;selected.back_visible=true
-	else:selected.back_visible=not selected.back_visible
-	selected.lift=0.6 if selected.back_visible else 0.0
-	if selected.back_visible:tool="glue"
-	else:tool="move";press_glued_piece(selected)
-	selected.queue_redraw();audio.play("PAPER_MOVE");changed();build_ui()
+	piece.add_glue(at);piece.glue_flash=0.8;piece.back_visible=false;audio.play("GLUE_BRUSH",0.3)
+	press_glued_piece(piece);changed()
 func press_glued_piece(piece) -> void:
 	if piece.source_id<0 or piece.back_visible or piece.glue_coverage<0.6 or not LETTER.has_point(piece.position):return
-	piece.is_glued=true;piece.lift=0;audio.play("PAPER_PRESS");say("这张纸已经固定。选中后点揭起，可以重新摆放。")
+	piece.is_glued=true;piece.release_lift();piece.queue_redraw();audio.play("PAPER_PRESS");say("贴好了，仍然可以拖动和调整大小。")
 func transform_selected(factor: float, angle: float) -> void:
 	if not is_instance_valid(selected):return
-	if selected.is_glued:say("纸片已涂胶固定，先点揭起再移动。");return
 	if absf(selected.scale.x*factor)>=0.25 and absf(selected.scale.x*factor)<=3.0:selected.scale*=factor
 	selected.rotation+=angle;changed()
+
+func voyage_path() -> String:
+	return str(example_return.get("save",save_path)).get_basename()+"_voyage.json"
+func save_voyage() -> void:
+	var file:=FileAccess.open(voyage_path(),FileAccess.WRITE)
+	if file:file.store_string(JSON.stringify({"due":sample_reply_due,"cycle":sample_cycle}))
+func load_voyage() -> void:
+	if not FileAccess.file_exists(voyage_path()):return
+	var record=JSON.parse_string(FileAccess.get_file_as_string(voyage_path()))
+	if record is Dictionary:sample_reply_due=record.get("due",false);sample_cycle=int(record.get("cycle",0))
+
+func apply_writing_preferences() -> void:
+	letter_text_node.writing_speed=str(writing_preferences.speed);letter_text_node.pen_volume=float(writing_preferences.volume);letter_text_node.reduce_motion=bool(writing_preferences.reduce_motion)
+func current_letter_data() -> Dictionary:
+	letter_data.full_text=letter_text;letter_data.letter_type=letter_mode
+	letter_data.reply_to=reply_parent.get("id");letter_data.reply_chain_id=str(reply_parent.get("reply_chain_id",reply_parent.get("id","")))
+	letter_data.author_id=str(bottle.player.get("id",""))
+	letter_data.sealed=stage in ["SEND","END"] or (stage=="BOTTLE" and bottle_finish.phase in ["SEA","WAIT"])
+	letter_data.sent=stage=="END"
+	return letter_data.duplicate(true)
+func play_letter_animation(value: String) -> void:
+	letter_text=value;build_ui();letter_text_node.play_letter_animation(value)
+func sync_letter_pages() -> void:
+	var count:=1
+	for piece in pieces_root.get_children():count=maxi(count,int(piece.get_meta("letter_page",0))+1)
+	if letter_text_node.minimum_pages!=count:
+		letter_text_node.minimum_pages=count;letter_text_node.reflow()
+func letter_puzzle_payload() -> Dictionary:
+	return current_letter_data()
+
+func archive_current_letter() -> void:
+	for record in sent_letters:
+		if record.get("letter_id")==letter_data.letter_id:return
+	var record:=current_letter_data();record["pieces"]=[];record["paper_style"]=letter_paper_style;record["ink"]=letter_ink_color.to_html()
+	for piece in pieces_root.get_children():record.pieces.append(piece.serialize())
+	sent_letters.append(record)

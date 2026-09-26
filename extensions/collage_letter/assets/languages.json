@@ -47,7 +47,7 @@
   "画作": "Art",
   "全部": "All",
   "一封来自海边的信": "A Letter from the Sea",
-  "海盐书信事务所": "Sea Salt Letter Office",
+  "Solmere 书信事务所": "Solmere Letter Office",
   "COLLAGE LETTER   /   把捡到的语言，寄给某个人": "COLLAGE LETTER / Send someone the words you found",
   "声音": "Sound",
   "静音": "Muted",
@@ -187,7 +187,7 @@
   "查看全部素材": "Browse materials",
   "中文版": "Chinese",
   "英文版": "English",
-  "拼贴书信 · 海盐书信事务所": "Collage Letter - Sea Salt Letter Office",
+  "拼贴书信 · Solmere 书信事务所": "Collage Letter - Solmere Letter Office",
   "份　点选后回到桌边裁取": "items / Choose one for your desk",
   "页": "page",
   "请求格式有误。": "The request format is invalid.",
@@ -328,5 +328,11 @@
   "让这封信，随海风出发": "Let this letter travel with the sea breeze",
   "写给还没有遇见的人。慢慢写，准备好后把信卷起装进瓶子。": "Write to someone you have not met. Take your time; roll the letter when you are ready.",
   "先翻到背面，在背面刷胶，再翻回正面放好。": "Turn the piece over, brush glue on its back, then place it face up.",
-  "② 纸片：翻到背面涂胶，再翻回正面放上信纸。": "2. Scraps: turn over, glue the back, then place face up on your letter."
+  "② 纸片：翻到背面涂胶，再翻回正面放上信纸。": "2. Scraps: turn over, glue the back, then place face up on your letter.",
+  "选中素材后，拖角缩放、拖边调整宽高，拖圆柄旋转。": "Select a piece: drag a corner to scale, an edge to stretch, or the round handle to rotate.",
+  "在素材上轻轻涂抹即可，不需要翻面；随时可以重新排列。": "Brush over a piece without flipping it. Rearrange whenever you like.",
+  "贴好了，仍然可以拖动和调整大小。": "Attached. You can still move and resize it.",
+  "胶带贴好了。选中后拖角调整大小，拖圆柄旋转。": "Tape placed. Select it, then drag a corner to resize or the round handle to rotate.",
+  "字母已拿到信纸上。选中后拖角缩放、拖边调整宽高，圆柄旋转。": "Letter placed. Drag a corner to scale, an edge to stretch, or the round handle to rotate.",
+  "② 纸片：选中后拖角缩放、拖边拉伸，圆柄旋转。": "2. Clippings: select, drag corners to scale, edges to stretch, or the round handle to rotate."
 }

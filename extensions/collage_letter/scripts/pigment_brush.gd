@@ -32,7 +32,7 @@ func begin(at: Vector2) -> void:
 			source_id=g.source_preview_id;image=g.get_material_texture(source_id).get_image().duplicate()
 		else:
 			target=g.pick(at)
-			if not is_instance_valid(target) or target.source_id<0:g.say("请选择一张纸片或照片，只涂素材会锁住它的边缘。");return
+			if not is_instance_valid(target) or (target.source_id<0 and target.source_id!=-5):g.say("请选择一张纸片或照片，只涂素材会锁住它的边缘。");return
 			image=target.texture.get_image().duplicate()
 	else:
 		if not g.LETTER.has_point(at):return

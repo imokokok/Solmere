@@ -16,9 +16,9 @@ func run()->void:
 	game.smoke=true;game.conversation_open=false;game.build_ui()
 	check(not game.shelf_open and not game.tools_open,"Both drawers start closed")
 	await capture("closed-desk")
-	game.desk.toggle("shelf");await create_timer(0.3).timeout
+	game.desk.toggle("shelf");await create_timer(1.2).timeout
 	check(is_equal_approx(game.desk.shelf.position.x,38),"Shelf slides into its open position")
-	game.desk.toggle("tools");await create_timer(0.3).timeout
+	game.desk.toggle("tools");await create_timer(1.2).timeout
 	check(is_equal_approx(game.desk.kit.position.x,1039),"Kit slides into its open position")
 	game.desk.begin_material_drag(622,Vector2(200,360))
 	var drop:=InputEventMouseButton.new();drop.button_index=MOUSE_BUTTON_LEFT;drop.pressed=false;drop.position=Vector2(650,360);game.desk._input(drop)
@@ -30,7 +30,7 @@ func run()->void:
 	check(game.source_preview_id==tickets[1],"Preview next arrow turns directly to the next ticket")
 	game.desk.shelf.get_node("PreviewPrevious").pressed.emit();await create_timer(0.8).timeout
 	game.desk.shelf.get_node("PreviewPrevious").pressed.emit();await create_timer(0.8).timeout
-	check(game.source_preview_id==tickets[-1] and game.drawer_page==(tickets.size()-1)/12,"Preview wraps within its category and keeps list page aligned")
+	check(game.source_preview_id==tickets[-1] and game.drawer_page==(tickets.size()-1)/game.desk.page_size(),"Preview wraps within its category and keeps list page aligned")
 	check(game.pieces_root.get_child_count()==1,"Preview paging preserves the collage")
 	for locale in ["zh","en"]:
 		if game.L.language!=locale:game.switch_language()
