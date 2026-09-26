@@ -59,6 +59,10 @@ func _ready() -> void:
 		experience.return_requested.connect(_cancel)
 		experience.finish_requested.connect(_complete)
 		ObservatoryAudio.set_stargazing(true)
+	if module_id == "tarot" and experience.has_signal("exit_requested"):
+		experience.exit_requested.connect(func():
+			if _experience_completed(): _complete()
+			else: _cancel())
 	_fit_experience()
 	_build_host_bar()
 	_fit_experience()
@@ -82,7 +86,7 @@ func _fit_experience() -> void:
 			if is_instance_valid(host_panel):
 				host_panel.position = Vector2.ZERO
 				host_panel.size = Vector2(size.x, LETTER_HOST_BAR_HEIGHT - 4)
-		if module_id == "tarot":
+		if module_id == "tarot" and not experience.has_signal("exit_requested"):
 			experience.offset_top = 60
 			if not has_node("TableHeader"):
 				var backdrop := ColorRect.new(); backdrop.name="TableHeader"; backdrop.color=Color("214860"); backdrop.size=Vector2(size.x,60); backdrop.mouse_filter=Control.MOUSE_FILTER_IGNORE; add_child(backdrop)
@@ -94,6 +98,9 @@ func _fit_experience() -> void:
 
 
 func _build_host_bar() -> void:
+	if module_id == "tarot" and experience.has_signal("exit_requested"):
+		status_label = experience.status
+		return
 	# The telescope owns its controls; route shared errors to its visible hint.
 	if module_id == "contemplation":
 		status_label = experience.hint
@@ -255,13 +262,16 @@ func _cancel() -> void:
 	if module_id == "ghostwriting" and is_instance_valid(experience) and experience.has_method("save_game"):
 		experience.save_game()
 	var preserved_extension_state: Dictionary = {}
+	var reader_state: Dictionary = {}
 	var preserved_key := ""
 	if module_id == "tarot" and is_instance_valid(experience) and experience.has_method("save_session"):
 		experience.save_session()
 		preserved_key = "myriorama_" + GameState.current_role
 		preserved_extension_state = GameState.shared_state.get(preserved_key, {}).duplicate(true)
+		reader_state = GameState.shared_state.get("tarot_reader_" + GameState.current_role, {}).duplicate(true)
 	var extension_drafts: Dictionary=GameState.artifacts.get("minigame_drafts",{}).duplicate(true)
 	GameplayModuleSystem.cancel_session()
+	if not reader_state.is_empty(): GameState.shared_state["tarot_reader_" + GameState.current_role] = reader_state
 	GameState.artifacts["minigame_drafts"]=extension_drafts
 	if module_id == "contemplation" and is_instance_valid(experience):
 		experience.preserve_after_cancel()

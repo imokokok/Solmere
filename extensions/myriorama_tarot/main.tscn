@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://extensions/myriorama_tarot/scripts/table.gd" id="1"]
+[ext_resource type="Script" path="res://extensions/myriorama_tarot/scripts/reader_scene.gd" id="1"]
 
-[node name="TarotTable" type="Control"]
+[node name="TarotScene" type="Control"]
 layout_mode=3
 anchors_preset=15
 anchor_right=1.0
@@ -10,3 +10,24 @@ anchor_bottom=1.0
 grow_horizontal=2
 grow_vertical=2
 script=ExtResource("1")
+
+[node name="Space" type="Control" parent="."]
+mouse_filter=2
+offset_right=1600.0
+offset_bottom=900.0
+
+[node name="Background" type="Node2D" parent="Space"]
+
+[node name="EnvironmentalLighting" type="Node2D" parent="Space"]
+
+[node name="TarotReader" type="Node2D" parent="Space"]
+
+[node name="Table" type="Node2D" parent="Space"]
+
+[node name="TarotVFX" type="Node2D" parent="Space"]
+
+[node name="DialogueSystem" type="Control" parent="Space"]
+mouse_filter=2
+
+[node name="InteractionUI" type="Control" parent="Space"]
+mouse_filter=2

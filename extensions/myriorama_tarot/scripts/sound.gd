@@ -37,6 +37,12 @@ func play(kind: String) -> void:
 	player.play()
 	if variants.has(kind) and has_node("/root/WorldSound"): get_node("/root/WorldSound").note_sound("paper")
 
+func play_timed(kind: String, duration: float) -> void:
+	play(kind)
+	if muted or DisplayServer.get_name()=="headless" or not clips.has(kind): return
+	var player:=players[(cursor-1)%players.size()]
+	player.pitch_scale=player.stream.get_length()/maxf(0.01,duration)
+
 func synthesize(kind: String) -> AudioStreamWAV:
 	var duration := 0.24
 	if kind == "deal":

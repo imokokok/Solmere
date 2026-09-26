@@ -29,6 +29,10 @@ var navigation_ready := false
 
 
 func _ready() -> void:
+	# Export templates disallow CLI scene overrides. Keep preview opt-in and isolated.
+	if OS.get_cmdline_user_args().has("--tarot-preview") and OS.get_cmdline_user_args().has("--isolated-save"):
+		get_tree().change_scene_to_file.call_deferred("res://extensions/myriorama_tarot/main.tscn")
+		return
 	WorldSound.set_active(false)
 	SettingsSystem.language_changed.connect(_refresh_navigation_language)
 	_build_living_cover()
