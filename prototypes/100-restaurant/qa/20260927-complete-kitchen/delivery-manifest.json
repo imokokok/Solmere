@@ -1,0 +1,51 @@
+{
+  "status": "PASS",
+  "created_at": "2026-09-27T20:13:26.244210+08:00",
+  "remote_push": false,
+  "duration_seconds": 971.0833333333334,
+  "video_frames": 23306,
+  "files": [
+    {
+      "file": "Demo/厨房游戏全流程演示.mp4",
+      "bytes": 358996907,
+      "sha256": "7e6f04cf05d77ac40a9d2433e3c9e6fd828403fcc81e549f94128bc448a39ed0"
+    },
+    {
+      "file": "Demo/厨房游戏全流程演示.srt",
+      "bytes": 11256,
+      "sha256": "7751919a87f0f48ce34ff0264dbd98c1ccad96c82085d88842a9c6847a23c86b"
+    },
+    {
+      "file": "Demo/厨房游戏全流程封面.png",
+      "bytes": 898746,
+      "sha256": "f5cc95e608c33be68fe99562898fab0a62e2261e092ab0b5d94e65319578ab38"
+    },
+    {
+      "file": "Demo/厨房游戏全流程演示说明.md",
+      "bytes": 3224,
+      "sha256": "93269e426246b363574eeff09c93470f393347eb0ba0dd055d41177e4ac6cb2c"
+    }
+  ],
+  "preserved_diy_short_film": {
+    "file": "Demo/厨房菜谱DIY演示.mp4",
+    "bytes": 10451242,
+    "sha256": "15e103bac83c59842534b9e87ac5ed9c789b570435afdc03b57e5581fdb04ab7"
+  },
+  "subtitle_cues": 98,
+  "delivery_copy_matches_verified_staging": true,
+  "subsequent_user_request": {
+    "requested_action": "Empty Demo and push implementation to remote main",
+    "completed_at": "2026-09-27T22:11:44.116173+08:00",
+    "demo_files_removed": [
+      "厨房菜谱DIY演示.mp4",
+      "厨房游戏全流程演示.srt",
+      "厨房游戏全流程封面.png",
+      "100Restaurant_Pan_Lid_Explosion_Polished_20260926_CN.mp4",
+      "厨房游戏全流程演示说明.md",
+      "厨房游戏全流程演示.mp4",
+      "Solmere_Photography_Walkthrough_CN.mp4"
+    ],
+    "demo_is_empty": true,
+    "delivery_manifest_is_historical": true
+  }
+}

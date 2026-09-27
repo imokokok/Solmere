@@ -1,0 +1,82 @@
+{
+  "chapters": [
+    {
+      "id": "broth-return-and-reheat",
+      "result": "finite broth returned; original food re-enters pot",
+      "seconds": 328.416666666667
+    },
+    {
+      "id": "inventory-return",
+      "result": "same unprocessed ingredient restored to original slot",
+      "seconds": 347.916666666667
+    },
+    {
+      "id": "controls-and-help",
+      "result": "Q/G/E, held-only discard, clear, pause/help and sound toggle exercised",
+      "seconds": 367.083333333333
+    },
+    {
+      "id": "phase-and-seasoning",
+      "result": "butter/cheese/tofu, three dispensing modes and wooden stirring",
+      "seconds": 414.625
+    },
+    {
+      "id": "spoon",
+      "result": "native bowl capture, slow lift, wheel tilt and Q return",
+      "seconds": 425.875
+    },
+    {
+      "id": "pan-and-plate-physics",
+      "result": "plate drag, pan lift, A/D rotation, held right tilt and actual gravity pour",
+      "seconds": 440.583333333333
+    },
+    {
+      "id": "photo-recipe",
+      "result": "actual photo added to free collage recipe and saved",
+      "seconds": 466.25
+    },
+    {
+      "id": "lid-and-burning",
+      "result": "real warnings, vent, shake, upward blast/landing, charred face flip and residual heat",
+      "seconds": 557.5
+    },
+    {
+      "id": "mistake-feedback",
+      "result": "charred meal photographed/served, feedback read, dirty pot cleaned",
+      "seconds": 590.958333333333
+    },
+    {
+      "id": "follow-complete",
+      "result": "starter guide progresses on actual operations and completes after broth plating; second genuine served meal",
+      "seconds": 679.958333333333
+    },
+    {
+      "id": "overflow-flood-and-drain",
+      "result": "1500ml capacity, visible rim-origin overflow, sink/floor/full-room rise, tap shutoff, continuous drain, retained pot emptied separately",
+      "seconds": 778.666666666667
+    },
+    {
+      "id": "counter-spill-and-sponge",
+      "result": "finite sauce overflows full pot; native sponge removes the spill",
+      "seconds": 819.208333333333
+    },
+    {
+      "id": "odd-and-reviews",
+      "result": "hard/soft strange materials, actual perfume/toothpaste, selective plating, photo, customer feedback and saved letters",
+      "seconds": 886.791666666667
+    },
+    {
+      "id": "paper-craft",
+      "result": "native photo move/resize/rotate, scissors/restore, duplicate/layers/delete/undo/redo, tape colour/dimensions, text, three pen widths, publish and re-edit",
+      "seconds": 942.208333333333
+    },
+    {
+      "id": "recipe-exchange",
+      "result": "recipe pages, like, full JSON export/import and same-ID deduplication",
+      "seconds": 956.875
+    }
+  ],
+  "claims": "All implemented operation families; not all 104 ingredients cooked one by one, not unimplemented 3D/town features.",
+  "input_only": true,
+  "practice_is_separate": true
+}

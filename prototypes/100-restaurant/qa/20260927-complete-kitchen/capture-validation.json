@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "edit": "Matching normal service/receipt from the same clean take, independent laboratory excerpt, native beige settlement slate.",
+  "segments": [
+    {
+      "source": "frames-ending",
+      "native_start_frame": 0,
+      "native_frames": 7883
+    },
+    {
+      "source": "frames-full",
+      "native_start_frame": 7895,
+      "native_frames": 15071
+    },
+    {
+      "source": "frames-card",
+      "native_start_frame": 0,
+      "native_frames": 60
+    },
+    {
+      "source": "frames-ending",
+      "native_start_frame": 7965,
+      "native_frames": 307
+    }
+  ],
+  "source_full_native_frames": 23357,
+  "source_full_clean_prefix_checks": 324,
+  "source_full_lab_checks": 235,
+  "source_full_lab_errors": 0,
+  "discarded_source_tail_reason": "The first take invoked original lid cleanup while temporarily detaching the main kitchen; errors begin after the discarded boundary. Original capture.log remains unchanged. Adapter detachment was fixed and bounded re-entry verified.",
+  "source_ending_native_frames": 8272,
+  "source_ending_checks": 91,
+  "source_ending_errors": 0,
+  "normal_and_receipt_same_game_instance": true,
+  "combined_native_frames": 23321,
+  "checks_in_delivery": 326,
+  "combined_native_seconds": 971.7083333333334,
+  "startup_trim_frames": 15,
+  "delivered_seconds": 971.0833333333334,
+  "native_audio_joins_on_exact_frame_boundaries": true,
+  "gameplay_state_injection": false
+}

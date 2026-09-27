@@ -13,6 +13,7 @@ var capture_probe := false
 var previous_pointer := Vector2.ZERO
 var original_pointer := Vector2.ZERO
 var held_mouse := false
+var virtual_input := false
 var warp_pointer := true
 var chapter_label: Label
 var overlay: CanvasLayer
@@ -37,6 +38,7 @@ class DemoPointer extends Control:
 		draw_polyline(arrow,Color("314d43"),1.5,true)
 
 func _initialize() -> void:
+	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS,true)
 	root.size=Vector2i(1352,852); root.content_scale_size=Vector2i(1600,1008)
 	call_deferred("run")
 
@@ -124,32 +126,39 @@ func letter(strokes: Array, origin: Vector2) -> void:
 
 func setup_overlay() -> void:
 	overlay=CanvasLayer.new(); overlay.layer=120; root.add_child(overlay)
-	var bar := ColorRect.new(); bar.position=Vector2(0,946); bar.size=Vector2(1600,62); bar.color=Color("193e37")
+	var bar := ColorRect.new(); bar.position=Vector2(0,946); bar.size=Vector2(1600,62); bar.color=Color("f4e7c9")
 	bar.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(bar)
-	caption=Label.new(); caption.position=Vector2(26,958); caption.size=Vector2(1220,38)
-	caption.add_theme_font_override("font",preload("res://modules/restaurant/ui/paper_ink.gd").font()); caption.add_theme_font_size_override("font_size",24)
-	caption.add_theme_color_override("font_color",Color("fff4d9")); caption.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(caption)
+	caption=Label.new(); caption.position=Vector2(26,949); caption.size=Vector2(1220,56)
+	caption.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; caption.vertical_alignment=VERTICAL_ALIGNMENT_CENTER
+	caption.add_theme_font_override("font",preload("res://modules/restaurant/ui/paper_ink.gd").font()); caption.add_theme_font_size_override("font_size",22)
+	caption.add_theme_color_override("font_color",Color("554b3a")); caption.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(caption)
 	chapter_label=Label.new(); chapter_label.text="100 饭店 · 上手指南"; chapter_label.position=Vector2(1265,971); chapter_label.size.x=310
 	chapter_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_RIGHT
 	chapter_label.add_theme_font_override("font",preload("res://modules/restaurant/ui/paper_ink.gd").font()); chapter_label.add_theme_font_size_override("font_size",18)
-	chapter_label.add_theme_color_override("font_color",Color("b6cbb9")); chapter_label.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(chapter_label)
+	chapter_label.add_theme_color_override("font_color",Color("867151")); chapter_label.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(chapter_label)
 	pointer=DemoPointer.new(); pointer.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(pointer); pointer.hide()
 
 func card(title: String, subtitle: String, seconds := 2.5) -> void:
 	pointer.hide()
 	var previous_mode: int=game.process_mode
 	game.process_mode=Node.PROCESS_MODE_DISABLED
-	var shade:=ColorRect.new(); shade.size=Vector2(1600,946); shade.color=Color("183e36",0); shade.mouse_filter=Control.MOUSE_FILTER_IGNORE; overlay.add_child(shade)
+	var shade:=preload("res://modules/restaurant/ui/paper_surface.gd").new(); shade.size=Vector2(1600,946); shade.modulate.a=0; overlay.add_child(shade)
 	var box:=VBoxContainer.new(); box.position=Vector2(180,340); box.size=Vector2(1240,280); box.add_theme_constant_override("separation",24); shade.add_child(box)
-	for pair in [["100 RESTAURANT",20],[title,58],[subtitle,27]]:
+	var saved_caption:=caption.text
+	var saved_chapter:=chapter_label.text
+	if title=="饭店小游戏演示": caption.text=""; chapter_label.text=""
+	var lines: Array=[["100 RESTAURANT",20],[title,58],[subtitle,27]]
+	if title=="饭店小游戏演示": lines=[[title,64]]; box.position.y=422
+	for pair in lines:
 		var label:=Label.new(); label.text=pair[0]; label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
-		label.add_theme_font_override("font",preload("res://modules/restaurant/ui/paper_ink.gd").font()); label.add_theme_font_size_override("font_size",pair[1]); label.add_theme_color_override("font_color",Color("fff1d2")); box.add_child(label)
+		label.add_theme_font_override("font",preload("res://modules/restaurant/ui/paper_ink.gd").font()); label.add_theme_font_size_override("font_size",pair[1]); label.add_theme_color_override("font_color",Color("554b3a")); box.add_child(label)
 	for i in 12:
-		shade.color.a=float(i+1)/12*.94; box.modulate.a=float(i+1)/12; await frames(1)
+		shade.modulate.a=float(i+1)/12; await frames(1)
 	await hold(seconds)
 	for i in 12:
-		shade.color.a=(1-float(i+1)/12)*.94; box.modulate.a=1-float(i+1)/12; await frames(1)
+		shade.modulate.a=1-float(i+1)/12; await frames(1)
 	shade.queue_free(); game.process_mode=previous_mode
+	caption.text=saved_caption; chapter_label.text=saved_chapter
 
 func checkpoint(name: String) -> void:
 	root.get_texture().get_image().save_png(output.path_join(name+".png"))
@@ -157,21 +166,27 @@ func checkpoint(name: String) -> void:
 func run() -> void:
 	var args:=OS.get_cmdline_user_args()
 	if args.is_empty() or DisplayServer.get_name()=="headless": quit(1); return
-	output=args[0]; pilot=args.size()>1 and args[1]=="pilot"
+	output=args[0]; pilot=args.size()>1 and args[1] in ["pilot","extras"]
 	capture_probe=args.size()>1 and args[1]=="probe"
 	DirAccess.make_dir_recursive_absolute(output)
 	game=CaptureRestaurant.new()
 	var roster: Array=JSON.parse_string(FileAccess.get_file_as_string("res://modules/restaurant/data/customers.json"))
 	game.configure({"npc_profiles":roster,"repository_path":"user://player_tour_"+Crypto.new().generate_random_bytes(16).hex_encode()+"/book.json","display_name":"小满"})
 	root.add_child(game); await process_frame
+	prepare_recording_input()
 	original_pointer=root.get_mouse_position(); setup_overlay()
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_ALWAYS_ON_TOP,true)
 	stage("欢迎来到 100 饭店：今天，从一颗番茄做出自己的第一道菜")
-	await card("把这一餐，做成自己的作品", "取材 · 切配 · 烹饪 · 摆盘 · 留下你的招牌",5)
+	await card("饭店小游戏演示", "取材 · 烹饪 · 自由实验 · 创作与接客",5)
 	await hold(3)
+	checkpoint("00-opening-kitchen")
 	if args.size()>1 and args[1]=="probe":
 		print("PROBE_DONE ",frame); quit(0); return
 	await click("先在厨房练习"); await hold(2)
+	if args.size()>1 and args[1]=="extras":
+		if not await comprehensive_extras(): return
+		print("PASS: additional player operations, ",checks," checks, ",frame," frames")
+		game.world.audio.muted=true; game.queue_free(); await frames(2); quit(0); return
 	chapter_label.text="01 / 认识厨房"
 	stage("第一次来，可以先在准备期练习；准备期不限时，熟悉以后再开始营业")
 	await hold(5)
@@ -379,7 +394,8 @@ func run() -> void:
 	if not await fill_pan(): return
 	stage("盖上锅盖再加热，留意蒸汽；游戏里持续大火还可能把锅盖顶飞")
 	if not await lid_and_bowl(): return
-	chapter_label.text="10 / 收班"
+	if not await comprehensive_extras(): return
+	chapter_label.text=closing_chapter()
 	stage("忙完以后，在「暂停 / 帮助」里提前收班，查看今天的结算")
 	game._show_pause(); await hold(2); await click("提前收班并结算"); await hold(5)
 	checkpoint("11-receipt")
@@ -394,6 +410,15 @@ func run() -> void:
 	game.world.audio.muted=true
 	if DisplayServer.get_name()!="headless": Input.warp_mouse(original_pointer)
 	quit(0)
+
+func comprehensive_extras() -> bool:
+	return true
+
+func closing_chapter() -> String:
+	return "10 / 收班"
+
+func prepare_recording_input() -> void:
+	pass
 
 func cutting() -> bool:
 	await frames(60)
@@ -493,28 +518,31 @@ func fire(id: String) -> void:
 	var control: Button=game._fire_buttons[id]
 	pointer.show(); pointer.position=control.get_global_rect().get_center(); pointer.down=true; pointer.queue_redraw(); control.pressed.emit(); await hold(.3); pointer.down=false; pointer.queue_redraw()
 
-func seasoning(id: String,seconds: float) -> bool:
+func seasoning(id: String,seconds: float,expect_in_pan := true) -> bool:
+	var previous_warp:=warp_pointer
+	warp_pointer=false
 	game.storage_display.reveal_ingredient(id)
 	var slot: Button=game.storage_display.find_child("Ingredient_"+id,true,false)
 	if not require(slot!=null,"seasoning available on physical rack"): return false
 	slot.tooltip_text=""
 	var origin:=slot.get_global_rect().get_center()
-	_mouse(origin,"down"); await frames(2); _mouse(origin,"up"); await frames(6)
+	_mouse(origin,"down"); await frames(3)
 	if not require(is_instance_valid(game.world._held),"real bottle picked up"): return false
 	await move_to(game.world.pan.point(Vector2(800,535)),28)
+	_mouse(previous_pointer,"up"); await frames(6)
 	_mouse(previous_pointer,"down"); await frames(2)
-	if not require(game.world._squeezing,"bottle dispenses through real press"): return false
+	if not require(game.world._squeezing,"bottle dispenses through real press: "+id): return false
 	await frames(roundi(seconds*FPS)); _mouse(previous_pointer,"up"); await frames(24)
-	if not require(_dish_has(id),"real seasoning reaches pan"): return false
+	if expect_in_pan and not require(_material_present(id),"real seasoning reaches pan or coats its food"): return false
 	await move_to(Vector2(1090,740),24)
 	_mouse(previous_pointer,"down"); await frames(2); _mouse(previous_pointer,"up")
 	if not require(not is_instance_valid(game.world._held),"bottle left on worktop for plate sauce"): return false
-	await frames(6); return true
+	await frames(6); warp_pointer=previous_warp; return true
 
 func stir() -> bool:
 	warp_pointer=false
 	var tool=game.world.utensils[1]
-	_mouse(tool.home,"down"); await frames(4)
+	_mouse(tool.to_global(Vector2(-24,0)),"down"); await frames(4)
 	if not require(tool.active,"wooden tool selected by input"): return false
 	var start: Vector2=game.world.pan.point(Vector2(755,580))-tool._offset
 	await move_to(start,24)
@@ -566,11 +594,15 @@ func type_text(edit: Control,words: String) -> void:
 	edit.release_focus(); pointer.hide()
 
 func tap(open: bool) -> void:
-	await drag(Vector2(190,570) if open else Vector2(190,632),Vector2(190,680) if open else Vector2(190,570),18)
-	# The broad rectangular handle accepts either starting height.
-	if game.world.pan.faucet_on!=open:
-		await drag(Vector2(190,618),Vector2(190,680) if open else Vector2(190,550),18)
-	require(game.world.pan.faucet_on==open,"faucet handle reaches requested position")
+	var saved_warp:=warp_pointer
+	warp_pointer=false
+	for attempt in 3:
+		# Always grab the actual pivot hit region, rather than the free spout.
+		await move_to(Vector2(190,618),10)
+		await drag(Vector2(190,618),Vector2(190,698) if open else Vector2(190,538),18)
+		if game.world.pan.faucet_amount>0.99 if open else game.world.pan.faucet_amount<0.01: break
+	warp_pointer=saved_warp
+	require(game.world.pan.faucet_amount>0.99 if open else game.world.pan.faucet_amount<0.01,"faucet handle reaches requested full-open/closed position")
 
 func clean_pan() -> bool:
 	await fire("off"); await tap(true); warp_pointer=false
@@ -598,7 +630,11 @@ func fill_pan() -> bool:
 		var handle: Vector2=game.world.pan.point(Vector2(1037,578))
 		await drag(handle,handle+correction,30); await frames(8)
 	if not require(game.world.pan.under_tap(),"pan carried under tap"): return false
-	await tap(true); await frames(52); await tap(false); warp_pointer=true; await hold(2)
+	await tap(true)
+	var fill_wait:=0
+	while game.world.pan.water_ml<300 and fill_wait<600:
+		await frames(1); fill_wait+=1
+	await tap(false); warp_pointer=true; await hold(2)
 	if not require(game.world.pan.water_ml>250,"finite water supplied by faucet"): return false
 	var now: Vector2=game.world.pan.point(Vector2(1037,578))
 	await drag(now,now+Vector2(587,0),42); await hold(2)
@@ -682,11 +718,20 @@ func _dish_has(id: String) -> bool:
 		if str(item.get("id", "")) == id: return true
 	return false
 
+func _material_present(id: String) -> bool:
+	if _dish_has(id): return true
+	for body in game.world._foods.get_children():
+		if body.is_queued_for_deletion() or body.get_meta("overflow",false): continue
+		for field in ["surface_sauce","liquid_state"]:
+			if float(body.get_meta(field,{}).get("composition_ml",{}).get(id,0))>0: return true
+	return false
+
 func _mouse(point: Vector2, kind: String) -> void:
 	pointer.show(); pointer.position=point
+	preload("res://tests/recording_focus_isolation.gd").pointer=point
 	if kind != "move": held_mouse=kind=="down"; pointer.down=held_mouse; pointer.queue_redraw()
 	var window_point: Vector2 = root.get_final_transform() * point
-	if warp_pointer and DisplayServer.get_name() != "headless": Input.warp_mouse(window_point)
+	if warp_pointer and DisplayServer.get_name() != "headless" and not virtual_input: Input.warp_mouse(window_point)
 	if kind == "move":
 		var motion := InputEventMouseMotion.new()
 		motion.position = window_point

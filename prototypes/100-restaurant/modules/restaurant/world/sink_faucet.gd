@@ -22,10 +22,24 @@ func _draw() -> void :
 			var y: = lerpf(562, end_y, fmod(controller.world._time * 2 + i / 6.0, 1))
 			draw_line(Vector2(198, y), Vector2(202, y + 4), Color("f1f5db"), 2)
 		if controller.overflowing and catch_pan:
-			# Water leaves the low outside edges of the pan and drops into the
-			# basin below. Only the accepted volume remains in the pan.
+			# Start on the visible water surface, cross the shared rim, then run
+			# down the outside wall. Never originate below the vessel.
 			for side in [-1.0, 1.0]:
-				var lip: Vector2 = controller.point(geometry.CENTER + Vector2(side * 111.0, 19.0))
-				var drain := Vector2(lip.x - side * 22.0, maxf(741.0, lip.y + 18.0))
-				draw_line(lip, drain, Color("9dd7d1", 0.82), 3.0, true)
+				var path := overflow_path(side)
+				var drain: Vector2 = path[-1]
+				draw_polyline(path, Color("75bdbb", 0.84), 7.0, true)
+				draw_polyline(path, Color("d5eee0", 0.88), 2.5, true)
+				for i in 3:
+					var phase := fmod(controller.world._time * 1.5 + float(i) / 3.0, 1.0)
+					var point := path[2].lerp(drain, phase)
+					draw_line(point, point + Vector2(0, 7), Color("f1f5db", 0.8), 2.0, true)
 				draw_arc(drain, 7.0, PI * 0.1, PI * 0.9, 10, Color("b7e2d5", 0.7), 1.7, true)
+
+func overflow_path(side: float) -> PackedVector2Array:
+	var geometry = preload("res://modules/restaurant/world/pan_geometry.gd")
+	var lip_x: float = geometry.CENTER.x + side * 106.0
+	var path := PackedVector2Array()
+	for point in [geometry.CENTER + Vector2(side * 91.0, 18.0), Vector2(lip_x, geometry.front_y(lip_x)), geometry.CENTER + Vector2(side * 127.0, 33.0), geometry.CENTER + Vector2(side * 132.0, 69.0)]:
+		path.append(controller.point(point))
+	path.append(Vector2(path[-1].x + side * 5.0, maxf(741.0, path[-1].y + 20.0)))
+	return path

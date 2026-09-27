@@ -1,0 +1,18 @@
+{
+  "source_seconds": 971.0833333333334,
+  "raw_source_seconds": 971.7083333333334,
+  "trim_start_native_frames": 15,
+  "trim_seconds": 0.625,
+  "sample_rate": 48000,
+  "channels": 2,
+  "source_peak_dbfs": -15.235540677114006,
+  "source_rms_dbfs": -44.69577584362584,
+  "source_clipped_samples": 0,
+  "gain_db": 10.235540677114006,
+  "fade_seconds": 0.12,
+  "final_peak_dbfs": -5.0001122862997285,
+  "final_clipped_samples": 0,
+  "source_pcm_sha256": "8a078451a87e3139be881f8dc2aa0d1a064e8c761dffa117a0817b56e8da5e19",
+  "processed_wav_sha256": "2ae6282dba7ed82014e1ef59072726a5245489ee8edeb801b522e038d95f1c28",
+  "note": "Only matching native startup-frame trim, uniform gain and endpoint fades; licensed native game recordings, no generated effects, music or voiceover."
+}

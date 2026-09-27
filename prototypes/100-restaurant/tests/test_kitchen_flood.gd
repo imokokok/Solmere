@@ -35,6 +35,23 @@ func run() -> void:
 	game.world._process(12.0)
 	check(is_equal_approx(game.world.flood_water_ml, 6600.0) and is_equal_approx(game.world.drained_flood_ml, 3000.0), "closing the tap drains standing room water without resetting it instantly")
 	check(is_equal_approx(game.world.sink_water_ml + game.world.flood_water_ml + game.world.drained_flood_ml, 10800.0), "tap water remains conserved across sink, floor and drain")
+	var world=game.world
+	world.pan.move_to(Vector2(-598,world.pan.HOME.y))
+	var overflow_path: PackedVector2Array=world.pan.faucet_art.overflow_path(1.0)
+	check(world.pan.contains(overflow_path[0]) and overflow_path[1].y<overflow_path[3].y,"overflow starts inside the moved pot, crosses its rim and descends outside")
+	world.pan.water_ml=400.0
+	var before: float=world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml
+	world.pan.grab(world.pan.point(world.pan.PIVOT))
+	world.pan.set_angle(PI/2)
+	check(world.pan.water_ml==0 and is_equal_approx(world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml-before,400.0),"tilting retained pot water into sink adds exactly that volume to sink/floor/drain")
+	world.pan.release_pan()
+	world.pan.water_ml=350.0
+	before=world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml
+	var drain:=InputEventMouseButton.new()
+	drain.button_index=MOUSE_BUTTON_LEFT; drain.pressed=true
+	drain.position=world.get_global_transform_with_canvas()*Vector2(215,765)
+	world.pan._input(drain)
+	check(world.pan.water_ml==0 and is_equal_approx(world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml-before,350.0),"sink drain action conserves retained pot water instead of deleting it")
 	if DisplayServer.get_name() != "headless" and not OS.get_cmdline_user_args().is_empty():
 		var prefix: String = OS.get_cmdline_user_args()[0]
 		game.world.flood_water_ml = 0.0

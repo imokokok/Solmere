@@ -1,0 +1,98 @@
+{
+  "chapters": [
+    {
+      "id": "broth-return-and-reheat",
+      "result": "finite broth returned; original food re-enters pot",
+      "seconds": 328.416666666667,
+      "video_seconds": 327.8333333333337
+    },
+    {
+      "id": "inventory-return",
+      "result": "same unprocessed ingredient restored to original slot",
+      "seconds": 347.416666666667,
+      "video_seconds": 346.8333333333337
+    },
+    {
+      "id": "controls-and-help",
+      "result": "Q/G/E, held-only discard, clear, pause/help and sound toggle exercised",
+      "seconds": 366.583333333333,
+      "video_seconds": 365.99999999999966
+    },
+    {
+      "id": "phase-and-seasoning",
+      "result": "butter/cheese/tofu, three dispensing modes and wooden stirring",
+      "seconds": 414.125,
+      "video_seconds": 413.5416666666667
+    },
+    {
+      "id": "spoon",
+      "result": "native bowl capture, slow lift, wheel tilt and Q return",
+      "seconds": 425.375,
+      "video_seconds": 424.7916666666667
+    },
+    {
+      "id": "pan-and-plate-physics",
+      "result": "plate drag, pan lift, A/D rotation, held right tilt and actual gravity pour",
+      "seconds": 440.083333333333,
+      "video_seconds": 439.49999999999966
+    },
+    {
+      "id": "photo-recipe",
+      "result": "actual photo added to free collage recipe and saved",
+      "seconds": 465.75,
+      "video_seconds": 465.1666666666667
+    },
+    {
+      "id": "lid-and-burning",
+      "result": "real warnings, vent, shake, upward blast/landing, charred face flip and residual heat",
+      "seconds": 557.0,
+      "video_seconds": 556.4166666666666
+    },
+    {
+      "id": "mistake-feedback",
+      "result": "charred meal photographed/served, feedback read, dirty pot cleaned",
+      "seconds": 590.458333333333,
+      "video_seconds": 589.8749999999997
+    },
+    {
+      "id": "follow-complete",
+      "result": "starter guide progresses on actual operations and completes after broth plating; second genuine served meal",
+      "seconds": 679.458333333333,
+      "video_seconds": 678.8749999999997
+    },
+    {
+      "id": "overflow-flood-and-drain",
+      "result": "1500ml capacity, visible rim-origin overflow, sink/floor/full-room rise, tap shutoff, continuous drain, retained pot emptied separately",
+      "seconds": 778.166666666667,
+      "video_seconds": 777.5833333333336
+    },
+    {
+      "id": "counter-spill-and-sponge",
+      "result": "finite sauce overflows full pot; native sponge removes the spill",
+      "seconds": 818.708333333333,
+      "video_seconds": 818.1249999999997
+    },
+    {
+      "id": "odd-and-reviews",
+      "result": "hard/soft strange materials, actual perfume/toothpaste, selective plating, photo, customer feedback and saved letters",
+      "seconds": 886.291666666667,
+      "video_seconds": 885.7083333333336
+    },
+    {
+      "id": "paper-craft",
+      "result": "native photo move/resize/rotate, scissors/restore, duplicate/layers/delete/undo/redo, tape colour/dimensions, text, three pen widths, publish and re-edit",
+      "seconds": 941.708333333333,
+      "video_seconds": 941.1249999999997
+    },
+    {
+      "id": "recipe-exchange",
+      "result": "recipe pages, like, full JSON export/import and same-ID deduplication",
+      "seconds": 956.375,
+      "video_seconds": 955.7916666666666
+    }
+  ],
+  "claims": "All implemented operation families; not all 104 ingredients cooked one by one, not unimplemented 3D/town features.",
+  "input_only": true,
+  "practice_is_separate": true,
+  "note": "Operation end markers, translated onto the edited video. Normal service and final receipt are from the same clean take; laboratory recipes/files are examples from an independent recording."
+}

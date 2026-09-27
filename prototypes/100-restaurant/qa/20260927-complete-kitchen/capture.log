@@ -1,0 +1,1183 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+Movie Maker mode enabled, recording movie in 1352×852 @ 24 FPS...
+TUTORIAL_STAGE 0 欢迎来到 100 饭店：今天，从一颗番茄做出自己的第一道菜
+TUTORIAL_CHECK button: 先在厨房练习
+TUTORIAL_STAGE 231 第一次来，可以先在准备期练习；准备期不限时，熟悉以后再开始营业
+TUTORIAL_STAGE 327 冰箱找食材，右侧菜板切配；左边水槽，中间炉灶，盘子用来装盘
+TUTORIAL_STAGE 534 冰箱和奇物架可以翻层；每件食材取出后，原位会留空
+TUTORIAL_STAGE 668 除了家常食材，还有奇物可以试；先用番茄和鸡蛋做一餐
+TUTORIAL_STAGE 706 按 TAB 打开食材柜，也可以直接搜索想找的原料
+TUTORIAL_STAGE 859 把番茄放到右侧菜板；按住刀柄，顺箭头从一侧压切到另一侧
+TUTORIAL_CHECK tomato has a visible storage slot
+TUTORIAL_CHECK tomato is picked up
+TUTORIAL_CHECK tomato is put down
+TUTORIAL_CHECK tomato reaches the cutting board
+TUTORIAL_CHECK held knife is visible over the cleared countertop
+TUTORIAL_CHECK knife creates physical tomato pieces
+TUTORIAL_STAGE 1118 拿刀时按 R 转 90°，滚轮微调；横向再切一次，就能切成块
+TUTORIAL_CHECK player-driven crosscut makes diced tomato pieces
+TUTORIAL_STAGE 1270 拖住同批的一片，就能把这一组切块一起送进锅口
+TUTORIAL_CHECK tomato pieces enter the pan through physics
+TUTORIAL_STAGE 1373 按住锅柄，向上轻甩；食材会跟着锅翻起来
+TUTORIAL_CHECK pan handle can be held for a real toss
+TUTORIAL_CHECK physical food lifts and turns when the pan is tossed
+TUTORIAL_STAGE 1525 鸡蛋在锅沿轻敲两次：先裂壳，再让蛋液落进锅里
+TUTORIAL_CHECK egg has a visible storage slot
+TUTORIAL_CHECK whole egg is picked up
+TUTORIAL_CHECK first rim strike cracks the held shell
+TUTORIAL_CHECK second strike pours egg and launches two shell pieces
+TUTORIAL_CHECK actual cracked egg admitted to pan
+TUTORIAL_STAGE 1680 食材准备好了，再开始今天的营业；记得先听听客人的想法
+TUTORIAL_CHECK button: 准备好了，开始营业
+TUTORIAL_STAGE 1733 先看看客人留的小纸条：今天的经历、想吃的味道，都在这里
+TUTORIAL_STAGE 1906 点击「聊聊口味」，还能听客人说今天的故事
+TUTORIAL_CHECK button: 聊聊口味
+TUTORIAL_CHECK button: 聊聊口味
+TUTORIAL_STAGE 2162 点击灶台的大火开始加热；看蛋液凝固和食材变色
+TUTORIAL_STAGE 2394 火候需要一点耐心；锅温升高后，会听到真实的煎炒声
+TUTORIAL_STAGE 2550 鸡蛋逐渐成形，转中火继续；留意中心熟度，别只看表面颜色
+TUTORIAL_CHECK real heat cooks the same egg
+TUTORIAL_STAGE 2626 做好后及时关火，让余热继续工作；烧焦的食物不会自动恢复
+TUTORIAL_STAGE 2670 瓶口对准锅内，按住挤出番茄酱；松开，就会停止出料
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: ketchup
+TUTORIAL_CHECK real seasoning reaches pan or coats its food
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_STAGE 2861 拿起木铲轻轻推拌，让切块和酱汁碰到一起
+TUTORIAL_CHECK wooden tool selected by input
+TUTORIAL_STAGE 3140 点击盘子进入摆盘；选择「全部装盘」，每一块都来自刚才那口锅
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK real bodies are plated
+TUTORIAL_STAGE 3290 在盘中拖动食物，选中后还能旋转；摆盘也能自由调整
+TUTORIAL_CHECK button: 顺时针
+TUTORIAL_STAGE 3483 切到「成品淋酱」，在盘边画一条酱汁；用量会从瓶中扣除
+TUTORIAL_CHECK button: 成品淋酱
+TUTORIAL_CHECK finite bottle sauce placed on real plate
+TUTORIAL_STAGE 3615 拍照并交给顾客：照片记录当前这一盘，不会换成预制菜图
+TUTORIAL_CHECK button: 拍照并交给顾客
+TUTORIAL_CHECK real plate photographed and served
+TUTORIAL_STAGE 3746 顾客各有口味，反馈会告诉你哪里能改；评分、心情和收入也会留下
+TUTORIAL_CHECK button: 看看客人的反馈
+TUTORIAL_CHECK one actual customer reviewed the served meal
+TUTORIAL_STAGE 3915 也可以写一封回复；这些反馈会留在「回信」里
+TUTORIAL_CHECK button: 保存回复
+TUTORIAL_CHECK button: 继续招待下一位
+TUTORIAL_STAGE 4095 打开菜谱，选择「新建 DIY 菜谱」，把刚刚做的这一餐留下来
+TUTORIAL_CHECK button: 新建 DIY 菜谱
+TUTORIAL_CHECK DIY starts from the actual served dish
+TUTORIAL_STAGE 4186 做法文字已经在纸上，也能按自己的习惯修改；配图仍由你来画
+TUTORIAL_CHECK button: 改材料和步骤
+TUTORIAL_STAGE 4277 先用细笔，在最上面手写菜名：这次叫它「番茄蛋」
+TUTORIAL_CHECK button: 细笔
+TUTORIAL_STAGE 4527 做法文字会按这餐的成品状态整理；旁边的番茄和刀，由你来画
+TUTORIAL_STAGE 4641 换一支颜色，画出锅里的番茄和鸡蛋
+TUTORIAL_STAGE 4770 第三步画锅铲和热气，把翻炒的动作记下来
+TUTORIAL_STAGE 4932 最后画一盘完成的料理：这是自己的图解，不是固定贴图
+TUTORIAL_STAGE 5095 画错了，橡皮擦只擦自己的笔画；预写文字会留下来
+TUTORIAL_CHECK button: 橡皮擦
+TUTORIAL_STAGE 5140 ⑥ 收进菜谱：手写菜名和四幅配图会原样保存
+TUTORIAL_CHECK name consists of actual ink strokes
+TUTORIAL_CHECK illustrations contain no prefab stickers, photos or font title layers
+TUTORIAL_CHECK button: 收进我的菜谱
+TUTORIAL_CHECK saved page contains the actual cooked dish
+TUTORIAL_CHECK edited printed materials survive saving
+TUTORIAL_CHECK button: 手绘菜谱 1
+TUTORIAL_STAGE 5231 ⑦ 保存后还能继续画；重新打开，完整笔迹和做法都在
+TUTORIAL_CHECK button: 继续 DIY
+TUTORIAL_CHECK reopen restores every title and picture stroke
+TUTORIAL_CHECK button: 保存修改
+TUTORIAL_CHECK continuing the drawing updates the same page
+TUTORIAL_CHECK button: 手绘菜谱 1
+TUTORIAL_STAGE 5364 完成：上面是亲手写的菜名，下面是自己画的四步做法
+TUTORIAL_STAGE 5422 材料和步骤也能修改；笔迹、文字和这一餐的记录都会一起保存
+TUTORIAL_CHECK button: 继续 DIY
+TUTORIAL_CHECK button: 改材料和步骤
+TUTORIAL_CHECK button: 保存修改
+TUTORIAL_CHECK button: 手绘菜谱 1
+TUTORIAL_STAGE 5578 「分享这一页」可导出图文文件；朋友用浏览器就能看这份菜谱
+TUTORIAL_CHECK button: 分享这一页
+TUTORIAL_STAGE 5669 保存过实际料理的菜谱还能「跟做」；提示会随取材、切配、装盘推进
+TUTORIAL_CHECK button: 照着做这道菜
+TUTORIAL_CHECK button: 番茄清汤面
+TUTORIAL_STAGE 5815 厨房也有示范菜谱，想做汤面时可以先翻一翻
+TUTORIAL_STAGE 5873 再给小店做张海报：放上刚拍的照片，写下今天的主厨推荐
+TUTORIAL_CHECK button: 纸上写字
+TUTORIAL_CHECK button: 加入料理照片
+TUTORIAL_CHECK button: 贴出去 · 家常料理
+TUTORIAL_CHECK actual photo poster saved and published in kitchen
+TUTORIAL_STAGE 6147 上一餐的残味会留在锅里；抹布打湿后，拖过空锅来清理
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK cloth wetted in running water
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK real strokes remove finite pan residue
+TUTORIAL_STAGE 6691 海绵负责台面洒漏；想丢掉拿错的东西，也可以用右下角清理按钮
+TUTORIAL_STAGE 6867 按住锅柄把锅搬到水槽；向下转动水龙头把手，接好水就关上
+TUTORIAL_CHECK pan carried under tap
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK finite water supplied by faucet
+TUTORIAL_CHECK water-filled pan returned to stove
+TUTORIAL_STAGE 7172 盖上锅盖再加热，留意蒸汽；游戏里持续大火还可能把锅盖顶飞
+TUTORIAL_CHECK noodles has a visible storage slot
+TUTORIAL_CHECK noodles is picked up
+TUTORIAL_CHECK noodles is put down
+TUTORIAL_CHECK real lid seats on pan
+TUTORIAL_STAGE 7275 煮汤等待 · 4 倍速：水会受热，面条逐渐吸水变软
+TUTORIAL_CHECK real heat produces boiling water and visible lid steam
+TUTORIAL_STAGE 7515 汤烧开以后，拖开锅盖放出蒸汽，再把火关掉
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK button: 汤碗
+TUTORIAL_STAGE 7650 做汤时选「汤碗」；从锅里盛汤，碗里的汤就是锅里减少的那部分
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK real broth moved into bowl
+TUTORIAL_STAGE 7757 汤盛多了，可以倒回锅；盘里的同一批食物也能回锅继续料理
+TUTORIAL_CHECK button: 汤倒回锅
+TUTORIAL_CHECK bowl broth actually returned to original pot
+TUTORIAL_CHECK button: 完成摆盘，回厨房
+TUTORIAL_CHECK same plated noodle returns to pot
+TUTORIAL_CHECK button: 先在厨房练习
+TUTORIAL_STAGE 8000 冷藏柜可以开合；TAB 的分类和搜索，与架子共用同一份有限库存
+TUTORIAL_CHECK button: 基础食材
+TUTORIAL_CHECK button: 调味料
+TUTORIAL_CHECK button: 甜品饮品
+TUTORIAL_CHECK button: 怪异材料
+TUTORIAL_STAGE 8271 拿错了还没处理的原料，拖回原来的空位，可以放回去
+TUTORIAL_CHECK unprocessed original onion returned to finite shelf
+TUTORIAL_STAGE 8350 空手点取，Q 放下；拿着食物按 G 可以投掷，E 对准工位进行操作
+TUTORIAL_CHECK stock available: carrot
+TUTORIAL_CHECK picked up: carrot
+TUTORIAL_CHECK Q releases actual carried food
+TUTORIAL_CHECK stock available: potato
+TUTORIAL_CHECK picked up: potato
+TUTORIAL_CHECK G throws original potato
+TUTORIAL_CHECK stock available: mushroom
+TUTORIAL_CHECK picked up: mushroom
+TUTORIAL_CHECK E drops carried mushroom into targeted stove
+TUTORIAL_STAGE 8554 拿着食材点「丢弃」只丢手上这一件；空手再点，会清理锅、盘和台面
+TUTORIAL_CHECK stock available: bread
+TUTORIAL_CHECK picked up: bread
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_CHECK discard held food preserves other cooking
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_CHECK workspace clear removes actual food and debris
+TUTORIAL_STAGE 8601 暂停会停下厨房；操作说明随时可看，也可以在底栏开关游戏声音
+TUTORIAL_CHECK button: 暂停 / 帮助
+TUTORIAL_CHECK button: 操作说明
+TUTORIAL_CHECK button: 知道了，回厨房
+TUTORIAL_CHECK button: 声音 开
+TUTORIAL_CHECK button: 声音 关
+TUTORIAL_STAGE 8892 黄油和芝士会受热软化、融化；它们仍来自原来的那块食材
+TUTORIAL_CHECK butter has a visible storage slot
+TUTORIAL_CHECK butter is picked up
+TUTORIAL_CHECK butter is put down
+TUTORIAL_CHECK cheese has a visible storage slot
+TUTORIAL_CHECK cheese is picked up
+TUTORIAL_CHECK cheese is put down
+TUTORIAL_CHECK tofu has a visible storage slot
+TUTORIAL_CHECK tofu is picked up
+TUTORIAL_CHECK tofu is put down
+TUTORIAL_STAGE 9105 加热等待 · 4 倍速：看黄油融开、芝士变软，不会换成固定成品图
+TUTORIAL_CHECK real burner produces finite butter liquid phase
+TUTORIAL_STAGE 9252 盐罐撒粉，酱油倾倒，番茄酱挤出；按住出料，松开停止，都有余量
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: salt
+TUTORIAL_CHECK real seasoning reaches pan or coats its food
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: soy_sauce
+TUTORIAL_CHECK real seasoning reaches pan or coats its food
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: ketchup
+TUTORIAL_CHECK real seasoning reaches pan or coats its food
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_STAGE 9744 木铲左右推拌，酱会逐渐沾到食物上；工具接触的是实际食材
+TUTORIAL_CHECK wooden tool selected by input
+TUTORIAL_STAGE 9951 木勺能承托食物和酱；慢移可以带起，滚轮倾斜后会滑回锅中
+TUTORIAL_CHECK spoon picked through exposed cup handle
+TUTORIAL_CHECK actual sauce available to scoop
+TUTORIAL_CHECK wheel tilts actual wooden spoon
+TUTORIAL_CHECK real spoon captured sauce before tilting and returning
+TUTORIAL_STAGE 10221 盘子也能整只拖动；抬起锅离开炉灶，再靠重力把同一批料理倒进盘里
+TUTORIAL_CHECK lifted original pan leaves stove
+TUTORIAL_CHECK mouse wheel rotates held original pan
+TUTORIAL_CHECK right button pouring plates original cooking through gravity
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK button: 顺时针
+TUTORIAL_CHECK button: 逆时针
+TUTORIAL_CHECK button: 成品淋酱
+TUTORIAL_CHECK finite bottle sauce placed on real plate
+TUTORIAL_STAGE 10840 淋酱也能选择瓶子；清除酱线后再画，照片会记录最终摆好的这一盘
+TUTORIAL_CHECK button: 清除酱汁
+TUTORIAL_CHECK native plate sauce chooser present
+TUTORIAL_CHECK finite bottle sauce placed on real plate
+TUTORIAL_CHECK button: 拍照并加入菜谱
+TUTORIAL_CHECK actual practice meal photo opens editable recipe
+TUTORIAL_CHECK button: 加入料理照片
+TUTORIAL_CHECK button: 收进我的菜谱
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_STAGE 11303 把鸡肉拿到菜板切开，再拖一块，让同批切块一起落入锅中
+TUTORIAL_CHECK chicken has a visible storage slot
+TUTORIAL_CHECK chicken is picked up
+TUTORIAL_CHECK chicken is put down
+TUTORIAL_CHECK actual board target: chicken
+TUTORIAL_CHECK actual knife produces chicken pieces
+TUTORIAL_CHECK lid genuinely seated for hazardous cooking
+TUTORIAL_STAGE 11602 加热等待 · 6 倍速：盖住湿食材，盖沿冒汽、颤动和敲击会先提醒你
+TUTORIAL_CHECK actual heating reaches pressure warning 0.57
+TUTORIAL_STAGE 11917 看到预警，可以拖开锅盖泄汽，或减火、移锅；揭盖会放出积聚的蒸汽
+TUTORIAL_CHECK opening actual lid vents real accumulated steam
+TUTORIAL_STAGE 12066 这次故意继续大火：盖上再摇锅，危险会累积，食物不能穿过盖子
+TUTORIAL_CHECK actual heating reaches pressure warning 0.65
+TUTORIAL_CHECK lid follows the genuinely shaken pot
+TUTORIAL_STAGE 12336 危险预警加重了，锅盖会被积汽顶起来；现在观察实际的上冲和落地
+TUTORIAL_CHECK actual heating reaches pressure warning 0.84
+TUTORIAL_CHECK real heat triggers one upward lid blast
+TUTORIAL_STAGE 12789 砰！锅盖向上飞起、翻转，食物和汁水飞溅；落稳后盖子还能再用
+TUTORIAL_CHECK lid naturally lands after the blast
+TUTORIAL_STAGE 12911 故意忘记关火 · 6 倍速等待：同一块肉从焦黄继续变成焦糊
+TUTORIAL_CHECK real dry heating chars original meat surface
+TUTORIAL_STAGE 13178 锅铲往上翻动，露出真正烧焦的底面；焦色、焦味提醒和烟一起出现
+TUTORIAL_CHECK black spatula selected from cup
+TUTORIAL_CHECK native spatula exposes actual charred face
+TUTORIAL_STAGE 13316 及时关火；锅仍有余热，烧糊的历史不会因为关火或加水就恢复
+TUTORIAL_CHECK button: 准备好了，开始营业
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK button: 拍照并交给顾客
+TUTORIAL_CHECK button: 看看客人的反馈
+TUTORIAL_CHECK charred actual meal reaches customer feedback
+TUTORIAL_CHECK button: 继续招待下一位
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK cloth wetted in running water
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK real strokes remove finite pan residue
+TUTORIAL_STAGE 14265 选「番茄清汤面」，按「照着做」；底部提示会跟着真实操作变化
+TUTORIAL_CHECK button: 菜谱
+TUTORIAL_CHECK button: 番茄清汤面
+TUTORIAL_CHECK button: 照着做这道菜
+TUTORIAL_CHECK tomato has a visible storage slot
+TUTORIAL_CHECK tomato is picked up
+TUTORIAL_CHECK tomato is put down
+TUTORIAL_CHECK actual board target: tomato
+TUTORIAL_CHECK guide tomato actually cut
+TUTORIAL_CHECK pan carried under tap
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK finite water supplied by faucet
+TUTORIAL_CHECK water-filled pan returned to stove
+TUTORIAL_CHECK noodles has a visible storage slot
+TUTORIAL_CHECK noodles is picked up
+TUTORIAL_CHECK noodles is put down
+TUTORIAL_STAGE 15013 跟做煮面 · 4 倍速等待：番茄加热，面条吸水变软，满足做法才会完成
+TUTORIAL_CHECK native guide observes real take/cut/water/pan/cook success
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK button: 汤碗
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK button: 完成摆盘，回厨房
+TUTORIAL_CHECK guide genuinely completes only after real food/broth plating
+TUTORIAL_STAGE 15473 所有环节完成，提示才显示「这一餐做好了」；这碗面接着交给下一位客人
+TUTORIAL_CHECK button: 收起引导
+TUTORIAL_CHECK button: 拍照并交给顾客
+TUTORIAL_CHECK button: 看看客人的反馈
+TUTORIAL_CHECK button: 继续招待下一位
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK cloth wetted in running water
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK real strokes remove finite pan residue
+TUTORIAL_STAGE 16420 把空锅搬到水槽接水；这次持续打开水龙头，观察水先填满锅
+TUTORIAL_CHECK pan carried under tap
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK finite water supplied by faucet
+TUTORIAL_CHECK water-filled pan returned to stove
+TUTORIAL_CHECK pot under faucet for real overflow
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK real faucet fills 1500ml pot to its brim
+TUTORIAL_STAGE 16979 锅满后，水从锅内越过两侧锅沿，沿外壁落进水槽；不是从锅底漏出
+TUTORIAL_CHECK visible overflow begins inside pot and crosses upper rim
+TUTORIAL_STAGE 17075 忘了关水 · 2 倍速等待：水槽也满了，地面积水才开始往上淹
+TUTORIAL_CHECK actual overflow reaches rising room flood
+TUTORIAL_STAGE 17399 继续放水 · 2 倍速：整个厨房会被淹没，先去关水龙头
+TUTORIAL_CHECK actual runoff fully floods kitchen
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_STAGE 17748 向上回转把手关闭水龙头，停止新进水；已经积起来的水会逐渐排走
+TUTORIAL_CHECK closing handle stops supply and drains existing water
+TUTORIAL_STAGE 17825 排水等待 · 4 倍速：水位连续下降，锅里已经接到的水仍然保留
+TUTORIAL_CHECK standing room water drains without erasing pot water
+TUTORIAL_STAGE 18418 客人也有等待时间；忙着处理厨房意外时，留意右上纸条与营业时钟
+TUTORIAL_STAGE 18495 锅里的水另行处理：按住锅柄，用右键倾锅，水越过低侧锅沿倒入水槽
+TUTORIAL_CHECK right tilt actually drains retained pot water at sink
+TUTORIAL_CHECK poured pot water is conserved in sink/floor/drain
+TUTORIAL_STAGE 18688 洒到台面的调料也有实际用量；海绵拖过污渍可以擦掉，抹布负责锅内残味
+TUTORIAL_CHECK pan carried under tap
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK finite water supplied by faucet
+TUTORIAL_CHECK water-filled pan returned to stove
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK faucet handle reaches requested full-open/closed position
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: mayonnaise
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_CHECK full pot creates actual finite seasoning spill
+TUTORIAL_CHECK sponge removes actual counter spill
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_STAGE 19743 奇物架上也是可取用的东西：闹钟是硬质物件，菜刀切不开
+TUTORIAL_CHECK alarm_clock has a visible storage slot
+TUTORIAL_CHECK alarm_clock is picked up
+TUTORIAL_CHECK alarm_clock is put down
+TUTORIAL_CHECK actual board target: alarm_clock
+TUTORIAL_CHECK actual knife cannot split hard alarm clock
+TUTORIAL_STAGE 20032 软材质奇物可以切开；这次把幻想袜子切开，与硬质物件一起实验
+TUTORIAL_CHECK sock has a visible storage slot
+TUTORIAL_CHECK sock is picked up
+TUTORIAL_CHECK sock is put down
+TUTORIAL_CHECK actual board target: sock
+TUTORIAL_CHECK soft strange material cut by real knife
+TUTORIAL_STAGE 20266 香水属于可倾倒的奇物；牙膏是有限余量软管，也能按住挤出
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: perfume
+TUTORIAL_CHECK real seasoning reaches pan or coats its food
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press: toothpaste
+TUTORIAL_CHECK real seasoning reaches pan or coats its food
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_CHECK wooden tool selected by input
+TUTORIAL_CHECK real odd combination remains in actual cooking
+TUTORIAL_STAGE 20762 组合也能装盘与出餐；顾客的偏好、忌口和新奇程度会反映在评价里
+TUTORIAL_CHECK button: 幻想袜子
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK button: 顺时针
+TUTORIAL_CHECK button: 拍照并交给顾客
+TUTORIAL_CHECK button: 看看客人的反馈
+TUTORIAL_CHECK odd experiment actually reviewed by third customer
+TUTORIAL_CHECK button: 继续招待下一位
+TUTORIAL_CHECK button: 回信
+TUTORIAL_CHECK button: 丢弃 / 清理台面
+TUTORIAL_STAGE 21396 除了手绘菜谱，海报和自由拼贴手记还可以贴实拍照片、材料与小装饰
+TUTORIAL_CHECK button: 海报
+TUTORIAL_CHECK button: 加入料理照片
+TUTORIAL_CHECK last actual odd meal photo added to poster
+TUTORIAL_CHECK button: 移动素材
+TUTORIAL_STAGE 21518 选中照片后，滚轮改大小，边角柄调方向；照片和材料都能剪成自己的形状
+TUTORIAL_CHECK poster wheel resizes actual photo
+TUTORIAL_CHECK native photo corner drag changes real rotation
+TUTORIAL_CHECK button: 剪出形状
+TUTORIAL_CHECK native point scissors create a real photo mask
+TUTORIAL_CHECK button: 恢复原图
+TUTORIAL_STAGE 21692 恢复原图可以撤掉剪裁；复制、移到底层、删除，都可以再撤销和重做
+TUTORIAL_CHECK button: 复制
+TUTORIAL_CHECK button: 移到底层
+TUTORIAL_CHECK button: 删除
+TUTORIAL_CHECK button: 撤销
+TUTORIAL_CHECK button: 重做
+TUTORIAL_STAGE 21862 胶带和小贴纸能拖到纸上；选中后调颜色、长度和宽度，再摆到合适位置
+TUTORIAL_CHECK real decoration tray has tape
+TUTORIAL_CHECK native tape controls change two dimensions
+TUTORIAL_STAGE 21986 自己的图片也能导入；做过这餐的材料，可以作为保持原状态的贴纸放到纸上
+TUTORIAL_CHECK actual served photo decodes for local import
+TUTORIAL_CHECK button: 导入照片
+TUTORIAL_CHECK actual used ingredient appears in paper material tray
+TUTORIAL_STAGE 22173 在纸上写字，双击还能改写；细笔、铅笔和宽笔各有不同笔触
+TUTORIAL_CHECK button: 纸上写字
+TUTORIAL_CHECK double click reopens native poster text
+TUTORIAL_CHECK button: 铅笔
+TUTORIAL_CHECK button: 宽笔
+TUTORIAL_CHECK button: 细笔
+TUTORIAL_CHECK button: 贴出去 · 怪味特供
+TUTORIAL_CHECK decorated photo poster actually published
+TUTORIAL_CHECK button: 海报
+TUTORIAL_CHECK button: 继续编辑已贴出的海报
+TUTORIAL_CHECK published poster reopened with strokes and editable layers
+TUTORIAL_STAGE 22613 菜谱翻页、点赞、导出与导入都在厨房手记里；本地文件可以带回游戏继续编辑
+TUTORIAL_CHECK button: 菜谱
+TUTORIAL_CHECK button: 融化与调味实验
+TUTORIAL_CHECK button: 喜欢这道菜
+TUTORIAL_CHECK button: ← 上一页
+TUTORIAL_CHECK button: 下一页 →
+TUTORIAL_CHECK button: 导出菜谱文件
+TUTORIAL_CHECK native cookbook export creates local JSON
+TUTORIAL_CHECK button: 导入其他人的菜谱
+TUTORIAL_CHECK import preserves recipes and deduplicates same IDs
+TUTORIAL_STAGE 23049 忙完以后，在「暂停 / 帮助」里提前收班，查看今天的结算
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+TUTORIAL_CHECK button: 提前收班并结算
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+TUTORIAL_CHECK shift settles the one real meal
+TUTORIAL_STAGE 23198 从一颗番茄开始，把你的料理和故事，都留在这间小店
+TUTORIAL_STAGE 23318 实机画面 · 自动操作录制 · 字幕与转场为视频编排
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+SCRIPT ERROR: Cannot call method 'queue_redraw' on a previously freed instance.
+          at: _process (gdscript://-9223371930571110616.gd:138)
+          GDScript backtrace (most recent call first):
+              [0] _process (gdscript://-9223371930571110616.gd:138)
+PASS: player tutorial, 326 checks, 23356 frames, 973.166666666667 seconds
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/solmere-complete-kitchen-20260927/complete.avi
+1049 frames at 24 FPS (movie length: 00:00:43:17), recorded in 00:09:29 (7% of real-time speed).
+CPU render time: 35.59 seconds (average: 33.93 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 118.41 seconds (average: 112.88 ms/frame)
+--------------------------------------------------------------------------------

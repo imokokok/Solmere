@@ -4,19 +4,22 @@ import ImageIO
 import CoreGraphics
 import CoreVideo
 
-guard (4...5).contains(CommandLine.arguments.count) else {
-    fputs("Usage: swift tools/encode_godot_movie.swift <frames-directory> <output.mp4> <fps> [bitrate]\n", stderr)
+guard (4...6).contains(CommandLine.arguments.count) else {
+    fputs("Usage: swift tools/encode_godot_movie.swift <frames-directory> <output.mp4> <fps> [bitrate] [trim-start-frames]\n", stderr)
     exit(2)
 }
 
 let source = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
 let output = URL(fileURLWithPath: CommandLine.arguments[2])
 let fps = Int(CommandLine.arguments[3]) ?? 24
-let bitrate = CommandLine.arguments.count == 5 ? (Int(CommandLine.arguments[4]) ?? 0) : 5_000_000
+let bitrate = CommandLine.arguments.count >= 5 ? (Int(CommandLine.arguments[4]) ?? 0) : 5_000_000
 guard fps > 0, bitrate > 0 else { fatalError("FPS and bitrate must be positive") }
-let files = try FileManager.default.contentsOfDirectory(at: source, includingPropertiesForKeys: nil)
+let trimFrames = CommandLine.arguments.count == 6 ? (Int(CommandLine.arguments[5]) ?? -1) : 0
+guard trimFrames >= 0 else { fatalError("Invalid frame trim") }
+let allFiles = try FileManager.default.contentsOfDirectory(at: source, includingPropertiesForKeys: nil)
     .filter { $0.lastPathComponent.hasPrefix("frame_") && $0.pathExtension == "jpg" }
     .sorted { $0.lastPathComponent < $1.lastPathComponent }
+let files = Array(allFiles.dropFirst(trimFrames))
 guard !files.isEmpty, let firstSource = CGImageSourceCreateWithURL(files[0] as CFURL, nil),
       let first = CGImageSourceCreateImageAtIndex(firstSource, 0, nil) else {
     fputs("No readable JPEG frames\n", stderr)
@@ -88,4 +91,5 @@ let finished = DispatchSemaphore(value: 0)
 writer.finishWriting { finished.signal() }
 finished.wait()
 guard writer.status == .completed else { fatalError("MP4 export failed: \(writer.error?.localizedDescription ?? "unknown")") }
+print("Trimmed \(trimFrames) native startup frames")
 print("Wrote \(output.path): \(files.count) frames, \(width)x\(outputHeight), \(fps) fps")

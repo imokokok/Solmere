@@ -1,0 +1,15 @@
+{
+  "actual_native_frames": 23321,
+  "script_frames": 23320,
+  "startup_frames": 1,
+  "fps": 24,
+  "raw_seconds": 971.7083333333334,
+  "unique_jpeg_frames": 13524,
+  "longest_identical_run_frames": 154,
+  "longest_identical_run_seconds": 6.416666666666667,
+  "longest_identical_run_start_seconds": 156.75,
+  "trim_start_native_frames": 15,
+  "delivery_frames": 23306,
+  "delivery_seconds": 971.0833333333334,
+  "source": "Native Movie Maker MJPEG chunks; no generated frames."
+}

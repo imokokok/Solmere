@@ -130,6 +130,7 @@ func _input(event: InputEvent) -> void :
 				world.interaction.emit("notice", "按住把手向下转开，向上回转关闭。")
 				get_viewport().set_input_as_handled()
 			elif Rect2(80, 748, 270, 32).has_point(p) and under_tap():
+				world.receive_faucet_runoff(water_ml)
 				water_ml = 0
 				water_heat = 0
 				overflow_water_ml = 0
@@ -233,6 +234,7 @@ func set_angle(value: float) -> void :
 			water_ml = 0.0
 			water_heat = 0.0
 			if above_sink():
+				world.receive_faucet_runoff(poured_ml)
 				world.audio.play_effect("drain")
 				world.interaction.emit("notice", "锅里的水顺着低侧锅沿倒进了水槽。")
 			else:
