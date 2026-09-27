@@ -1,24 +1,37 @@
-# Soulmere Sample Sequencer Prototype
+# Soulmere · 声音手作桌 Prototype
 
-This is a self-contained Godot 4.7.2 prototype. It does not load or modify the
-main Soulmere game, its save files, or the record-shop workbench.
+一个 Godot 4 的声音采样小游戏原型。玩家在保留舒缓节奏底座的同时，可以自由组合 C 大调五声音阶中的五个低音。
 
-## Run
+## 运行
 
-1. Import `prototypes/sample-sequencer/project.godot` in Godot.
-2. Press F6 or F5.
-3. The default window is 1440×810; maximize it for a 1600×900 layout.
+1. 使用 Godot 4.3 或更新版本打开本目录中的 `project.godot`。
+2. 按 `F6` 或 `F5` 运行。
 
-## Controls
+当前原型使用纯合成试听音色，不读取外部 WAV，因此可以从 Soulmere 仓库中独立打开，不依赖正式游戏代码或音频资源。
 
-- Rhythm/texture rows toggle on and off.
-- C3, D3, E3, G3 and A3 rows cycle through off, 1, 2, 4 and 8 steps.
-- Save/Load stores only this prototype's grid in `user://sequencer_draft.json`.
+## 当前范围
 
-## Previous integration approach
+- 3 条节奏/纹理轨加 5 条固定音高轨，16 步、78 BPM、单小节循环。
+- 音高轨分别对应 C3、D3、E3、G3、A3，并各自使用不同的柔和音色。
+- 点击节奏格控制开关；点击音符格循环切换“关闭、持续 1、2、4、8 格”。
+- C 大调五声音阶确保自由组合时仍具有较高的和谐概率。
+- 节奏轨保留密度限制；五条音高轨允许更自由地实验。
+- 播放、暂停、停止、清空与单格试听。
+- 将当前编排保存成唱片，并从收藏中载入或删除。
+- 唱片数据保存在 `user://sample_records.json`。
+- UI 使用浅牛皮纸、叠放纸卡与胶带层级，参考 Soulmere 正式声音页面的手作视觉语言。
 
-The earlier experiment added one button to `StudioScreen.gd`. That button
-instantiated the sequencer as an overlay, rendered four bars into an
-`Arrangement`, and passed the result to the existing `VisualRoom` and
-`PressingTable`. This prototype revision removes that hook and all runtime
-dependencies so other authors' production code remains untouched.
+## 替换成正式采样
+
+原型音色由 `scripts/main.gd` 的 `_build_audio()` 在启动时直接生成：
+
+- `streams[0]`：合成低频脉冲。
+- `streams[1]`：合成敲击颗粒。
+- `streams[2]`：合成空间纹理。
+- `streams[3]`～`streams[7]`：C3、D3、E3、G3、A3 五条合成音高轨。
+
+每个旋律音的 1、2、4、8 格时值会按目标持续时间即时生成，无需外部音频文件。
+
+## 与正式游戏隔离
+
+此目录拥有自己的 `project.godot`、场景和脚本。它不会加载或修改 Soulmere 根项目的场景、Autoload、正式存档或唱片店工作台。
