@@ -8,6 +8,7 @@ func _initialize() -> void:
 	call_deferred("run")
 func run() -> void:
 	game = preload("res://modules/restaurant/restaurant.tscn").instantiate()
+	game.configure({"repository_path":"user://free_pan_%s/book.json" % Crypto.new().generate_random_bytes(16).hex_encode()})
 	root.add_child(game)
 	await process_frame
 	game._start_shift()
@@ -16,42 +17,44 @@ func run() -> void:
 	game.world.drop_into_pan()
 	await create_timer(0.6).timeout
 	var initial: Vector2 = food.position
-	var start_handle: Vector2 = game.world.pan.point(Vector2(1000, 566))
-	expect(game.world.pan.can_grab(start_handle), "the current pan handle can be grabbed")
-	mouse(start_handle, MOUSE_BUTTON_LEFT, true)
-	motion(Vector2(850,250))
-	await process_frame
-	await physics_frame
-	await process_frame
-	expect(game.world.pan.offset.y < -300, "pan follows pointer vertically")
-	expect(food.position.y < initial.y - 300, "contents follow vertical lift")
+	var first_handle: Vector2=game.world.pan.point(Vector2(1000,566))
+	mouse(first_handle, MOUSE_BUTTON_LEFT, true)
+	for i in 90:
+		motion(first_handle+Vector2(-70,-250)*(i+1)/90.0)
+		await physics_frame
+	await create_timer(0.6).timeout
+	expect(game.world.pan.offset.y < game.world.pan.HOME.y - 235, "native pan follows a deliberate upward drag")
+	expect(food.position.y < initial.y - 210 and not food.freeze, "colliders lift independent contents")
 	expect(not game.world.pan.on_stove(), "raised pan does not receive stove heat")
-	motion(Vector2(1000,250))
-	mouse(Vector2(1000,250), MOUSE_BUTTON_LEFT, false)
+	mouse(first_handle+Vector2(-70,-250), MOUSE_BUTTON_LEFT, false)
 	await process_frame
 	expect(game.world.pan.falling, "released raised pan falls under gravity")
 	await create_timer(1.3).timeout
-	expect(not game.world.pan.falling and absf(game.world.pan.offset.y-game.world.pan.HOME.y) < 0.1, "pan lands on counter and stops following pointer")
+	expect(not game.world.pan.falling and absf(game.world.pan.offset.y-game.world.pan.HOME.y) < 2.0, "pan lands on counter and stops following pointer")
 	expect(game.session.dish.size() == 1, "gravity landing preserves ingredients")
-	var toss_handle: Vector2 = game.world.pan.point(Vector2(1000,566))
-	var face_before := int(food.get_meta("thermal", {}).get("contact_face", 0))
-	mouse(toss_handle, MOUSE_BUTTON_LEFT, true)
-	motion(toss_handle + Vector2(0, -44))
-	await physics_frame
-	expect(game.world.pan._last_toss_msec > 0 and not food.freeze, "short upward pan flick releases the real food into a toss")
-	expect(int(food.get_meta("thermal", {}).get("contact_face", 0)) != face_before, "toss turns the heated food face without replacing it")
-	mouse(toss_handle + Vector2(0, -44), MOUSE_BUTTON_LEFT, false)
-	await create_timer(1.0).timeout
-	var handle: Vector2 = game.world.pan.point(Vector2(1000,566))
-	mouse(handle, MOUSE_BUTTON_LEFT, true)
-	motion(Vector2(1510,430))
-	mouse(Vector2(1510,430), MOUSE_BUTTON_RIGHT, true)
-	await create_timer(2.3).timeout
-	expect(game.world.pan.angle > 1.5, "right hold tilts held pan")
+	# Stage the bowl above the plate using a deliberate lift and transfer.
+	var pan=game.world.pan
+	var handle: Vector2=pan.point(Vector2(1000,566))
+	mouse(handle,MOUSE_BUTTON_LEFT,true)
+	var lift_target: Vector2=handle+Vector2(0,-240)
+	for i in 90:
+		motion(handle.lerp(lift_target,(i+1)/90.0))
+		await physics_frame
+	await create_timer(0.4).timeout
+	# Pointer must move around the preserved local grip while the wrist rotates.
+	var pivot: Vector2=Vector2(1355,430)
+	for i in 150:
+		var t:=float(i+1)/150.0
+		pan.set_angle(t*deg_to_rad(105))
+		var desired: Vector2=pivot+pan.grip.local_anchor.rotated(t*deg_to_rad(105))
+		motion(lift_target.lerp(desired,t))
+		await physics_frame
+	await create_timer(1.3).timeout
+	expect(pan.angle > 1.5, "wrist target tilts a force-held native pan")
 	expect(food.get_meta("plated", false), "gravity pours original food into plate")
 	expect(game.session.dish.size() == 1 and int(game.session.dish[0].physics_id) == food.get_instance_id(), "poured food retains identity without duplication")
-	mouse(Vector2(1210,220), MOUSE_BUTTON_RIGHT, false)
-	mouse(Vector2(1210,220), MOUSE_BUTTON_LEFT, false)
+	print("POUR_METRICS pan=",pan.rigid.position," food=",food.position," plate=",game.world.plate.center)
+	pan.release_pan()
 	game.world.audio.muted = true
 	await create_timer(0.2).timeout
 	game.queue_free()

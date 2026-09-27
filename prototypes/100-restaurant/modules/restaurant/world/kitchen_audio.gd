@@ -1,7 +1,7 @@
 extends Node
 ## CC0 field recordings only. Material routing is a documented acoustic approximation.
 
-const LOOPS := {"flame": -26.0, "sizzle": -14.0, "sauce": -13.0, "boil": -12.0, "water": -15.0, "squeeze": -14.0, "pour": -14.0, "powder": -13.0}
+const LOOPS := {"runoff": -24.0, "flame": -26.0, "sizzle": -14.0, "sauce": -13.0, "boil": -12.0, "water": -15.0, "squeeze": -14.0, "pour": -14.0, "powder": -13.0}
 const EFFECT_BANKS := {"ignite": "ignite", "tap": "tap", "bell": "bell", "pan": "pan", "chop": "chop", "chop_soft": "chop_soft", "chop_hard": "chop_hard", "stir": "stir_wood", "stir_wet": "stir_wet", "stir_meat": "stir_wet", "stir_dry": "stir_dry", "stir_hard": "pan", "stir_water": "stir_water", "stir_sauce": "stir_sauce", "stir_pasta": "stir_pasta", "stir_wood": "stir_wood", "stir_metal": "stir_metal", "drop": "drop", "drop_dry": "drop_dry", "drain": "drain", "pour": "drain", "wipe": "wipe", "paper": "paper", "serve": "serve", "toss": "toss", "hot_drop": "hot_drop"}
 const OILS := ["oil", "butter", "olive_oil", "sesame_oil"]
 const LID_LEVELS := {"lid_tick": -27.0, "lid_close": -20.0, "lid_pop": -13.0, "lid_land": -18.0, "lid_rebound": -23.0, "steam_release": -20.0}
@@ -119,7 +119,7 @@ func update_kitchen(world: Node2D) -> void:
 	if world._squeezing and is_instance_valid(world._held) and float(world._held.get_meta("remaining_ml", 0.0)) > 0.001:
 		dispensing = world.get_dispense_mode(world._held.get_meta("definition", {}))
 		ingredient_id = str(world._held.get_meta("id", ""))
-	var desired := {"flame": world.cooking, "sizzle": profile.begins_with("fry_"), "sauce": profile == "simmer_sauce", "boil": profile == "boil", "water": world.pan.faucet_on, "squeeze": dispensing == "squeeze", "pour": dispensing == "pour", "powder": dispensing == "powder"}
+	var desired := {"runoff": world.pan.outflow_ml_s > 3.0 or world.pan.runoff.recent_rate > 5.0, "flame": world.cooking, "sizzle": profile.begins_with("fry_"), "sauce": profile == "simmer_sauce", "boil": profile == "boil", "water": world.pan.faucet_on, "squeeze": dispensing == "squeeze", "pour": dispensing == "pour", "powder": dispensing == "powder"}
 	for id in loops:
 		var player: AudioStreamPlayer = loops[id]
 		var ui_active: bool = ui_dispense_mode == id and id in ["squeeze", "pour", "powder"]
@@ -127,11 +127,12 @@ func update_kitchen(world: Node2D) -> void:
 		if not active:
 			player.stop()
 			continue
-		var group: String = profile if id in ["sizzle", "sauce"] else str(id)
+		var group: String = profile if id in ["sizzle", "sauce"] else ("water" if id == "runoff" else str(id))
 		if id in ["squeeze", "pour", "powder"]:
 			group = _dispense_bank(id, ui_dispense_id if ui_active else ingredient_id)
 			var pressure: float = ui_pressure if ui_active else world.squeeze_pressure
 			player.volume_db = LOOPS[id] + lerpf(-9.0, 0.0, pressure)
+		elif id == "runoff": player.volume_db = LOOPS[id] + linear_to_db(clampf(maxf(world.pan.outflow_ml_s,world.pan.runoff.recent_rate)/280.0,0.02,1.0))
 		elif id == "water": player.volume_db = LOOPS[id] + lerpf(-8.0, 0.0, world.pan.faucet_amount)
 		elif id in ["sizzle", "sauce", "boil", "flame"]:
 			if id=="flame": player.volume_db=LOOPS[id]

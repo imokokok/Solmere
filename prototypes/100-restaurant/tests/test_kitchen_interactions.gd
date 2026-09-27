@@ -13,6 +13,11 @@ func _run() -> void:
 	await process_frame
 	game._start_shift()
 	await process_frame
+	# Native input may enqueue the whole drag before the next rendered frame.
+	game.world.spawn_ingredient(game._definition("tomato"))
+	game.world.begin_food_drag(Vector2(85,220),true)
+	_expect(game.world._held.position.distance_to(Vector2(85,220))<0.01 and game.world.held_grip.local_anchor.length()<0.01, "inventory grip starts at the press even if the OS cursor has already moved")
+	game.world.discard_held()
 	# Grab food directly from a shelf on mouse-down, and release above a GUI panel.
 	game.storage_display.reveal_ingredient("egg")
 	var button = game.find_child("Ingredient_egg", true, false)
@@ -26,7 +31,7 @@ func _run() -> void:
 		await process_frame
 		_expect(is_instance_valid(game.world._held) and game.world._dragging, "shelf press immediately owns a physical food drag")
 		_mouse(Vector2(600, 605), "move")
-		await process_frame
+		await create_timer(0.9).timeout
 		_mouse(Vector2(1350, 250), "up")
 		await process_frame
 		_expect(game.world._held == null and not game.world._dragging, "release above GUI ends food drag")
@@ -55,17 +60,21 @@ func _run() -> void:
 	await process_frame
 	_expect(game.world.pan.active, "actual pan-handle press starts pan movement")
 	var before := bread.position
-	_mouse(handle_sink, "move")
+	await _pan_motion(handle_sink)
 	await process_frame
 	await physics_frame
 	await process_frame
-	_expect(bread.position.x < before.x - 490, "moving pan carries the existing ingredient body")
+	_expect(game.world.pan.rigid.position.x < before.x - 490 and game.world.pan.contains(bread.position) and not bread.freeze, "slow pan transport carries independent food through actual contacts")
 	_mouse(handle_sink, "up")
-	await create_timer(0.15).timeout
+	await create_timer(0.7).timeout
 	_expect(not game.world.pan.active and game.world.pan.under_tap(), "released pan stays under sink faucet")
 	_expect(game.session.dish.size() == 1 and bread.get_meta("enrolled", false), "pan transport preserves single recipe enrollment")
+	if game.session.dish.is_empty():
+		push_error("transport lost pan contents")
+		quit(1)
+		return
 	var heat: float = game.session.dish[0].heat
-	await create_timer(0.15).timeout
+	await create_timer(0.7).timeout
 	_expect(is_equal_approx(game.session.dish[0].heat, heat), "pan away from burner stops receiving heat")
 	_expect(game.world.audio.loops.flame.playing and not game.world.audio.loops.sizzle.playing, "burner remains audible while moved pan stops sizzling")
 	# Pressing alone does not create water. The visible mixer lever must rotate.
@@ -87,9 +96,9 @@ func _run() -> void:
 	await create_timer(0.1).timeout
 	_expect(is_equal_approx(water, game.world.pan.water_ml) and not game.world.audio.loops.water.playing, "turning the handle back stops both filling and water sound")
 	_mouse(handle_sink, "down")
-	_mouse(handle_home, "move")
+	await _pan_motion(handle_home)
 	_mouse(handle_home, "up")
-	await create_timer(0.2).timeout
+	await create_timer(0.7).timeout
 	_expect(game.world.pan.on_stove() and game.world.pan.water_heat > 0, "returning a cold water-filled pan heats the water first")
 	_expect(game.session.heating and bread.get_meta("enrolled", false), "moving the pan back does not drop its food or switch off the burner")
 	game.world.pan.water_heat = 100
@@ -112,14 +121,14 @@ func _run() -> void:
 	for player in game.world.audio.loops.values(): _expect(not player.playing, "mute stops each loop independently of the host bus")
 	game.world.audio.muted = false
 	_mouse(handle_home, "down")
-	_mouse(handle_sink, "move")
+	await _pan_motion(handle_sink)
 	_mouse(handle_sink, "up")
-	await create_timer(0.15).timeout
+	await create_timer(0.7).timeout
 	_expect(game.world.pan.under_tap(), "pan settles beneath faucet before draining")
 	_mouse(Vector2(200,761), "down")
 	_mouse(Vector2(200,761), "up")
-	await process_frame
-	_expect(is_zero_approx(game.world.pan.water_ml), "sink drain control empties only pan water")
+	await create_timer(3.0).timeout
+	_expect(game.world.pan.water_ml < 0.05, "sink drain empties pan water gradually")
 	game.world.pan.faucet_on = true
 	game.world.pan.water_ml = 1499
 	await create_timer(0.2).timeout
@@ -130,10 +139,14 @@ func _run() -> void:
 	# Drain the intentionally full fixture before testing moved-pan dispensing.
 	_mouse(Vector2(200,761), "down")
 	_mouse(Vector2(200,761), "up")
+	await create_timer(6.0).timeout
+	# Take the bottle from above the counter. Spawning inside the sink below
+	# the pan and pulling upward correctly lifts the pan through contacts.
+	_mouse(Vector2(420,480), "idle")
 	await process_frame
 	game.world.spawn_ingredient(game._definition("ketchup"))
 	_mouse(Vector2(211,633), "idle")
-	await process_frame
+	await create_timer(0.8).timeout
 	_mouse(Vector2(211,633), "down")
 	await create_timer(0.7).timeout
 	_mouse(Vector2(211,633), "up")
@@ -173,3 +186,17 @@ func _mouse(point: Vector2, kind: String) -> void:
 func _expect(ok: bool, message: String) -> void:
 	checks += 1
 	if not ok: failures.append(message)
+
+func _pan_motion(target: Vector2) -> void:
+	var pan=game.world.pan
+	var start: Vector2=pan.rigid.to_global(pan.grip.local_anchor)
+	# Lift clear of the surface, translate slowly, then set down.
+	var waypoints := [start+Vector2(0,-85),target+Vector2(0,-85),target]
+	for endpoint in waypoints:
+		var frames := 420 if absf(endpoint.x-start.x)>100 else 90
+		for i in frames:
+			var t:=float(i+1)/frames
+			_mouse(start.lerp(endpoint,smoothstep(0,1,t)), "move")
+			await physics_frame
+		start=endpoint
+	await create_timer(0.5).timeout

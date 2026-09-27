@@ -37,12 +37,12 @@ func run() -> void:
 	await process_frame
 	game._update_recipe_guide()
 	check(pieces.size() == 2 and game.recipe_guide.completed.get(1, false), "two real geometry fragments complete cutting")
-	game.world._pickup(pieces[0])
-	game.world.begin_food_drag(pieces[0].position)
-	game.world._move_dragged_food(game.world.pan.point(Vector2(810, 560)))
-	game.world._finish_food_drag()
+	for fragment in pieces:
+		game.world._pickup(fragment)
+		game.world.drop_into_pan()
+		await create_timer(0.4).timeout
 	await create_timer(1.1).timeout
-	check(game.session.dish.size() == 2, "one batch drag enrolls both fragments")
+	check(game.session.dish.size() == 2, "both individually dropped fragments enroll")
 	game._take_ingredient(game._definition("noodles"))
 	game.world.drop_into_pan()
 	await create_timer(0.8).timeout

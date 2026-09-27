@@ -173,7 +173,7 @@ func _test_physics_and_service() -> void:
 	if bodies.is_empty():
 		_expect(false, "spawn creates RigidBody2D")
 		return
-	var body: RigidBody2D = bodies[-1] as RigidBody2D
+	var body: RigidBody2D = game.world._held
 	_expect(is_equal_approx(body.mass, float(definition["mass"])), "rigid body receives ingredient-specific mass")
 	# Real physics body travels into the pan; no direct domain add is used.
 	game.world.chop_held()

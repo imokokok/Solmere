@@ -137,7 +137,7 @@ func _test_container(id: String, mode: String, stop_kind: String) -> void:
 			await process_frame
 			_expect(is_instance_valid(game.world._held_proxy) and game.world._held_foreground.visible, "a picked-up sauce portion also has a visible foreground proxy")
 			_motion(PAN_POINT, false)
-			await process_frame
+			await create_timer(0.8).timeout
 			await _key(KEY_E)
 			await create_timer(0.55).timeout
 			_expect(portion.collision_layer == 32 and portion.collision_mask == 1, "re-dropping a sauce portion preserves its non-stacking collision layer")

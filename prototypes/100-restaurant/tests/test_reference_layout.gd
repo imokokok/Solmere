@@ -77,15 +77,15 @@ func run() -> void:
 	game._close_modal()
 	game.world.pan.overflow_water_ml = 100
 	game.world.spill_pan_water(100, Vector2(480, 716))
-	await process_frame
+	await create_timer(0.3).timeout
 	var sponge = game.world.sponge
 	_mouse(sponge.position, "down")
 	await process_frame
 	expect(sponge.active and not game.world.spawn_ingredient(game._definition("tomato")), "sponge can be picked up and owns the hand")
-	_mouse(Vector2(480, 716), "move")
+	_mouse(Vector2(480, 736), "move")
 	_mouse(Vector2(480, 716), "up")
 	await process_frame
-	expect(not sponge.active and is_zero_approx(game.world.pan.overflow_water_ml), "dragging sponge over water removes the tracked spill")
+	expect(not sponge.active and sponge.absorbed_ml > 0 and sponge.absorbed_ml <= sponge.CAPACITY_ML, "sponge absorbs a finite amount of contacted water")
 	await process_frame
 	expect(game.world._foods.get_child_count() == 0, "wiped liquid has no ghost physical body")
 	var ketchup := game.storage_display.find_child("Ingredient_ketchup", true, false) as Button

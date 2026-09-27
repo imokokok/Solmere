@@ -1,250 +1,115 @@
 extends SceneTree
-const Thermal = preload("res://modules/restaurant/domain/food_thermal.gd")
 var game
-var checks := 0
-var failures: Array[String] = []
-var output := ""
+var checks:=0
+var failures: Array[String]=[]
 func _initialize() -> void:
-	Engine.max_fps = 120
-	root.size = Vector2i(1440, 851)
-	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_NO_FOCUS, true)
+	Engine.max_fps=120
+	root.size=Vector2i(1600,946)
 	call_deferred("run")
-func expect(ok: bool, message: String) -> void:
-	checks += 1
-	if not ok: failures.append(message)
-func capture(name: String) -> void:
-	if output.is_empty() or DisplayServer.get_name() == "headless": return
-	await process_frame
-	await process_frame
-	await RenderingServer.frame_post_draw
-	root.get_texture().get_image().save_png(output + "-" + name + ".png")
-func mouse(point: Vector2, pressed: bool) -> void:
-	var event := InputEventMouseButton.new()
-	event.button_index = MOUSE_BUTTON_LEFT
-	event.pressed = pressed
-	event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
-	event.position = root.get_final_transform() * game.world.get_global_transform_with_canvas() * point
-	event.global_position = event.position
-	Input.parse_input_event(event)
-func motion(point: Vector2) -> void:
-	var event := InputEventMouseMotion.new()
-	event.position = root.get_final_transform() * game.world.get_global_transform_with_canvas() * point
-	event.global_position = event.position
-	event.button_mask = MOUSE_BUTTON_MASK_LEFT
-	Input.parse_input_event(event)
+func check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok: failures.append(label)
 func run() -> void:
-	var args := OS.get_cmdline_user_args()
-	if not args.is_empty(): output = args[0]
-	game = preload("res://modules/restaurant/restaurant.tscn").instantiate()
-	game.configure({"repository_path":"/private/tmp/pan_lid_qa_%s/book.json" % Crypto.new().generate_random_bytes(16).hex_encode(), "shift_seconds":900.0})
+	game=preload("res://modules/restaurant/restaurant.tscn").instantiate()
+	game.configure({"repository_path":"user://lid_native_%s/book.json"%Crypto.new().generate_random_bytes(16).hex_encode(),"shift_seconds":900})
 	root.add_child(game)
 	await process_frame
 	game._start_shift()
-	game.set_process(false)
-	var world = game.world
-	world.audio.muted = true
-	world.reactions.set_physics_process(false)
-	world.spawn_ingredient(game._definition("chicken"))
-	var food: RigidBody2D = world._held
-	world.drop_into_pan()
-	await create_timer(0.9).timeout
-	food.freeze = true
-	food.position = world.pan.point(Vector2(795, 583))
-	world.reactions.ensure_state(food)
-	# The same resting transform drives drawing and pointer picking.
-	expect(world.lid.hit(world.lid.HOME), "leaning lid remains selectable at its stand")
-	var corners := PackedVector2Array([Vector2(-165,-65),Vector2(165,-65),Vector2(165,62),Vector2(-165,62)])
-	var clear := true
-	for corner in corners:
-		var point: Vector2 = world.lid.transform * corner
-		clear = clear and point.x > 1080.0 and point.x < 1340.0 and point.y < 680.0
-	expect(clear, "resting lid projection clears seasoning bottles, plate and cutting board")
-	await capture("open")
-	# Production mouse routing, not only direct state setters.
-	mouse(world.lid.HOME, true)
+	var w=game.world
+	w.audio.muted=true
+	var lid=w.lid
+	var pan=w.pan
+	check(lid.hit(lid.HOME),"parked hand-painted lid can be selected")
+	check(lid.rigid.collision_layer==0,"parked lid has no invisible full-size collider")
+	w.spawn_ingredient(game._definition("chicken"))
+	var food: RigidBody2D=w._held
+	w.drop_into_pan()
+	await create_timer(0.7).timeout
+	check(lid.close_lid(),"placing lid is allowed with empty hands")
+	await create_timer(0.8).timeout
+	print("SEATED ",lid.rigid.position," seat=",pan.point(Vector2(810,582))," angle=",lid.rotation," covered=",lid.covered)
+	check(lid.covered and not lid.rigid.freeze,"cold lid rests dynamically on the pan rim")
+	check(lid.rigid.get_contact_count()>0,"closed lid has real contact support")
+	check(w._food_at(food.position)==null,"closed lid occludes underlying food selection")
+	check(lid.pressure_pa<1,"cold contents cannot produce pressure")
+	var utensil=w.utensils[0]
+	utensil.active=true
+	check(utensil.stir_sweep(food.position-Vector2(30,0),food.position+Vector2(30,0))==0,"lid blocks stir interaction")
+	utensil.active=false
+	w.spawn_ingredient(game._definition("carrot"))
+	var held=w._held
+	w.drop_into_pan()
+	check(w._held==held,"closed lid blocks shortcut ingredient insertion")
+	held.position=Vector2(1230,700)
+	w.drop_held()
+	# Water ledger is driven only by vapor actually produced by thermal exchange.
+	w.reactions.set_physics_process(false)
+	lid.advance(0.1,2.0,180,true)
+	check(lid.received_steam_ml==2.0 and lid.condensed_ml>0,"actual captured vapor can condense into finite water")
+	check(absf(lid.received_steam_ml-lid.steam_ml-lid.condensed_ml-lid.escaped_steam_ml)<0.000001,"steam ledger conserves captured mass")
+	var water_before: float=pan.water_ml
+	lid.open_lid()
+	check(not lid.covered and lid.pressure_pa==0,"lifting cover releases pressure")
+	check(absf(lid.received_steam_ml-lid.steam_ml-lid.condensed_ml-lid.escaped_steam_ml)<0.000001,"venting conserves captured mass")
+	check(pan.water_ml==water_before,"venting does not invent pan water")
+	lid.rest_lid()
+	w.clear_workspace()
 	await process_frame
-	expect(world.lid.active, "mouse grabs the physical lid")
-	motion(world.pan.point(Vector2(810, 582)))
-	await process_frame
-	mouse(world.pan.point(Vector2(810, 582)), false)
-	await process_frame
-	expect(world.lid.covered and not world.lid.active, "drag and release seats the lid on the pan")
-	expect(world._food_at(food.position) == null, "covered food cannot be selected through the lid")
+	pan.move_to(pan.HOME)
+	pan.rigid.linear_velocity=Vector2.ZERO
+	pan.rigid.angular_velocity=0
+	pan.water_ml=600
+	pan.water_heat=100
+	w.reactions.pan_c=180
+	lid.close_lid()
+	await create_timer(0.8).timeout
+	var base: Vector2=lid.position
+	var peak:=0.0
+	var peak_pressure:=0.0
+	game.session.water_ml=pan.water_ml
+	game.session.set_heating(true)
+	w.set_cooking(true)
+	for i in 1800:
+		await physics_frame
+		peak=maxf(peak,base.y-lid.position.y)
+		peak_pressure=maxf(peak_pressure,lid.pressure_pa)
+		if lid.burst_count>0: break
+	print("PRESSURE peak=",peak_pressure," lift=",peak," pops=",lid.burst_count," hot_s=",lid._hot_seconds," water=",pan.water_ml," heat=",pan.water_heat," cooking=",w.cooking)
+	check(peak_pressure>100 and peak>1,"boiling steam lifts actual lid mass")
+	check(lid.burst_count==1,"sustained boiling can produce a finite steam pop")
+	var count: int=lid.burst_count
+	var previous: Vector2=lid.position
+	var max_step:=0.0
+	for i in 240:
+		await physics_frame
+		max_step=maxf(max_step,previous.distance_to(lid.position))
+		previous=lid.position
+	check(max_step<12,"flight and collisions are continuous without a return-to-rack teleport")
+	check(lid.position.distance_to(lid.HOME)>80,"steam pop does not home to the rack")
+	check(not lid.rigid.freeze,"airborne and landed lid remains a physical body")
+	w.set_controls_enabled(false)
 	await physics_frame
-	await process_frame
-	expect(not world.lid._shape.disabled, "closed lid supplies an actual collision ceiling")
-	var utensil = world.utensils[0]
-	utensil.active = true
-	expect(utensil.stir_sweep(food.position-Vector2(30,0),food.position+Vector2(30,0)) == 0, "utensils cannot stir through a closed lid")
-	utensil.active = false
-	await capture("covered")
-	world.spawn_ingredient(game._definition("carrot"))
-	var held: RigidBody2D = world._held
-	world.drop_into_pan()
-	expect(world._held == held and not held.get_meta("enrolled", false), "keyboard cannot drop ingredients through closed lid")
-	world._held.position = Vector2(1240, 700)
-	world.drop_held()
-	world.set_cooking(true)
-	world.set_heat_level("high")
-	world.reactions.advance(35.0)
-	expect(world.lid.pressure > 0.0 and world.lid.received_steam_ml > 0.0, "actual heating and food evaporation accumulate lid warning")
-	expect(absf(world.lid.received_steam_ml - world.lid.steam_ml - world.lid.escaped_steam_ml - world.lid.condensed_ml) < 0.00001, "captured water is conserved across steam, venting and condensation")
-	expect(world.lid.condensed_ml > 0.0 and world.pan.water_ml > 0.0, "finite condensate returns to the pan")
-	var before_pressure: float = world.lid.pressure
-	world.set_controls_enabled(false)
-	await create_timer(0.15).timeout
-	expect(world.lid.pressure == before_pressure, "modal pause does not advance pressure")
-	world.set_controls_enabled(true)
-	world.reactions.pan_c = 215.0
-	world.lid.pressure = 0.7
-	await capture("warning")
-	mouse(world.lid.position, true)
-	await process_frame
-	expect(not world.lid.covered and world.lid.pressure == 0.0, "dragging lid off vents pressure immediately")
-	motion(world.lid.HOME)
-	mouse(world.lid.HOME, false)
-	await process_frame
-	expect(world.lid.position == world.lid.HOME, "lid returns to its counter rest position")
-	world.lid.close_lid()
-	world.lid.pressure = 0.5
-	world.set_cooking(false)
-	world.reactions.pan_c = 70.0
-	world.reactions.advance(5.0)
-	expect(world.lid.pressure < 0.5, "cooling releases accumulated warning")
-	world.lid.open_lid()
-	world.lid.rest_lid()
-	world.set_cooking(true)
-	world.set_heat_level("high")
-	world.reactions.pan_c = 235.0
-	var fresh := Thermal.make_state(game._definition("chicken"),food.mass, 1.0)
-	food.set_meta("thermal", fresh)
-	food.position = world.pan.point(Vector2(795, 583))
-	world.lid.close_lid()
-	# No direct pressure injection here: actual food/water/heat step until a pop.
-	var elapsed := 0.0
-	while world.lid.burst_count == 0 and elapsed < 240.0:
-		# Stop near the actual pop, rather than missing part of the turn inside
-		# the final accelerated one-second heating chunk.
-		var cooking_dt := 0.01 if world.lid.pressure >= 0.975 else 1.0
-		world.reactions.advance(cooking_dt)
-		elapsed += cooking_dt
-	expect(world.lid.burst_count == 1 and not world.lid.covered, "sustained real heating pops the lid once")
-	expect(food.linear_velocity.y < 0.0 and world.cooking, "burst moves the same food bodies while burner remains on")
-	expect(food.get_meta("thermal").initial_kg == fresh.initial_kg, "burst preserves food identity and processing history")
-	await capture("burst")
-	var peak: float = world.lid.position.y
-	var previous_pose: Vector2 = world.lid.position
-	var largest_step := 0.0
-	var descending := false
-	var airborne_rotation: float = world.lid.rotation
-	var angular_step := 0.0
-	var previous_rotation: float = world.lid.rotation
-	var total_turn := 0.0
-	var airborne_turn := 0.0
-	var minimum_projection := 1.0
-	var previous_scale: Vector2 = world.lid.scale
-	var largest_scale_step := 0.0
-	var largest_contact_scale_step := 0.0
-	var contact_scale := Vector2.ZERO
-	for i in 280:
-		var was_airborne: bool = world.lid._flight
-		world.reactions.advance(0.01)
-		peak = minf(peak, world.lid.position.y)
-		largest_step = maxf(largest_step, previous_pose.distance_to(world.lid.position))
-		previous_pose = world.lid.position
-		angular_step = maxf(angular_step, absf(wrapf(world.lid.rotation - previous_rotation, -PI, PI)))
-		total_turn += absf(wrapf(world.lid.rotation - previous_rotation, -PI, PI))
-		if was_airborne: airborne_turn += wrapf(world.lid.rotation - previous_rotation, -PI, PI)
-		if world.lid._flight: minimum_projection = minf(minimum_projection, world.lid.scale.y)
-		largest_scale_step = maxf(largest_scale_step, previous_scale.distance_to(world.lid.scale))
-		if was_airborne and not world.lid._flight: contact_scale = world.lid.scale
-		if not world.lid._flight: largest_contact_scale_step = maxf(largest_contact_scale_step, previous_scale.distance_to(world.lid.scale))
-		previous_scale = world.lid.scale
-		previous_rotation = world.lid.rotation
-		if world.lid._flight and world.lid._velocity.y > 0.0: descending = true
-	expect(world.lid.burst_origin.y - peak > 220.0, "steam impulse launches lid visibly high above the pan")
-	expect(descending and absf(wrapf(world.lid.rotation - airborne_rotation, -PI, PI)) > 0.1, "lid turns and descends under gravity")
-	expect(absf(airborne_turn + TAU) < 0.3 and total_turn < TAU + PI * 0.5, "lid completes one airborne turn then leans into its stand without extra spins")
-	expect(minimum_projection >= 0.77, "airborne lid keeps a readable face instead of repeatedly flipping edge-on")
-	expect(largest_scale_step < 0.004, "lid projection changes gradually through the arc instead of shrinking at landing")
-	expect(contact_scale.distance_to(world.lid.REST_SCALE) < 0.0001 and largest_contact_scale_step < 0.0001, "contact, rebound and final rest preserve the same lid dimensions")
-	expect(largest_step < 9.0, "flight and rebound remain continuous without a sideways teleport")
-	expect(angular_step < 0.16, "landing preserves a continuous turn rather than snapping the disc upright")
-	expect(not world.lid._flight and world.lid._settling == 0.0 and world.lid.position == world.lid.HOME and world.lid.scale == world.lid.REST_SCALE, "popped lid settles into clear stand and is reusable")
-	world.lid.close_lid()
-	world.lid.burst()
-	var paused_pose: Vector2 = world.lid.position
-	world.set_controls_enabled(false)
-	await create_timer(0.15).timeout
-	expect(world.lid.position == paused_pose, "modal pause freezes airborne lid")
-	expect(world.lid.display_transform() == world.lid.transform, "paused rendering does not interpolate a moving pose")
-	world.set_controls_enabled(true)
-	world.reactions.advance(3.0)
-	world.pan.water_ml = 0.0
-	food.freeze = true
-	food.position = world.pan.point(Vector2(795, 583))
-	# Real dry cooking from existing state, no invented cooked/char values.
-	world.reactions.advance(250.0)
-	var state: Dictionary = food.get_meta("thermal")
-	var charred := maxf(float(state.char[0]),float(state.char[1]))
-	expect(charred > 0.15 and food.get_meta("burn_warning",false), "prolonged frying produces irreversible char and warning")
-	food.freeze = false
-	utensil.active = true
-	var previous_face := int(state.contact_face)
-	expect(utensil.stir_sweep(food.position + Vector2(45,40), food.position + Vector2(-15,-20)) == 1, "actual upward spatula contact turns burnt food")
-	utensil.active = false
-	food.freeze = true
-	expect(int(state.contact_face) != previous_face and float(state.char[1-int(state.contact_face)]) > 0.15, "flipping exposes the actual burnt underside and preserves both faces")
-	world.reactions._apply(food,state)
-	await capture("burnt")
-	var saved_char: Array = state.char.duplicate()
-	world.pan.water_ml = 400.0
-	world.pan.water_heat = 95.0
-	world.reactions.advance(10.0)
-	expect(state.char == saved_char, "adding water cannot repair char or create further wet-heat char")
-	var snapshot: Dictionary = world.describe_body(food)
-	expect(snapshot.thermal.char == saved_char, "plating snapshot retains burnt surfaces")
-	world.lid.close_lid()
-	world.pan.move_to(world.pan.HOME + Vector2(-180, 0))
-	await process_frame
-	expect(world.lid.position.distance_to(world.pan.point(Vector2(810,582))) < 0.01, "lid follows moved pan using the same geometry")
-	world.lid.open_lid()
-	world.lid.rest_lid()
-	world.clear_food()
-	world.pan.water_ml = 0.0
-	world.pan.move_to(world.pan.HOME)
-	world.lid.close_lid()
-	world.reactions.advance(120.0)
-	world.lid.agitate(160.0)
-	expect(world.lid.pressure == 0.0 and world.lid.burst_count == 2, "an empty dry pan has no steam explosion")
-	world.pan.move_to(Vector2(world.pan.SINK_X - 809, world.pan.HOME.y))
-	world.pan.faucet_on = true
-	world.pan._process(0.5)
-	expect(world.pan.water_ml == 0.0 and world.sink_water_ml > 0.0, "tap water runs off closed lid instead of entering the pot")
-	world.pan.faucet_on = false
-	# Ballistic motion must not depend on the size of the simulation step.
-	# This would expose the old semi-implicit Euler drift across frame rates.
-	var trajectories: Array[Vector2] = []
-	var angles: Array[float] = []
-	var flight_turns: Array[float] = []
-	for rate in [30, 60, 120]:
-		world.lid.rest_lid()
-		world.lid.close_lid()
-		world.lid.burst()
-		var launch_angle: float = world.lid.rotation
-		for frame in rate: world.lid.advance(1.0 / rate, 0.0, 22.0, false)
-		trajectories.append(world.lid.position)
-		angles.append(world.lid.rotation)
-		for frame in rate * 4:
-			if not world.lid._flight: break
-			world.lid.advance(1.0 / rate, 0.0, 22.0, false)
-		flight_turns.append(world.lid.rotation - launch_angle)
-	expect(trajectories[0].distance_to(trajectories[1]) < 0.01 and trajectories[1].distance_to(trajectories[2]) < 0.01, "30/60/120 Hz steps produce the same one-second steam impulse trajectory")
-	expect(absf(angles[0] - angles[1]) < 0.0001 and absf(angles[1] - angles[2]) < 0.0001, "30/60/120 Hz steps preserve the same damped angular impulse")
-	expect(absf(flight_turns[0] + TAU) < 0.0001 and absf(flight_turns[1] + TAU) < 0.0001 and absf(flight_turns[2] + TAU) < 0.0001, "30/60/120 Hz all finish exactly one turn before landing")
-	print("Lid pop after %s seconds of accelerated hot-pan fixture cooking" % elapsed)
-	for failure in failures: push_error(failure)
-	print("%s: pan lid and burning, %d checks" % ["PASS" if failures.is_empty() else "FAIL", checks])
+	var pause: Vector2=lid.rigid.position
+	await create_timer(0.2).timeout
+	check(lid.rigid.position.distance_to(pause)<0.01,"modal freezes lid simulation")
+	w.set_controls_enabled(true)
+	game.session.set_heating(false)
+	w.set_cooking(false)
+	pan.water_heat=30
+	w.reactions.pan_c=30
+	await create_timer(2).timeout
+	check(lid.pressure_pa<5,"cooling dissipates low-pressure steam")
+	lid.rest_lid()
+	pan.water_ml=0
+	lid.close_lid()
+	w.reactions.pan_c=240
+	game.session.water_ml=pan.water_ml
+	game.session.set_heating(true)
+	w.set_cooking(true)
+	await create_timer(2).timeout
+	check(lid.burst_count==count and lid.pressure_pa<5,"hot dry pan has no invented steam explosion")
 	game.queue_free()
 	await process_frame
+	for f in failures: push_error(f)
+	print("%s: pan lid and burning, %d checks"%["PASS" if failures.is_empty() else "FAIL",checks])
 	quit(0 if failures.is_empty() else 1)

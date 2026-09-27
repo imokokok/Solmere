@@ -52,13 +52,12 @@ func _run() -> void:
 		_expect(str(piece.get_meta("batch_uid", "")) == batch_uid and piece.freeze, "every cut piece keeps lineage and stays stable on the board")
 
 	if not generation.is_empty():
-		var first: RigidBody2D = generation[0]
-		world._pickup(first)
-		world.begin_food_drag(first.position)
-		world._move_dragged_food(world.pan.point(Vector2(810, 560)))
-		world._finish_food_drag()
+		for fragment in generation:
+			world._pickup(fragment)
+			world.drop_into_pan()
+			await create_timer(0.4).timeout
 	await create_timer(1.4).timeout
-	_expect(game.session.dish.size() == generation.size(), "one cut-piece drag enrolls the complete eight-piece batch")
+	_expect(game.session.dish.size() == generation.size(), "eight independently dropped fragments enroll")
 	var occupied: Dictionary = {}
 	for piece in generation:
 		_expect(is_instance_valid(piece) and piece.get_meta("enrolled", false), "every batch fragment is accepted by the pan")
@@ -66,7 +65,7 @@ func _run() -> void:
 		_expect(piece.position.is_finite() and piece.position.y < 760.0, "no cut fragment is thrown off the worktop")
 		var cell := Vector2i(roundi(piece.position.x), roundi(piece.position.y))
 		occupied[cell] = true
-	_expect(occupied.size() > 5, "batch fragments start at distributed pan positions")
+	_expect(occupied.size() > 5, "native contacts separate all eight fragments")
 
 	# Capacity is conserved and excess tap water is tracked as overflow.
 	world.pan.move_to(Vector2(world.pan.SINK_X - 809.0, world.pan.HOME.y))
@@ -79,12 +78,13 @@ func _run() -> void:
 	world.pan.faucet_on = false
 	world.pan.water_ml = 500.0
 	world.pan.angle = 0.0
-	world.pan.active = true
-	world.pan._grab_point = world.pan.PIVOT
-	world.pan._pointer = world.pan.PIVOT + world.pan.offset
+	world.pan.grab(world.pan.point(Vector2(1000,566)))
+	world.pan.move_pointer(Vector2(660,440))
 	world.pan.set_angle(deg_to_rad(110.0))
-	_expect(is_zero_approx(world.pan.water_ml), "tilting a water-filled pan past its rim removes water from the vessel")
-	world.pan.active = false
+	_expect(world.pan.water_ml == 500.0, "changing wrist target cannot instantly delete water")
+	await create_timer(2.5).timeout
+	_expect(world.pan.water_ml < 25.0 and world.pan.runoff.received_ml > 450, "tilt drains water progressively through the low rim")
+	world.pan.release_pan()
 	world.clear_workspace()
 	await process_frame
 	_expect(is_zero_approx(world.pan.overflow_water_ml) and world._foods.get_child_count() == 0, "clean workspace removes loose food, spills and residual overflow state")

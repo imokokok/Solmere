@@ -77,12 +77,12 @@ func run() -> void:
 	expect(thin >= 6, "cutting produces thin parallel slices rather than uniform chunks")
 	expect(is_equal_approx(mass, total), "slicing conserves ingredient mass")
 	if not pieces.is_empty():
-		world._pickup(pieces[0])
-		world.begin_food_drag(pieces[0].position)
-		world._move_dragged_food(world.pan.point(Vector2(810, 560)))
-		world._finish_food_drag()
+		for fragment in pieces:
+			world._pickup(fragment)
+			world.drop_into_pan()
+			await create_timer(0.4).timeout
 	await create_timer(1.4).timeout
-	expect(game.session.dish.size() == pieces.size(), "one drag transfers all seven slices into the pan")
+	expect(game.session.dish.size() == pieces.size(), "all seven independently dropped slices reach the pan")
 	game.session.set_heating(true)
 	preload("res://tests/thermal_fixture.gd").cook(game,45.0)
 	world.set_dish(game.session.dish, game.session.ingredients)

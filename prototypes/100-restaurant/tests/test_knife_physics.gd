@@ -65,16 +65,20 @@ func _run() -> void:
 		return
 	world._pickup(quarters[0])
 	world.begin_food_drag(world.to_local(quarters[0].global_position))
-	_expect(world._drag_group.size() == 3, "grabbing one cut piece selects the rest of its physical batch")
-	var pan_pointer: Vector2 = world.pan.point(Vector2(809, 505))
-	world._move_dragged_food(world.to_local(pan_pointer))
-	world._finish_food_drag()
-	_expect(world._drag_group.is_empty() and world._held == null, "releasing a cut batch leaves no hidden held pieces")
+	_expect(world._drag_group.is_empty(), "picking one quarter does not magnetically collect its siblings")
+	for sibling in quarters.slice(1): _expect(sibling.freeze, "untouched sibling remains on the board")
+	world.drop_into_pan()
+	await create_timer(0.4).timeout
+	for quarter in quarters.slice(1):
+		world._pickup(quarter)
+		world.drop_into_pan()
+		await create_timer(0.4).timeout
+	_expect(world._drag_group.is_empty() and world._held == null, "all four independent releases leave no hidden held pieces")
 	for frame in range(120):
 		await physics_frame
 		if game.session.dish.size() == 4:
 			break
-	_expect(game.session.dish.size() == 4, "one drag drops every independent quarter into the physical pan")
+	_expect(game.session.dish.size() == 4, "individual drops retain every independent quarter")
 	var ids: Dictionary = {}
 	for entry in game.session.dish:
 		ids[entry.get("physics_id", 0)] = true

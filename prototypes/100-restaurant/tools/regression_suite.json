@@ -1,6 +1,7 @@
 {
   "godot_version": "4.7.2",
   "scripts": [
+    "tests/test_force_liquid_lid.gd",
     "tests/test_pan_lid.gd",
     "tests/test_thermal_reactions.gd",
     "tests/test_reaction_kitchen.gd",

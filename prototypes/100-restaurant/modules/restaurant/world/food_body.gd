@@ -145,5 +145,5 @@ func _integrate_forces(state: PhysicsDirectBodyState2D) -> void:
 		var relative := state.get_contact_local_velocity_at_position(i) - state.get_contact_collider_velocity_at_position(i)
 		speed = maxf(speed, absf(relative.dot(state.get_contact_local_normal(i))))
 	if speed > 18.0: impact.call_deferred(speed)
-	state.linear_velocity = state.linear_velocity.limit_length(420.0)
+	state.linear_velocity = state.linear_velocity.limit_length(1100.0)
 	state.angular_velocity = clampf(state.angular_velocity, -8.0, 8.0)

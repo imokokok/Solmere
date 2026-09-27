@@ -35,6 +35,7 @@ func run() -> void:
 	world._pickup(original)
 	world.begin_food_drag(original.position)
 	world._move_dragged_food(tomato.get_global_rect().get_center())
+	await create_timer(0.9).timeout
 	world._finish_food_drag()
 	expect(not is_instance_valid(world._held) and not tomato.disabled, "dragging unprocessed food home restores its slot")
 	game._take_ingredient(game._definition("tomato"))
@@ -47,6 +48,7 @@ func run() -> void:
 	var oil: Button = game.storage_display.find_child("Ingredient_oil", true, false)
 	world.begin_food_drag(bottle.position)
 	world._move_dragged_food(oil.get_global_rect().get_center())
+	await create_timer(0.9).timeout
 	world._finish_food_drag()
 	game._take_ingredient(game._definition("oil"))
 	expect(world._held == bottle and is_equal_approx(float(bottle.get_meta("remaining_ml")), 57.25), "returned bottle retains identity and remaining liquid")

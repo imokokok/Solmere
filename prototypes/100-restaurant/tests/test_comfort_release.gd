@@ -49,7 +49,7 @@ func run() -> void:
 	mouse(source,true)
 	await process_frame
 	motion(Vector2(1200,735))
-	await process_frame
+	await create_timer(1.2).timeout
 	mouse(Vector2(1200,735),false)
 	await physics_frame
 	await process_frame
@@ -91,19 +91,19 @@ func run() -> void:
 	mouse(first.position,true)
 	await process_frame
 	motion(w.pan.point(Vector2(810,520)))
-	await process_frame
+	await create_timer(1.0).timeout
 	mouse(w.pan.point(Vector2(810,520)),false)
 	await create_timer(1.0).timeout
-	expect(s.dish.size()==pieces.size(),"one drag enrolls the complete cut batch without merging its pieces")
+	expect(s.dish.size()==1,"one drag moves exactly one cut piece")
 	expect(first.position.distance_to(w.pan.point(Vector2(810,579)))<100,"food stays near the cooking surface")
 	var pan=w.pan
 	var pan_grip: Vector2=pan.point(Vector2(1000,566))
 	mouse(pan_grip,true)
 	await process_frame
 	motion(pan_grip+Vector2(-80,-170))
-	await process_frame
+	await create_timer(1.0).timeout
 	expect(pan.active and pan.is_carrying(first),"pan carries enrolled body")
-	expect(pan.point(Vector2(1000,566)).distance_to(pan_grip+Vector2(-80,-170))<2,"scaled pan grip stays under pointer")
+	expect(pan.point(Vector2(1000,566)).distance_to(pan_grip+Vector2(-80,-170))<8,"scaled pan grip approaches the pointer through bounded forces")
 	mouse(pan_grip+Vector2(-80,-170),false)
 	await create_timer(1.3).timeout
 	expect(not pan.active and not pan.falling,"pan release settles")

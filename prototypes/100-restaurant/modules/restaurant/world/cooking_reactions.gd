@@ -72,13 +72,14 @@ func _step(dt: float) -> void:
 			var outline: PackedVector2Array = body.get_meta("fragment_polygon", PackedVector2Array())
 			for vertex in outline:
 				bottom = maxf(bottom, world.pan.local_point(body.to_global(vertex)).y)
-		var contact: bool = in_pan and bottom>=585.0 and not world.utensil_holds(body)
+		var touches_metal: bool = body.get_colliding_bodies().has(world.pan.rigid)
+		var contact: bool = in_pan and (touches_metal or bottom>=585.0) and not world.utensil_holds(body)
 		var env := pan_c if contact else 22.0
 		var before := float(state.evaporated_kg)
 		var film: Dictionary = body.get_meta("surface_sauce",{})
 		var native := maxf(0.000001,body.mass-float(film.get("mass_kg",0.0)))
 		var exposed := minf(100.0, lerpf(22.0, pan_c, 0.62)) if covered and in_pan else 22.0
-		var absorbed_heat := Thermal.advance(state,definition,dt,env,world.pan.water_heat,wet,native,exposed,0.65 if covered and in_pan else 1.0)
+		var absorbed_heat := Thermal.advance(state,definition,dt,env,world.pan.water_heat,wet,native,exposed,0.65 if covered and in_pan else 1.0,1.0 if contact else 0.055)
 		if in_pan:
 			vapor_ml += (float(state.evaporated_kg)-before)*1000.0
 			moist_food = moist_food or (bool(Thermal.profile(definition).edible) and float(state.water_kg)>0.0001)
@@ -104,6 +105,7 @@ func _step(dt: float) -> void:
 		if in_pan and charred>0.15 and not body.get_meta("burn_warning",false):
 			body.set_meta("burn_warning",true)
 			world.interaction.emit("notice", "%s已经开始焦糊！翻面和减小火力可以减缓，焦味无法消除。" % str(definition.get("name","食材")))
+	_exchange_food_heat(solids,dt)
 	world.lid.advance(dt,vapor_ml,pan_c,moist_food or world.pan.water_ml>0.0)
 	# Pools only wet nearby ingredients. Falling streams select the first hit food.
 	for source in liquids:
@@ -120,6 +122,26 @@ func _step(dt: float) -> void:
 		if float(state.liquid_kg)>0.00001:
 			for other in solids:
 				if other!=food and other.position.distance_to(food.position)<35.0: coat_phase(food,other,dt*0.8)
+
+func _exchange_food_heat(solids: Array, dt: float) -> void:
+	# Each real contact exchanges a finite amount once. A stacked ingredient
+	# warms from its neighbour, without pretending it touches the hot metal.
+	for i in solids.size():
+		var a: RigidBody2D = solids[i]
+		var contacts := a.get_colliding_bodies()
+		for j in range(i+1,solids.size()):
+			var b: RigidBody2D = solids[j]
+			if not contacts.has(b): continue
+			var sa := ensure_state(a)
+			var sb := ensure_state(b)
+			var ca := maxf(0.01,a.mass*float(Thermal.profile(a.get_meta("definition")).cp)*0.56)
+			var cb := maxf(0.01,b.mass*float(Thermal.profile(b.get_meta("definition")).cp)*0.56)
+			var area := pow(maxf(0.001,minf(a.mass,b.mass))/0.15,0.66)
+			var q := Thermal.exchange(float(sa.core_c),float(sb.core_c),ca,cb,5.0*area,dt*5.0)
+			sa.core_c-=q/ca
+			sb.core_c+=q/cb
+			_apply(a,sa)
+			_apply(b,sb)
 
 func _apply(body: RigidBody2D,state: Dictionary) -> void:
 	body.set_meta("thermal",state)

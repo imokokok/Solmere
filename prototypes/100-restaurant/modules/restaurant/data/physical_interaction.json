@@ -1,0 +1,38 @@
+{
+  "model": "2d_game_approximation",
+  "gravity_px_s2": 980.0,
+  "grab": {
+    "frequency": 24.0,
+    "mass_exponent": 0.16,
+    "max_force": 16000.0,
+    "angular_frequency": 12.0
+  },
+  "pan": {
+    "tare_kg": 1.2,
+    "inertia_per_kg": 14500.0,
+    "friction": 0.65,
+    "bounce": 0.025,
+    "linear_damp": 1.2,
+    "angular_damp": 3.5
+  },
+  "lid": {
+    "mass_kg": 0.42,
+    "inertia_per_kg": 8500.0,
+    "friction": 0.5,
+    "bounce": 0.12,
+    "lift_pressure_proxy": 145.0,
+    "pop_after_hot_seconds": 9.0
+  },
+  "liquid": {
+    "tap_ml_s": 180.0,
+    "rim_drain_rate": 18.0,
+    "sink_drain_ml_s": 80.0,
+    "floor_drain_ml_s": 100.0
+  },
+  "spatula": {
+    "mass_kg": 0.16
+  },
+  "spoon": {
+    "mass_kg": 0.08
+  }
+}

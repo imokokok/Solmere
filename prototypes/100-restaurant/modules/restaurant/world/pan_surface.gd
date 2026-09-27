@@ -8,7 +8,10 @@ func _draw() -> void:
 	var center := Geometry.water_center(fill)
 	var radius := Geometry.water_radius(fill)
 	var points := PackedVector2Array()
-	for i in 48: points.append(center + Vector2.from_angle(i * TAU / 48.0) * radius)
+	for i in 48:
+		var p := center + Vector2.from_angle(i * TAU / 48.0) * radius
+		p.y += ((p.x-center.x)/radius.x) * clampf(controller.slosh*8.0, -5.0,5.0)
+		points.append(p)
 	draw_colored_polygon(points, Color("b6c9b6", 0.16))
 	var boiling: float = controller.world.reactions.water_activity()
 	if boiling <= 0.08: return

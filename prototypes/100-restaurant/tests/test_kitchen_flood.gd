@@ -1,86 +1,79 @@
 extends SceneTree
-## A running tap has a conserved path through sink storage, room flood and drain.
-var game: Node2D
-var failures: Array[String] = []
-var checks := 0
-
+var game
+var checks:=0
+var failures: Array[String]=[]
 func _initialize() -> void:
-	root.size = Vector2i(1600, 946)
+	root.size=Vector2i(1600,946)
 	call_deferred("run")
-
+func check(ok: bool,label: String) -> void:
+	checks+=1
+	if not ok: failures.append(label)
+func total(w) -> float:
+	var v: Dictionary=w.pan.runoff.inventory()
+	return w.pan.water_ml+w.pan.rim_water_ml+v.sink_ml+v.sink_overflow_ml+v.surface_ml+v.flight_ml+v.floor_ml+v.drained_ml+v.wiped_ml
+func step(w,seconds: float,rate:=120) -> void:
+	for i in int(seconds*rate):
+		w.pan.advance_water(1.0/rate)
+		w.pan.runoff.advance(1.0/rate)
 func run() -> void:
-	game = preload("res://modules/restaurant/restaurant.tscn").instantiate()
-	game.configure({"repository_path": "user://flood_%s/book.json" % Crypto.new().generate_random_bytes(16).hex_encode()})
+	game=preload("res://modules/restaurant/restaurant.tscn").instantiate()
+	game.configure({"repository_path":"user://flood_%s/book.json"%Crypto.new().generate_random_bytes(16).hex_encode()})
 	root.add_child(game)
 	await process_frame
 	game._close_modal()
-	game.world.audio.muted = true
-	check(game.world.flood_art.get_parent() == game.hud, "flood overlay covers the kitchen and HUD in the same screen layer")
-	check(is_equal_approx(game.session.duration, 720.0), "a full shift lasts twelve real minutes")
-	game.session.phase = "service"
-	game.session.elapsed = 360.0
+	var w=game.world
+	w.audio.muted=true
+	w.pan.set_physics_process(false)
+	w.pan.runoff.set_physics_process(false)
+	w.reactions.set_physics_process(false)
+	w.pan.rigid.freeze=true
+	check(w.flood_art.get_parent()==game.hud,"water foreground retains HUD/world alignment")
+	check(game.session.duration==720,"full shift retains twelve real minutes")
+	game.session.phase="service"
+	game.session.elapsed=360
 	game._update_hud()
-	check("12:00" in game.clock_label.text, "halfway through the shift the visible clock has advanced two game hours")
-	game.session.elapsed = 0.0
-	game.session.phase = "prep"
-	game.world.pan.faucet_on = true
-	game.world.pan._process(10.0)
-	check(is_equal_approx(game.world.sink_water_ml, 1200.0) and is_equal_approx(game.world.flood_water_ml, 600.0), "running tap fills sink then puts its overflow on the kitchen floor")
-	check(game.world.flood_ratio() > 0.0 and game.world.flood_ratio() < 0.1, "waterline starts at the floor and rises continuously")
-	game.world.pan._process(40.0)
-	check(is_equal_approx(game.world.flood_water_ml, game.world.KITCHEN_FLOOD_ML) and is_equal_approx(game.world.drained_flood_ml, 0.0), "continued running water reaches the full-room flood height")
-	game.world.pan._process(10.0)
-	check(is_equal_approx(game.world.drained_flood_ml, 1800.0), "water beyond the room capacity is recorded rather than disappearing")
-	game.world.pan.faucet_on = false
-	game.world._process(12.0)
-	check(is_equal_approx(game.world.flood_water_ml, 6600.0) and is_equal_approx(game.world.drained_flood_ml, 3000.0), "closing the tap drains standing room water without resetting it instantly")
-	check(is_equal_approx(game.world.sink_water_ml + game.world.flood_water_ml + game.world.drained_flood_ml, 10800.0), "tap water remains conserved across sink, floor and drain")
-	var world=game.world
-	world.pan.move_to(Vector2(-598,world.pan.HOME.y))
-	var overflow_path: PackedVector2Array=world.pan.faucet_art.overflow_path(1.0)
-	check(world.pan.contains(overflow_path[0]) and overflow_path[1].y<overflow_path[3].y,"overflow starts inside the moved pot, crosses its rim and descends outside")
-	world.pan.water_ml=400.0
-	var before: float=world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml
-	world.pan.grab(world.pan.point(world.pan.PIVOT))
-	world.pan.set_angle(PI/2)
-	check(world.pan.water_ml==0 and is_equal_approx(world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml-before,400.0),"tilting retained pot water into sink adds exactly that volume to sink/floor/drain")
-	world.pan.release_pan()
-	world.pan.water_ml=350.0
-	before=world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml
-	var drain:=InputEventMouseButton.new()
-	drain.button_index=MOUSE_BUTTON_LEFT; drain.pressed=true
-	drain.position=world.get_global_transform_with_canvas()*Vector2(215,765)
-	world.pan._input(drain)
-	check(world.pan.water_ml==0 and is_equal_approx(world.sink_water_ml+world.flood_water_ml+world.drained_flood_ml-before,350.0),"sink drain action conserves retained pot water instead of deleting it")
-	if DisplayServer.get_name() != "headless" and not OS.get_cmdline_user_args().is_empty():
-		var prefix: String = OS.get_cmdline_user_args()[0]
-		game.world.flood_water_ml = 0.0
-		game.world.flood_art.queue_redraw()
-		await process_frame
-		await RenderingServer.frame_post_draw
-		var dry := root.get_texture().get_image()
-		game.world.flood_water_ml = game.world.KITCHEN_FLOOD_ML * 0.72
-		game.world.flood_art.queue_redraw()
-		await process_frame
-		await RenderingServer.frame_post_draw
-		check(root.get_texture().get_image().save_png(prefix + "-rising.png") == OK, "GPU shows a room-wide rising waterline")
-		game.world.flood_water_ml = game.world.KITCHEN_FLOOD_ML
-		game.world.flood_art.queue_redraw()
-		await process_frame
-		await RenderingServer.frame_post_draw
-		var full := root.get_texture().get_image()
-		check(full.save_png(prefix + "-full.png") == OK, "GPU saves the fully flooded kitchen")
-		var changed := true
-		for pixel in [Vector2i(80, 80), Vector2i(720, 100), Vector2i(1250, 150), Vector2i(800, 750)]:
-			var a: Color = dry.get_pixelv(pixel)
-			var b: Color = full.get_pixelv(pixel)
-			changed = changed and Vector3(a.r, a.g, a.b).distance_to(Vector3(b.r, b.g, b.b)) > 0.08
-		check(changed, "full flood tints every sampled screen region including HUD and upper kitchen")
-	for failure in failures: push_error(failure)
-	print("%s: kitchen flood, %d checks" % ["PASS" if failures.is_empty() else "FAIL", checks])
+	check("12:00" in game.clock_label.text,"visible clock retains gradual shift time")
+	w.pan.faucet_on=true
+	step(w,0.01)
+	check(w.pan.runoff.inventory().flight_ml>0 and w.sink_water_ml==0,"tap enters as falling water, not a sink teleport")
+	step(w,6.0)
+	check(w.sink_water_ml>900 and w.sink_water_ml<1200 and w.flood_water_ml==0,"sink fills before any floor flooding")
+	step(w,1.0)
+	check(w.sink_water_ml<=1200 and w.pan.runoff.sink_overflow_ml>0,"full sink develops a finite brim reservoir")
+	step(w,4.0)
+	check(w.flood_water_ml>300 and w.flood_water_ml<800,"sink water travels from its brim before reaching floor")
+	check(absf(total(w)-w.pan.water_input_ml)<0.00001,"inlet, sink, brim, flights and floor conserve tap volume")
+	var local_count:=0
+	for ml in w.pan.runoff.floor_cells:
+		if ml>1: local_count+=1
+	check(local_count>1 and local_count<64,"floor pool spreads locally instead of appearing across the whole screen")
+	step(w,55.0,60)
+	check(w.flood_water_ml>7000,"continued overflow can gradually flood room")
+	check(absf(total(w)-w.pan.water_input_ml)<0.00001,"60 Hz subdivided flow preserves mass even at room capacity")
+	var before: float=w.flood_water_ml
+	w.pan.faucet_on=false
+	step(w,10.0)
+	check(w.flood_water_ml<before and w.flood_water_ml>before-1100,"closing tap drains gradually")
+	check(absf(total(w)-w.pan.water_input_ml)<0.00001,"drain and standing water remain conserved")
+	w.pan.runoff.clear()
+	w.pan.water_input_ml=0
+	w.pan.angle=0
+	w.pan.move_to(Vector2(w.pan.SINK_X-809,w.pan.HOME.y))
+	w.pan.water_ml=1499
+	w.pan.faucet_on=true
+	step(w,1.0)
+	check(w.pan.water_ml<=1500 and w.pan.outflow_ml_s>0,"filled pot produces actual rim overflow")
+	check(absf(total(w)-1499-w.pan.water_input_ml)<0.00001,"filled pot conserves inlet and spill")
+	w.pan.faucet_on=false
+	w.pan.angle=PI/2
+	var before_pour: float=w.pan.water_ml
+	w.pan.advance_water(1.0/120)
+	check(w.pan.water_ml>0 and w.pan.water_ml<before_pour,"tilting starts progressive flow without deleting water")
+	step(w,2.0)
+	check(w.pan.water_ml<0.01,"near-inverted pot eventually empties")
+	check(absf(total(w)-1499-w.pan.water_input_ml)<0.00001,"tilted flow preserves vessel, flight, sink and drain volume")
 	game.queue_free()
+	await process_frame
+	for f in failures: push_error(f)
+	print("%s: kitchen flood, %d checks"%["PASS" if failures.is_empty() else "FAIL",checks])
 	quit(0 if failures.is_empty() else 1)
-
-func check(ok: bool, description: String) -> void:
-	checks += 1
-	if not ok: failures.append(description)

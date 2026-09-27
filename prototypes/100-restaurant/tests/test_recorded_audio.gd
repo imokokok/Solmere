@@ -106,8 +106,14 @@ func _run() -> void:
 	world.pan.water_ml = 0.0
 	sound._last_effect.clear()
 	world.pan.grab(world.pan.point(Vector2(1000, 577)))
-	var tossed: int = world.pan._toss_contents(Vector2(0, -40), Time.get_ticks_msec())
-	_expect(tossed > 0 and sound.effects.toss.playing, "a real pan toss adds cookware motion sound only when food launches")
+	var anchor: Vector2=world.pan.rigid.to_global(world.pan.grip.local_anchor)
+	var heard_toss := false
+	for i in 150:
+		var height:= -140.0*smoothstep(0,1,float(i)/90) if i<90 else -140.0+140.0*smoothstep(0,1,float(i-90)/30)
+		world.pan.move_pointer(anchor+Vector2(0,height))
+		await physics_frame
+		heard_toss=heard_toss or sound.effects.toss.playing
+	_expect(heard_toss, "actual airborne food relative to the moving pan selects the toss recording")
 	world.pan.release_pan()
 	await create_timer(0.6).timeout
 	world.lid.rest_lid()
@@ -129,10 +135,12 @@ func _run() -> void:
 	world.lid.burst()
 	_expect(sound.effects.lid_pop.playing and sound.effects.steam_release.playing, "steam impulse synchronizes a dedicated lid transient and recorded air release")
 	_expect(not sound.effects.pan.playing and not sound.effects.hot_drop.playing and not sound.effects.lid_close.playing, "pop does not stack unrelated pan, frying-entry or manual-opening sounds")
-	world.lid.advance(2.0, 0.0, 22.0, false)
-	_expect(sound.effects.lid_land.playing, "the first real support impact triggers its own landing recording")
-	world.lid.advance(0.5, 0.0, 22.0, false)
-	_expect(sound.effects.lid_land.playing and sound.effects.lid_rebound.playing, "a quieter rebound voice preserves the first impact's ringing tail")
+	# Wait for native contacts, not advance() drawing timers.
+	var landed := false
+	for i in 360:
+		await physics_frame
+		landed = landed or sound.effects.lid_land.playing or sound.effects.lid_tick.playing
+	_expect(landed, "actual lid support impact triggers its contact recording")
 	_expect(sound.effects.lid_tick.volume_db < sound.effects.lid_pop.volume_db and sound.effects.lid_land.volume_db < sound.effects.lid_pop.volume_db, "warning and support impact use a restrained mix below the initial pop")
 	sound.muted = true
 	for player in sound.loops.values() + sound.effects.values():

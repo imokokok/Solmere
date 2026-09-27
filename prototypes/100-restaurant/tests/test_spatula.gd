@@ -27,24 +27,30 @@ func _run() -> void:
 	_mouse(tool.to_global(Vector2(-24, 0)), "down")
 	await process_frame
 	_expect(tool.active and world.get_held_name() == "锅铲", "pressing the exposed spatula above its cup grabs the correct tool")
-	_expect(is_equal_approx(tool.rotation, -PI/3), "picked up spatula is held diagonally with head below the grip")
+	await create_timer(0.8).timeout
+	_expect(absf(tool.rotation + PI/3)<0.1, "wrist torque settles the spatula diagonally without teleporting")
 	_expect(not world.spawn_ingredient(game._definition("egg")) and not world.pickup_knife(), "spatula occupies the hand exclusively")
-	var center: Vector2 = tomato.global_position
-	_mouse(center + Vector2(-45, -68), "move")
-	await process_frame
-	_mouse(center + Vector2(20, -76), "move")
-	await physics_frame
-	await process_frame
-	_expect(world.audio.effects.stir_wet.playing, "tomato contact selects the wet-food stir sound")
-	_expect(absf(tomato.angular_velocity) > 1.0, "head contact rotates actual rigid body")
-	_expect(tomato.linear_velocity.y < -20, "head contact lifts actual rigid body")
-	await physics_frame
-	await process_frame
-	_expect(tomato.global_position.distance_to(center) > 0.1, "food position changes through physics")
-	_expect(tomato.mass == mass and not tomato.get_meta("cut"), "stirring preserves mass and does not cut ingredients")
-	_expect(world._foods.get_child_count() == 1, "stirring never duplicates ingredients")
-	await create_timer(0.16).timeout
-	_expect(tomato.position.y < center.y - 8, "actual stir arc visibly raises food more than 8 pixels without an exaggerated launch")
+	# Contact fixture: put the real tool below real food, then lift its hand target.
+	tool.grip.target_angle=0
+	tool.rigid.position=Vector2(800,670)
+	tool.rigid.rotation=0
+	tool.rigid.linear_velocity=Vector2.ZERO
+	tool.rigid.angular_velocity=0
+	tool.grip.target=tool.rigid.to_global(tool.grip.local_anchor)
+	tomato.position=Vector2(785,627)
+	tomato.linear_velocity=Vector2.ZERO
+	tomato.angular_velocity=0
+	await create_timer(0.6).timeout
+	_expect(tool.rigid.get_colliding_bodies().has(tomato), "solid spatula face physically supports the food")
+	var center: Vector2=tomato.position
+	var target: Vector2=tool.grip.target
+	for i in 60:
+		tool.grip.target=target+Vector2(0,-60)*(i+1)/60.0
+		await physics_frame
+	await create_timer(0.3).timeout
+	_expect(tomato.position.y<center.y-30 and not tomato.freeze, "native face contact lifts independent food")
+	_expect(tomato.mass==mass and not tomato.get_meta("cut"), "contact preserves mass and does not cut")
+	_expect(world._foods.get_child_count()==1, "contact never duplicates food")
 	var key := InputEventKey.new()
 	key.pressed = true
 	key.physical_keycode = KEY_E
@@ -59,10 +65,10 @@ func _run() -> void:
 	_expect(tool.position.is_equal_approx(home), "released spatula never follows mouse")
 	_expect(tool.stir_sweep(Vector2(740, 600), Vector2(870, 600)) == 0, "idle tool cannot apply impulses")
 	_expect(world.audio.stir_profile(game._definition("beef"))=="meat", "meat has a heavier contact profile")
-	_expect(world.audio.stir_profile(game._definition("bread"))=="dry", "bread has a dry brushing profile")
+	_expect(world.audio.stir_profile(game._definition("bread"))=="dry", "grain has a dry brushing profile")
 	_expect(world.audio.stir_profile(game._definition("rock"))=="hard", "strange hard objects have a restrained knock profile")
 	await create_timer(0.8).timeout
-	_expect(game.session.dish.size() == 1, "flipped ingredient remains in recipe after settling")
+	_expect(is_instance_valid(tomato), "independent ingredient survives release")
 	_mouse(tool.to_global(Vector2(-24, 0)), "down")
 	await process_frame
 	var poster_key := InputEventKey.new()
@@ -94,26 +100,41 @@ func _run() -> void:
 	var enabled:=true
 	for shape in spoon._bowl_shapes: enabled=enabled and not shape.disabled
 	_expect(enabled,"spoon bowl collisions are active only while held")
-	tomato.global_position=spoon.to_global(Vector2(-25,-5))
-	tomato.linear_velocity=Vector2.ZERO
-	tomato.angular_velocity=0
-	await physics_frame
-	await physics_frame
-	var spoon_food_start:=tomato.global_position
-	var spoon_pointer: Vector2 = spoon.position - spoon._offset
-	for i in range(10):
-		_mouse(spoon_pointer+Vector2(5+i*5,0),"move")
+	# A quarter, rather than an oversized whole tomato, fits in the spoon bowl.
+	tomato.position=Vector2(1210,730)
+	tomato.freeze=true
+	tomato.set_meta("on_board",true)
+	var halves: Array=world.split_food(tomato,Vector2.RIGHT,Vector2.INF,4)
+	var quarters: Array=world.split_food(halves[0],Vector2.DOWN,Vector2.INF,4)
+	var morsel: RigidBody2D=quarters[0]
+	morsel.stop_board_settle()
+	morsel.set_meta("on_board",false)
+	morsel.freeze=false
+	spoon.grip.target_angle=0
+	spoon.rigid.position=Vector2(710,550)
+	spoon.rigid.rotation=0
+	spoon.rigid.linear_velocity=Vector2.ZERO
+	spoon.rigid.angular_velocity=0
+	spoon.grip.target=spoon.rigid.to_global(spoon.grip.local_anchor)
+	morsel.position=Vector2(685,525)
+	morsel.linear_velocity=Vector2.ZERO
+	morsel.angular_velocity=0
+	await create_timer(0.7).timeout
+	_expect(spoon.rigid.get_colliding_bodies().has(morsel),"finite spoon bowl supports a fitting cut morsel")
+	var spoon_food_start:=morsel.position
+	var spoon_target: Vector2=spoon.grip.target
+	for i in 90:
+		spoon.grip.target=spoon_target+Vector2(55,0)*(i+1)/90.0
 		await physics_frame
-	for i in range(8): await physics_frame
-	await process_frame
-	_expect(tomato.global_position.x>spoon_food_start.x+8 and spoon.bowl_contains(tomato),"food is physically carried inside the spoon depression")
-	for i in range(7): _wheel(MOUSE_BUTTON_WHEEL_DOWN)
-	await physics_frame
-	await physics_frame
-	_expect(spoon.rotation>0.72 and not spoon.bowl_contains(tomato),"tilting the spoon past its rim releases food to gravity")
+	await create_timer(0.4).timeout
+	_expect(morsel.position.x>spoon_food_start.x+25 and spoon.bowl_contains(morsel),"bowl collisions carry food without magnetic attraction")
+	for i in range(14): _wheel(MOUSE_BUTTON_WHEEL_DOWN)
+	await create_timer(1.3).timeout
+	print("SPOON_TILT angle=",spoon.rotation," foodlocal=",spoon.to_local(morsel.global_position)," active=",spoon.active," target=",spoon.grip.target_angle)
+	_expect(spoon.rotation>2.0 and not spoon.bowl_contains(morsel),"wrist tilt releases the morsel over the real rim")
 	world.spawn_ingredient(game._definition("shrimp"))
 	_expect(world._held==null,"held spoon prevents creating an unrelated hand-held item")
-	_mouse(spoon_home,"up")
+	spoon.release_tool()
 	await physics_frame
 	await process_frame
 	_expect(spoon._bowl_body.collision_mask==0,"putting the spoon down immediately removes hidden collision response")

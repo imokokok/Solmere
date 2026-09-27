@@ -36,7 +36,7 @@ static func exchange(a: float,b: float,capacity_a: float,capacity_b: float,condu
 	var c2 := maxf(0.01,capacity_b)
 	return (a-b)/(1.0/c1+1.0/c2)*(1.0-exp(-conductance*(1.0/c1+1.0/c2)*dt))
 
-static func advance(s: Dictionary, definition: Dictionary, dt: float, contact_c: float, bath_c: float, wet: bool, native_mass: float, exposed_c: float = AMBIENT, evaporation_scale: float = 1.0) -> float:
+static func advance(s: Dictionary, definition: Dictionary, dt: float, contact_c: float, bath_c: float, wet: bool, native_mass: float, exposed_c: float = AMBIENT, evaporation_scale: float = 1.0, contact_scale: float = 1.0) -> float:
 	if dt<=0.0: return 0.0
 	var p := profile(definition)
 	var mass := maxf(native_mass,0.000001)
@@ -49,7 +49,7 @@ static func advance(s: Dictionary, definition: Dictionary, dt: float, contact_c:
 	var contact := int(s.contact_face)
 	for f in 2:
 		var environment := bath_c if wet else (contact_c if f==contact else exposed_c)
-		var k := (18.0 if wet else (15.0 if f==contact else (2.2 if exposed_c > AMBIENT else 0.8)))*area
+		var k := (18.0 if wet else (15.0*contact_scale if f==contact else (2.2 if exposed_c > AMBIENT else 0.8)))*area
 		var q := (environment-float(s.faces_c[f]))*face_cap*(1.0-exp(-k/face_cap*dt*5.0))
 		s.faces_c[f] += q/face_cap
 		heat_in += q if (wet or f==contact or exposed_c > AMBIENT) else 0.0

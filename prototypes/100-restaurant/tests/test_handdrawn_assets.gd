@@ -110,12 +110,24 @@ func run() -> void:
 		await capture("sliced")
 		var saved: Dictionary = {}
 		for part in parts: saved[part.get_instance_id()] = part.get_meta("fragment_polygon").duplicate()
-		world._pickup(parts[0])
-		world.begin_food_drag(parts[0].position)
-		world._move_dragged_food(world.pan.point(Vector2(810, 560)))
-		world._finish_food_drag()
+		for fragment in parts:
+			world._pickup(fragment)
+			world.drop_into_pan()
+			await create_timer(0.4).timeout
 		await create_timer(1.0).timeout
-		expect(game.session.dish.size() == 2, "all mushroom pieces enter pan together")
+		expect(game.session.dish.size() == 2, "individually dropped mushroom pieces enter the pan")
+		var thermal = preload("res://modules/restaurant/domain/food_thermal.gd")
+		var sa: Dictionary = world.reactions.ensure_state(parts[0])
+		var sb: Dictionary = world.reactions.ensure_state(parts[1])
+		var ca: float = parts[0].mass * float(thermal.profile(parts[0].get_meta("definition")).cp) * 0.56
+		var cb: float = parts[1].mass * float(thermal.profile(parts[1].get_meta("definition")).cp) * 0.56
+		sa.core_c=120.0
+		sb.core_c=22.0
+		world.reactions._exchange_food_heat(parts,0.25)
+		expect(absf(float(sa.core_c)*ca+float(sb.core_c)*cb-(120.0*ca+22.0*cb))<0.00001, "food contact transfers equal and opposite thermal energy")
+		expect(float(sa.core_c)<120 and float(sb.core_c)>22 and float(sb.core_c)<float(sa.core_c), "stacked food warms only through its real contact without equalising instantly")
+		sa.core_c=22.0
+		sb.core_c=22.0
 		game.session.set_heating(true)
 		preload("res://tests/thermal_fixture.gd").cook(game,45.0)
 		world.set_dish(game.session.dish, game.session.ingredients)

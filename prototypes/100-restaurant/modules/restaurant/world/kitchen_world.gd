@@ -14,6 +14,7 @@ var heat_level: = "medium"
 var plated: = false
 var camera: Camera2D
 var _held: RigidBody2D
+var held_grip = preload("res://modules/restaurant/world/physical_grip.gd").new()
 var _foods: Node2D
 var _egg_shells: Node2D
 var shell_waste_kg := 0.0
@@ -71,19 +72,9 @@ func flood_ratio() -> float:
 	return clampf(flood_water_ml / KITCHEN_FLOOD_ML, 0.0, 1.0)
 
 func receive_faucet_runoff(amount_ml: float) -> void:
-	if amount_ml <= 0.0: return
-	var before := flood_water_ml
-	var sink_add := minf(amount_ml, maxf(0.0, SINK_HOLD_ML - sink_water_ml))
-	sink_water_ml += sink_add
-	var to_floor := amount_ml - sink_add
-	var floor_add := minf(to_floor, maxf(0.0, KITCHEN_FLOOD_ML - flood_water_ml))
-	flood_water_ml += floor_add
-	drained_flood_ml += to_floor - floor_add
-	if before <= 0.0 and flood_water_ml > 0.0:
-		interaction.emit("notice", "水槽已经满了！快关水龙头，厨房地面的水正在上涨。")
-	if before < KITCHEN_FLOOD_ML and flood_water_ml >= KITCHEN_FLOOD_ML:
-		interaction.emit("notice", "厨房已经被水淹没！快关水龙头。")
-	if is_instance_valid(flood_art): flood_art.queue_redraw()
+	# External callers add water at the sink mouth, preserving flight time.
+	if amount_ml > 0.0: pan.runoff.emit_water(amount_ml, Vector2(200, 700))
+
 var _food_drag_offset: = Vector2.ZERO
 var _food_drag_origin: = Vector2.ZERO
 var _food_drag_moved: = false
@@ -231,6 +222,9 @@ func _ready() -> void :
 	plate_ink.world = self
 	plate_ink.z_index = 5
 	add_child(plate_ink)
+	var inspector = preload("res://modules/restaurant/world/physics_inspector.gd").new()
+	inspector.world = self
+	add_child(inspector)
 	_last_mouse = get_global_mouse_position()
 	set_process(true)
 
@@ -274,14 +268,14 @@ func _update_held_motion(delta: float, mouse: Vector2) -> void:
 		# Keep a dispensing container visibly above the rear rim. Its nozzle and
 		# stream still use the same transform as the held art.
 		if _is_whole_egg(_held) and int(_held.get_meta("egg_taps", 0)) == 1:
-			_held.position = _held.get_meta("egg_tap_point", _held.position)
-		else:
-			_held.global_position = Vector2(clampf(mouse.x, 727.0 + pan.offset.x, 895.0 + pan.offset.x), minf(mouse.y, 470.0 + pan.offset.y)) if _squeezing else mouse + (_food_drag_offset if _dragging else Vector2.ZERO)
+			held_grip.target = to_global(_held.get_meta("egg_tap_point", _held.position))
+		elif not _dragging:
+			held_grip.target = Vector2(clampf(mouse.x, 727.0 + pan.offset.x, 895.0 + pan.offset.x), minf(mouse.y, 470.0 + pan.offset.y)) if _squeezing else mouse + (_food_drag_offset if _dragging else Vector2.ZERO)
 		if _squeezing:
 			var mode: = get_dispense_mode(_held.get_meta("definition", {}))
 			# The art adapter owns mouth orientation; rotating here as well
 			# previously turned top-opening authored bottles upright again.
-			_held.rotation = sin(_time * 25.0) * 0.1 if mode == "powder" else 0.0
+			held_grip.target_angle = sin(_time * 25.0) * 0.1 if mode == "powder" else 0.0
 			if not _squeeze_region().has_point(mouse):
 				_stop_squeezing()
 			else:
@@ -305,15 +299,6 @@ func _process(delta: float) -> void :
 	_backdrop.set("knife_held", _knife_held)
 	_backdrop.queue_redraw()
 	_time += delta
-	if controls_enabled and is_instance_valid(pan) and not pan.faucet_on:
-		var drained := minf(flood_water_ml, delta * 100.0)
-		flood_water_ml -= drained
-		drained_flood_ml += drained
-		if flood_water_ml <= 0.0:
-			var sink_drained := minf(sink_water_ml, delta * 80.0)
-			sink_water_ml -= sink_drained
-			drained_flood_ml += sink_drained
-		if drained > 0.0 and is_instance_valid(flood_art): flood_art.queue_redraw()
 	_chop_flash = maxf(0, _chop_flash - delta)
 	var mouse: = get_global_mouse_position()
 	_mouse_velocity = (mouse - _last_mouse) / maxf(delta, 0.001)
@@ -348,6 +333,7 @@ func _process(delta: float) -> void :
 	queue_redraw()
 
 func _physics_process(_delta: float) -> void :
+	if controls_enabled and is_instance_valid(_held): held_grip.apply(_held, _delta)
 	if not controls_enabled or not is_instance_valid(_pan_area):
 		return
 
@@ -494,8 +480,6 @@ func set_controls_enabled(value: bool) -> void :
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	if is_instance_valid(_foods):
 		for body in _foods.get_children():
-			if body == _held:
-				continue
 			if not value:
 				if not body.has_meta("modal_freeze"):
 					body.set_meta("modal_freeze", body.freeze)
@@ -553,6 +537,7 @@ func spawn_ingredient(definition: Dictionary) -> bool:
 	body.add_child(collision)
 	_foods.add_child(body)
 	_make_food_visual(body, definition)
+	body.global_position = get_global_mouse_position()
 	_pickup(body)
 	return true
 
@@ -627,33 +612,27 @@ func _update_food_depth() -> void:
 func begin_food_drag(pointer: Vector2, from_storage: = false) -> void :
 	if not controls_enabled or not is_instance_valid(_held): return
 	_drag_group.clear()
-	if bool(_held.get_meta("cut", false)) and not bool(_held.get_meta("enrolled", false)) and not bool(_held.get_meta("plated", false)):
-		var batch_uid: = str(_held.get_meta("batch_uid", ""))
-		for candidate in _foods.get_children():
-			if candidate == _held or not candidate is RigidBody2D or candidate.is_queued_for_deletion(): continue
-			if str(candidate.get_meta("batch_uid", "")) != batch_uid or bool(candidate.get_meta("enrolled", false)) or bool(candidate.get_meta("plated", false)): continue
-			if candidate.global_position.distance_to(_held.global_position) > 220.0: continue
-			_drag_group.append({"body": candidate, "offset": candidate.global_position - _held.global_position})
-			candidate.freeze = true
-			candidate.collision_layer = 0
-			candidate.linear_velocity = Vector2.ZERO
-			candidate.angular_velocity = 0.0
-			candidate.z_index = 19
+	if from_storage:
+		# A queued native drag can move the OS cursor before the press is handled.
+		# Initialise a newly taken inventory body at the source press, not at that
+		# later cursor position, so its grip does not acquire a huge false lever arm.
+		_held.global_position = to_global(pointer)
+		_held.linear_velocity = Vector2.ZERO
+		_held.angular_velocity = 0.0
+		_held.reset_physics_interpolation()
+	# Picked fragments remain individual bodies. Gather them with the spatula.
 	_dragging = true
 	_food_drag_origin = pointer
 	_food_drag_from_storage = from_storage
 	_food_drag_moved = false
 	_food_drag_offset = Vector2.ZERO if from_storage else _held.global_position - to_global(pointer)
+	held_grip.begin(_held, to_global(pointer))
 	_move_dragged_food(pointer)
 
 func _move_dragged_food(pointer: Vector2) -> void :
 	if not _dragging or not is_instance_valid(_held): return
 	if pointer.distance_to(_food_drag_origin) > 6: _food_drag_moved = true
-	_held.global_position = to_global(pointer) + _food_drag_offset
-	for member in _drag_group:
-		var body: RigidBody2D = member.get("body")
-		if is_instance_valid(body):
-			body.global_position = _held.global_position + (member.get("offset", Vector2.ZERO) as Vector2)
+	held_grip.target = to_global(pointer)
 	_sync_held_foreground()
 
 func _finish_food_drag(force: = false) -> void :
@@ -662,7 +641,7 @@ func _finish_food_drag(force: = false) -> void :
 	_food_drag_offset = Vector2.ZERO
 	_food_drag_from_storage = false
 	if not is_instance_valid(_held) or keep_carried: return
-	if not force and storage_return_handler.is_valid() and storage_return_handler.call(_held):
+	if not force and _held.global_position.distance_to(held_grip.target)<35.0 and storage_return_handler.is_valid() and storage_return_handler.call(_held):
 		_stop_squeezing()
 		_drag_group.clear()
 		return
@@ -678,36 +657,9 @@ func _finish_food_drag(force: = false) -> void :
 		_drag_group.clear()
 		return
 
-	var primary: RigidBody2D = _held
-	var dropped_batch: Array[RigidBody2D] = [primary]
-	for member in _drag_group:
-		var grouped: RigidBody2D = member.get("body")
-		if is_instance_valid(grouped): dropped_batch.append(grouped)
-	if pan.contains(point) and bool(primary.get_meta("cut", false)) and not bool(primary.get_meta("is_container", false)):
-		# Land close to the release point while keeping independent fragments
-		# apart. A fixed leftmost slot made each batch visibly jump on release.
-		var center: Vector2 = pan.local_point(point).clamp(Vector2(770, 570), Vector2(850, 584))
-		var pan_offsets := [
-			Vector2(0, 0), Vector2(-28, -7), Vector2(28, -7), Vector2(-56, -11), Vector2(56, -11),
-			Vector2(-42, 10), Vector2(-14, 10), Vector2(14, 10), Vector2(42, 10),
-			Vector2(-70, -24), Vector2(-42, -24), Vector2(-14, -24), Vector2(14, -24), Vector2(42, -24), Vector2(70, -24),
-			Vector2(-56, 24), Vector2(-28, 24), Vector2(0, 24), Vector2(28, 24), Vector2(56, 24)
-		]
-		for index in dropped_batch.size():
-			# More than twenty fragments are layered with a small, deterministic
-			# offset.  Accepted pan food does not collide with other food, so it can
-			# overlap naturally without gaining an explosive impulse.
-			var layer: int = index / pan_offsets.size()
-			var slot: Vector2 = center + pan_offsets[index % pan_offsets.size()] + Vector2(layer * 3, -layer * 3)
-			dropped_batch[index].position = pan.point(slot)
-			dropped_batch[index].set_deferred("position", dropped_batch[index].position)
-	else:
-		_held.global_position = to_global(point.clamp(Vector2(40, 520), Vector2(1560, 700)))
-	drop_held(false)
+	# Release the touched fragment at its contact pose and velocity.
+	drop_held(false, false)
 	_release_drag_group()
-	if pan.contains(primary.position):
-		for body in dropped_batch:
-			_on_pan_entered(body)
 
 func _release_drag_group() -> void :
 	for member in _drag_group:
@@ -742,13 +694,12 @@ func _pickup(body: RigidBody2D) -> void :
 	body.set_meta("on_board", false)
 	_update_plated_flag()
 	body.set_meta("pending", false)
-	body.freeze = true
-	body.collision_layer = 0
+	body.freeze = false
+	body.collision_layer = 16
 	body.collision_mask = 1 if bool(body.get_meta("dispensed", false)) else 17
-	body.linear_velocity = Vector2.ZERO
-	body.angular_velocity = 0
 	body.z_index = 20
 	_held = body
+	held_grip.begin(body, body.global_position)
 	var sauce = body.get_node_or_null("SauceBlob")
 	if is_instance_valid(sauce):
 		sauce.position = Vector2.ZERO
@@ -759,7 +710,7 @@ func _pickup(body: RigidBody2D) -> void :
 	if _held_is_sauce_bottle():
 		focus_changed.emit(get_held_name(), get_held_operation_hint())
 
-func drop_held(throw_item: = false) -> void :
+func drop_held(throw_item: = false, allow_storage_return := true) -> void :
 	_dragging = false
 	_food_drag_offset = Vector2.ZERO
 	if not is_instance_valid(_held):
@@ -768,7 +719,7 @@ func drop_held(throw_item: = false) -> void :
 		interaction.emit("notice", "锅盖挡住了锅口，先把盖子拖开。")
 		return
 	_stop_squeezing()
-	if storage_return_handler.is_valid() and storage_return_handler.call(_held): return
+	if allow_storage_return and storage_return_handler.is_valid() and storage_return_handler.call(_held): return
 	var body: = _held
 	_held = null
 	_sync_held_foreground()
@@ -776,8 +727,7 @@ func drop_held(throw_item: = false) -> void :
 	body.freeze = false
 	body.sleeping = false
 	body.z_index = 0
-	body.linear_velocity = Vector2(0, 20)
-	body.angular_velocity = 0
+	held_grip.release()
 	body.set_deferred("global_position", body.global_position)
 	if _stations.chop.has_point(body.position) and not body.get_meta("is_container", false):
 		body.position = body.position.clamp(_board_food_min(), _board_food_max())
@@ -789,7 +739,7 @@ func drop_held(throw_item: = false) -> void :
 	if is_instance_valid(plate) and plate.hit_rect().has_point(body.position) and not body.get_meta("is_container", false):
 		_land_on_plate(body)
 	if throw_item:
-		body.linear_velocity = Vector2(0, 20)
+		body.linear_velocity += _mouse_velocity.limit_length(260.0) * 0.35
 	held_changed.emit("")
 
 func drop_into_pan() -> void :
@@ -915,6 +865,7 @@ func _on_pan_entered(body: Node2D) -> void :
 			food_entered_pan.emit(str(body.get_meta("id")), bool(body.get_meta("cut", false)), body)
 
 func _on_pan_exited(body: Node2D) -> void :
+	if body.get_meta("enrolled", false) and absf(pan.angle) > 0.3: body.set_meta("poured", true)
 	if pan.is_carrying(body): return
 	# The pan and rigid bodies update in different physics phases. Area exit
 	# signals can arrive while a carried body still has its previous pose.
@@ -941,14 +892,6 @@ func accept_food(body: RigidBody2D, accepted: bool) -> void :
 			pan.residue.transfer_to_food(body)
 			body.set_meta("residue_deposited", false)
 		body.set_meta("container_location", "pan")
-		var displaced := minf(pan.water_ml, maxf(0.0, pan_contents_ml() - PAN_CAPACITY_ML))
-		if displaced > 0.0:
-			pan.water_ml -= displaced
-			if not pan.above_sink():
-				pan.overflow_water_ml += displaced
-				spill_pan_water(displaced, pan.point(Vector2(920, 643)))
-				_overflow_until = _time + 0.35
-				_overflow_color = Color("75b9bd")
 		# Independent solids contact one another; liquid batches stay non-solid.
 		# Cut batches use distinct starting positions to avoid coincident contacts.
 		body.collision_mask = 1 if body.has_meta("liquid_state") else 17
@@ -1128,6 +1071,9 @@ func clear_workspace() -> void:
 	pan.water_heat = 0
 	pan.overflow_water_ml = 0
 	pan._carried.clear()
+	pan.rim_water_ml = 0.0
+	pan.runoff.clear()
+	if is_instance_valid(sponge): sponge.absorbed_ml = 0.0
 	for body in _foods.get_children():
 		if body == _held:
 			_held = null
@@ -1497,9 +1443,7 @@ func _update_landed_seasoning() -> void :
 
 func spill_pan_water(volume_ml: float, spill_position: Vector2) -> void:
 	if volume_ml <= 0.0: return
-	var definition := {"id": "water", "name": "水", "color": "75b9bd", "dispense_mode": "pour", "density_g_ml": 1.0, "viscosity": 0.08}
-	var state := SauceState.make_batch(definition, volume_ml, "pan", 0.0)
-	_add_overflow(definition, state, spill_position)
+	pan.runoff.emit_water(volume_ml, spill_position, pan.rigid.linear_velocity * 0.35)
 
 func _add_overflow(definition: Dictionary, incoming_state: Dictionary = {}, spill_position: Vector2 = Vector2.INF) -> RigidBody2D:
 	var id: = str(definition.get("id", "ketchup"))
@@ -1790,7 +1734,7 @@ func split_food(body: RigidBody2D, normal: = Vector2.RIGHT, world_cut: = Vector2
 	body.queue_free()
 	_chop_flash = 0.2
 	audio.play_chop(definition)
-	interaction.emit("notice", ("横切成小块了" if cut_style == "dice" else "切出食材片了") + "；拖任意一块可把同批切块一起下锅。")
+	interaction.emit("notice", ("横切成小块了" if cut_style == "dice" else "切出食材片了") + "；用锅铲收拢，或逐块拿起下锅。")
 	return result
 
 func _clip_half(polygon: PackedVector2Array, normal: Vector2, distance: float) -> PackedVector2Array:
