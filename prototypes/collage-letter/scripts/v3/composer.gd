@@ -3,13 +3,13 @@ signal changed
 signal picked
 const Piece=preload("res://scripts/v3/paper_object.gd")
 const Paper=preload("res://scripts/letter_paper.gd")
-const PAGE=Rect2(493,233,365,516)
+const PAGE=Rect2(568,154,414,585)
 var fragments:Array=[]
 var mode="HELP"
 var owner_name="Mara"
 var selected
 var read_only=false
-var paper_style=2
+var paper_style=1
 const CutStyle=preload("res://scripts/v3/cutout_style.gd")
 func _ready() -> void:
  mouse_filter=Control.MOUSE_FILTER_IGNORE;size=Vector2(1440,810)
@@ -21,7 +21,10 @@ func add_fragment(d:Dictionary,at:Vector2=Vector2(545,355)):
  var shown=preload("res://scripts/v3/chinese.gd").show(word)
  var text_width=CutStyle.font_for(d).get_string_size(shown,HORIZONTAL_ALIGNMENT_LEFT,-1,27).x
  var dimensions=Vector2(clampf(text_width+16,36,340),43)
+ if d.has("asset_path"):dimensions=Vector2(153,128) if d.kind=="photo" else Vector2(78,96)
+ if d.get("kind","")=="tape":dimensions=Vector2(128,34)
  p.setup(d,at,dimensions);p.data.fragment=true;p.resizable=true;p.movable=not read_only
+ if read_only:p.mouse_filter=Control.MOUSE_FILTER_IGNORE
  p.picked.connect(func(paper):selected=paper;picked.emit())
  p.changed.connect(func(_p):changed.emit())
  p.examined.connect(func(paper):selected=paper)
@@ -50,7 +53,7 @@ func lower_selected() -> void:
  if is_instance_valid(selected):move_child(selected,0);changed.emit()
 
 func split_selected() -> bool:
- if not is_instance_valid(selected):return false
+ if not is_instance_valid(selected) or selected.data.has("asset_path") or selected.data.get("kind","")=="tape":return false
  var old=selected;var word=preload("res://scripts/v3/chinese.gd").show(str(old.data.word))
  if word.length()<2:return false
  var at=old.position;var angle=old.rotation;var zoom=old.scale;var base=old.data.duplicate(true)

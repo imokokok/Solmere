@@ -101,3 +101,25 @@ static func validate(fragments:Array,required:Dictionary,avoided:Dictionary) -> 
  for key in avoided:
   if totals.get(key,0)>=avoided[key]:violations.append(key)
  return {"passed":missing.is_empty() and violations.is_empty(),"missing":missing,"violations":violations,"totals":totals}
+
+static func visual_sources() -> Array:
+ var result=[]
+ for entry in [["photo_harbor","观景台 · 海港午后","lookout-terrace.jpg"],["photo_shop","居民相册 · 书信事务所","letter-office-front.jpg"],["photo_cafe","居民相册 · 午后的餐馆","restaurant-afternoon.jpg"]]:
+  var d=item(entry[0],entry[1],"来自小镇相册。点一下，拿一张到收纳盘。","photo")
+  d.asset_path="res://extensions/collage_letter/assets/open_pack/photos/"+entry[2];result.append(d)
+ for entry in [["clover","一枚幸运草","clover.svg"],["flower","路边的小花","flower.svg"]]:
+  var d=item(entry[0],entry[1],"夹在来信里的小纪念。点一下，放进收纳盘。","keepsake")
+  d.asset_path="res://extensions/collage_letter/assets/open_pack/icons/"+entry[2];result.append(d)
+ return result
+static func desk_example() -> Array:
+ # A small physical collage, constructed from the very same playable pieces.
+ var result=[]
+ var photo=visual_sources()[0].duplicate(true);photo.fragment=true;photo.word=""
+ result.append({"data":photo,"at":[706,295],"zoom":1.35,"angle":-3.5})
+ var flower=visual_sources()[2+2].duplicate(true);flower.fragment=true;flower.word=""
+ result.append({"data":flower,"at":[891,288],"zoom":0.75,"angle":8.0})
+ var rows=[["又一个六月",636,278,1.08,-3,2],["慢一点",614,445,1.05,-2,3],["我们",729,477,0.92,2,0],["一起",804,479,0.92,-2,2],["看海",760,538,1.15,-3,4]]
+ for i in rows.size():
+  var r=rows[i];result.append({"data":{"id":"desk_example_"+str(i),"word":r[0],"fragment":true,"print_variant":r[5],"tags":{}},"at":[r[1],r[2]],"zoom":r[3],"angle":r[4]})
+ result.append({"data":{"id":"sample_tape","kind":"tape","fragment":true,"tags":{}},"at":[810,278],"zoom":0.58,"angle":-7})
+ return result

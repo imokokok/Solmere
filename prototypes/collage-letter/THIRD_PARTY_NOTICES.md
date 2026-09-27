@@ -2,7 +2,7 @@
 
 本次没有提取商业游戏的美术、音效或代码。V3 的案件、十二封虚构海上来信、中文翻译、邮票小图形及交互代码为本项目新增内容；代码沿用仓库 MIT 许可。
 
-- 桌景沿用本项目现有平涂图：`assets/illustrated_office/desk-room-v2.png`，制作记录在同目录 `PROVENANCE.md`。本次没有新增生成图片。
+- 当前桌景为新生成的手绘背景 `assets/illustrated_office/desk-reference-v3.png`，使用内置图像生成工具，以用户给的布局图作为风格参考；不直接复制图中 UI、文字、照片。完整提示词在同目录 `PROVENANCE.md`。本项目既有海港、书信事务所、餐馆插画用于可拼贴照片。工具、纸签、木盘与翻页由游戏代码绘制。生成图不标注为 CC0。
 - 扫描纸张和既有音效沿用 `assets/open_pack/sources.json` 及 `assets/open_pack/licenses/` 中逐项记录的 CC0 素材。保留原始作者及许可文件，没有把用户提供的图片标成 CC0。
 - Xiaolai、Libre Baskerville：随包保留各自 SIL OFL。Special Elite 的既有许可证保留在字体目录。
 - 新增 Noto Sans SC（现代中文印刷黑体），来源 https://github.com/google/fonts/tree/main/ofl/notosanssc ，随包保留 SIL OFL 1.1，允许商业使用与再分发。字重由字体本身的可变字重提供。

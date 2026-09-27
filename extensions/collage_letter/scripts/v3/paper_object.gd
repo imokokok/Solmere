@@ -23,8 +23,10 @@ var lift=0.0
 var held_scale=Vector2.ONE
 var cut_indices:Array=[]
 var turn=0.0
+var artwork:Texture2D
 func setup(d:Dictionary,at:Vector2,dimensions:Vector2=Vector2(162,128)) -> void:
  data=d.duplicate(true);position=at;size=dimensions;pivot_offset=size/2
+ if data.has("asset_path"):artwork=load(data.asset_path)
  source_ids=d.get("source_ids",[d.id]).duplicate()
  mouse_filter=Control.MOUSE_FILTER_STOP
 func _ready() -> void:
@@ -38,7 +40,7 @@ func _gui_input(e:InputEvent) -> void:
    if e.double_click:examined.emit(self);accept_event();return
    if not movable:return
    state=State.HELD;start=get_global_transform()*e.position;offset=start-global_position;held_scale=scale
-   resizing=resizable and e.position.x>size.x-25 and e.position.y>size.y-25
+   resizing=resizable and e.position.x>size.x-minf(14,size.x*0.25) and e.position.y>size.y-minf(14,size.y*0.25)
    lift=8;move_to_front();picked.emit(self);queue_redraw();accept_event()
   elif e.button_index==MOUSE_BUTTON_RIGHT and e.pressed and not data.get("fragment",false):
    flip();accept_event()
@@ -57,7 +59,7 @@ func _input(e:InputEvent) -> void:
  elif e is InputEventMouseButton and e.button_index==MOUSE_BUTTON_LEFT and not e.pressed:
   state=State.FLAT;resizing=false
   var tw=create_tween();tw.tween_property(self,"lift",0.0,0.12);tw.parallel().tween_method(func(_v):queue_redraw(),0.0,1.0,0.12)
-  position.x=clampf(position.x,-size.x*0.25,1400-size.x*0.35);position.y=clampf(position.y,200,790-size.y*0.3)
+  position.x=clampf(position.x,-size.x*0.25,1400-size.x*0.35);position.y=clampf(position.y,133,790-size.y*0.3)
   dropped.emit(self);changed.emit(self);queue_redraw();get_viewport().set_input_as_handled()
 func flip() -> void:
  if turn>0:return
@@ -69,6 +71,16 @@ func _draw() -> void:
  if data.is_empty():return
  var r=Rect2(Vector2(0,-lift),size)
  if lift>0:draw_rect(Rect2(Vector2(4,6+lift),size),Color(0.22,0.15,0.1,0.16))
+ if data.has("asset_path"):
+  if data.kind=="photo":
+   Paper.paint(self,r,1,true);draw_texture_rect(artwork,Rect2(r.position+Vector2(7,7),r.size-Vector2(14,24)),false)
+  else:
+   draw_texture_rect(artwork,Rect2(r.position+Vector2(3,4+lift*0.3),r.size),false,Color(0.25,0.19,0.12,0.18));draw_texture_rect(artwork,r,false)
+  draw_held_outline(r);return
+ if data.get("kind","")=="tape":
+  draw_rect(r,Color(0.46,0.60,0.66,0.55))
+  for x in range(0,int(size.x),14):draw_line(r.position+Vector2(x,0),r.position+Vector2(x+12,size.y),Color(0.9,0.87,0.76,0.47),5)
+  draw_held_outline(r);return
  if str(data.get("kind","")).begins_with("tear") and not reverse:
   var poly=PackedVector2Array();var edge=[]
   for n in 18:
@@ -109,6 +121,8 @@ func _draw() -> void:
   if data.get("kind","").begins_with("tear"):
    var x= size.x-2 if data.kind=="tear_left" else 2
    for y in range(4,int(size.y-5),8):draw_line(Vector2(x,y-lift),Vector2(x+(-4 if x>5 else 4),y+4-lift),Color("b3a98f"),1)
+ draw_held_outline(r)
+func draw_held_outline(r:Rect2) -> void:
  if state in [State.HELD,State.DRAGGING]:
   draw_rect(r.grow(3),Color(0.28,0.39,0.37,0.45),false,1)
   if resizable:draw_circle(size-Vector2(5,5),4,Color("57746d"))

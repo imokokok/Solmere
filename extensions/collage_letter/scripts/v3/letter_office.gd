@@ -10,7 +10,14 @@ const CutStyle=preload("res://extensions/collage_letter/scripts/v3/cutout_style.
 const Paper=preload("res://extensions/collage_letter/scripts/letter_paper.gd")
 const FONT=preload("res://extensions/collage_letter/assets/fonts/xiaolai/Xiaolai-Regular.ttf")
 const SERIF=preload("res://extensions/collage_letter/assets/fonts/librebaskerville/LibreBaskerville[wght].ttf")
-const ROOM=preload("res://extensions/collage_letter/assets/illustrated_office/desk-room-v2.png")
+const ROOM=preload("res://extensions/collage_letter/assets/illustrated_office/desk-reference-v3.png")
+const Desk=preload("res://extensions/collage_letter/scripts/v3/desk_surface.gd")
+const BookPage=preload("res://extensions/collage_letter/scripts/v3/source_book_page.gd")
+const CATEGORIES=["报纸","书店","票据","来信","照片","纪念"]
+var category="报纸"
+var source_leaf:Control
+var source_turn:Tween
+var muted=false
 var audio
 var ui:Control
 var papers:Control
@@ -89,75 +96,98 @@ func clear_ui() -> void:
 func say(text:String) -> void:
  if is_instance_valid(hint_label):hint_label.text=Text.show(text)
 func build_ui() -> void:
- clear_ui()
- label(ui,"SOLMERE",Rect2(52,40,250,45),32)
- label(ui,"用纸片，写给某个人",Rect2(55,83,285,28),18)
- if phase!="compose":button(ui,"工作札记",Rect2(53,260,161,102),open_notebook,true)
- hint_label=label(ui,"",Rect2(352,769,770,36),19,Color("384f43"));hint_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
- button(ui,"",Rect2(450,0,590,173),func():blinds_open=1.0-blinds_open;audio.play("PAPER_SLIDE"),true)
- if phase=="hub":
-  button(ui,"来信托盘",Rect2(54,457,230,116),open_tray,true)
-  button(ui,"拼贴示例",Rect2(1190,388,190,45),open_example)
-  button(ui,"寄一封自己的信",Rect2(1190,243,190,60),func():start_composer("SEND","",true),true)
-  button(ui,"读海上来信",Rect2(1190,304,190,51),read_drift,true)
-  button(ui,"纸片抽屉",Rect2(65,662,220,67),open_library,true)
-  if not state.pending_replies.is_empty():button(ui,"收工 · 次日再来",Rect2(620,708,225,45),next_day)
-  say("有些话适合剪下来，慢慢放在一起。")
- elif phase=="compose":
-  label(ui,(current+" → "+Data.CASES[current].recipient) if mode=="HELP" else ("给海风中的某个人" if mode=="SEND" else "回一封海上来信"),Rect2(448,190,590,35),22)
-  button(ui,"纸片抽屉",Rect2(62,666,223,64),open_library,true)
-  button(ui,"剪开词条",Rect2(1190,571,167,40),split_selected)
-  button(ui,"换张底纸",Rect2(939,323,199,42),cycle_paper)
-  button(ui,"压到下面",Rect2(1190,620,167,37),func():composer.lower_selected();audio.play("PAPER_MOVE"))
-  button(ui,"拿回纸片",Rect2(1190,665,167,37),func():recover_selected())
-  button(ui,"留在桌上",Rect2(53,206,179,38),leave_composer)
-  if mode=="HELP":button(ui,"再看看委托",Rect2(939,264,199,42),func():open_commission(current,true))
-  var approved=bool(draft().get("approved",false))
-  button(ui,("给 "+current+" 看看") if mode=="HELP" and not approved else "寄出  →",Rect2(932,711,202,49),show_recipient if mode=="HELP" and not approved else begin_packaging)
-  say("点原件剪词 · 拖动拼贴 · 滚轮旋转 · 抓纸片右下角缩放")
-  build_sources()
- queue_redraw()
-func _draw() -> void:
- draw_texture_rect(ROOM,Rect2(0,-4,1440,902),false)
- # Warm light belongs to the room. The clock is read, never changed here.
- var minute=720.0
+ clear_ui();clear_papers()
+ label(ui,"书信事务所",Rect2(62,20,202,33),27,Color("f3e6ce"))
+ var brand=label(ui,"",Rect2(64,54,205,22),13,Color("e3d6bf"));brand.text="Solmere Letter Office"
  var atmosphere=get_node_or_null("/root/WorldAtmosphere")
+ var minute=int(atmosphere.minute) if atmosphere!=null else 14*60+20
+ label(ui,"第 %d 天   %02d:%02d"%[int(state.day),minute/60,minute%60],Rect2(343,20,193,28),21,Color("f5ead7"))
+ label(ui,"小镇的纸，慢慢寄。",Rect2(344,53,195,22),13,Color("ddceb5"))
+ button(ui,"札记",Rect2(1240,53,66,27),open_notebook,true).add_theme_color_override("font_color",Color("f4e6cd"))
+ button(ui,"",Rect2(1240,12,66,69),open_notebook,true).tooltip_text="工作札记 · 查看操作"
+ button(ui,"设置",Rect2(1320,53,67,27),open_settings,true).add_theme_color_override("font_color",Color("f4e6cd"))
+ button(ui,"",Rect2(1320,12,67,69),open_settings,true).tooltip_text="声音与窗光"
+ var brief="先读一封来信，再把想说的话拼起来。"
+ if phase=="compose":
+  var notes={"Mara":"寄给 Elena Moreau\n记得 6 月 17 日的六号桌。\n别让她以为我要回来了。","Theo":"寄给 Nico Alvarez\n我真的唱了《夏日杂音》。\n别写成一封正式的道歉信。","June":"寄给 Ms. Bell\n谢谢那句留下来的页边批注。\n这不是告别，还想约她喝茶。"}
+  brief=notes[current] if mode=="HELP" else "给海风中的某个人\n从左侧的原件里剪下字词。\n这封信，只用纸片来表达。"
+ label(ui,brief,Rect2(687,20,309,86),18,Color("554d41"))
+ button(ui,"⌄",Rect2(815,102,40,22),func():
+  if phase=="compose" and mode=="HELP":open_commission(current,true)
+  else:open_tray(),true)
+ for i in CATEGORIES.size():
+  var cat=CATEGORIES[i]
+  var tab=button(ui,cat,Rect2(20,153+i*60,94,45),func():turn_source(cat,0),true)
+  tab.add_theme_font_size_override("font_size",19);tab.tooltip_text="翻到"+cat
+ button(ui,"‹",Rect2(157,533,43,28),func():turn_source(category,-1),true)
+ button(ui,"›",Rect2(411,533,43,28),func():turn_source(category,1),true)
+ var list=category_sources()
+ source_page=posmod(source_page,maxi(1,list.size()))
+ var count=label(ui,"%d / %d"%[source_page+1,maxi(1,list.size())],Rect2(266,536,97,25),15);count.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ button(ui,"临时收纳  ·  纸片抽屉",Rect2(142,733,275,43),open_library,true)
+ var example_button=button(ui,"拼贴示例",Rect2(504,745,98,30),open_example,true);example_button.add_theme_font_size_override("font_size",15);example_button.add_theme_color_override("font_color",Color("f9ead2"))
+ hint_label=label(ui,"",Rect2(534,780,644,26),15,Color("f6e6c9"));hint_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+ if phase=="hub":
+  label(ui,"小镇来信",Rect2(1228,182,142,30),21)
+  label(ui,"点开读一读",Rect2(1228,216,142,26),15)
+  button(ui,"",Rect2(1205,155,187,192),open_tray,true).tooltip_text="打开来信托盘"
+  button(ui,"海上来信  →",Rect2(1196,351,188,32),read_drift,true)
+  button(ui,"开始拼贴  →",Rect2(1230,735,170,46),func():start_composer("SEND","",false),true)
+  if not state.pending_replies.is_empty():button(ui,"次日来信",Rect2(1044,322,125,35),next_day,true)
+  build_sources()
+  var preview=Composer.new();preview.read_only=true;preview.paper_style=1;papers.add_child(preview)
+  for entry in Data.desk_example():
+   var scrap=preview.add_fragment(entry.data,Vector2(entry.at[0],entry.at[1]));scrap.rotation_degrees=entry.angle;scrap.scale=Vector2(entry.zoom,entry.zoom)
+  say("桌上是一封拼贴示例。读来信，或开始你自己的信。")
+ elif phase=="compose":
+  label(ui,"给某个人的\n一些心意",Rect2(1228,181,142,61),20)
+  button(ui,"回到来信",Rect2(1205,346,187,32),leave_composer,true)
+  tool_target(Rect2(1300,482,97,171),"剪刀 · 剪开选中的词条",split_selected)
+  tool_target(Rect2(1202,608,70,72),"胶带 · 放一小段在收纳盘",add_tape)
+  tool_target(Rect2(1197,426,87,116),"纸叠 · 换张底纸",cycle_paper)
+  tool_target(Rect2(1310,417,83,63),"压纸夹 · 把选中纸片放到下面",func():composer.lower_selected();audio.play("PAPER_MOVE"))
+  button(ui,"放回原件",Rect2(1197,698,188,28),recover_selected,true).add_theme_font_size_override("font_size",15)
+  var approved=bool(draft().get("approved",false))
+  button(ui,"完成  →",Rect2(1229,735,171,46),show_recipient if mode=="HELP" and not approved else begin_packaging,true)
+  build_sources()
+  say("剪下 → 收纳盘 → 信纸  ·  滚轮旋转  ·  右下角缩放")
+ queue_redraw()
+func tool_target(r:Rect2,tip:String,action:Callable) -> void:
+ var b=button(ui,"",r,action,true);b.tooltip_text=tip;b.mouse_default_cursor_shape=Control.CURSOR_POINTING_HAND
+func open_settings() -> void:
+ begin_modal();modal_paper(Rect2(490,259,451,294))
+ label(modal,"桌边的声音与光",Rect2(524,285,381,35),25)
+ button(modal,"声音："+("关闭" if muted else "开启"),Rect2(526,342,374,43),func():
+  muted=not muted;AudioServer.set_bus_mute(AudioServer.get_bus_index("Master"),muted);open_settings())
+ button(modal,"百叶窗："+("拉开" if blinds_open>0.5 else "合上"),Rect2(526,395,374,43),func():blinds_open=1.0-blinds_open;audio.play("PAPER_SLIDE");open_settings())
+ button(modal,"回到桌边",Rect2(728,483,172,41),close_modal)
+func _draw() -> void:
+ draw_texture_rect(ROOM,Rect2(0,0,1440,810),false)
+ var minute=860.0;var atmosphere=get_node_or_null("/root/WorldAtmosphere")
  if atmosphere!=null:minute=float(atmosphere.minute)
  var weights=preload("res://extensions/collage_letter/scripts/desk_lighting.gd").sky_weights(minute)
  daylight=weights.x+weights.y*0.45
- if blinds_open<0.5:
-  for y in range(8,175,19):draw_rect(Rect2(407,y,683,13),Color("aa916c"))
  if daylight>0.02:
   for i in (8 if blinds_open<0.5 else 1):
-   var x=360+i*64+sin(elapsed*0.18)*4
-   var poly=PackedVector2Array([Vector2(x,230),Vector2(x+34 if blinds_open<0.5 else 875,230),Vector2(x+140 if blinds_open<0.5 else 1060,746),Vector2(x+60,746)])
-   draw_colored_polygon(poly,Color(1,0.94,0.71,(0.08 if blinds_open<0.5 else 0.11)*daylight))
+   var x=530+i*50+sin(elapsed*0.18)*4
+   draw_colored_polygon(PackedVector2Array([Vector2(x,136),Vector2(x+24 if blinds_open<0.5 else 921,136),Vector2(x+166 if blinds_open<0.5 else 1090,736),Vector2(x+110,736)]),Color(1,0.93,0.72,(0.065 if blinds_open<0.5 else 0.08)*daylight))
  if weights.z>0:draw_rect(Rect2(0,0,1440,810),Color(0.13,0.21,0.28,weights.z*0.30))
  if is_instance_valid(packing):return
- # Cloth-bound notebook and two different reference books, with page blocks.
- if phase!="compose":book_shape(Rect2(48,252,178,120),Color("788c78"),"FIELD NOTES")
- # Incoming letter tray, rather than a screen panel.
- draw_rect(Rect2(39,419,267,301),Color(0.28,0.18,0.1,0.18))
- draw_rect(Rect2(42,422,259,292),Color("a67d55"))
- draw_rect(Rect2(50,430,243,273),Color("cba574"))
- for i in 3:draw_line(Vector2(48,704+i*3),Vector2(297,704+i*3),Color("9a744f"),2)
- if phase=="hub":
-  for i in 3:Paper.paint(self,Rect2(62+i*5,469+i*7,219,108),1,true)
- # A small physical drift box, not a community feed.
- draw_rect(Rect2(1184,231,204,123),Color(0.20,0.28,0.23,0.22))
- draw_rect(Rect2(1180,220,204,125),Color("738f87"))
- draw_rect(Rect2(1196,230,173,14),Color("344f4d"))
- draw_line(Vector2(1180,348),Vector2(1384,348),Color("a5b2a0"),4)
- if phase=="compose" or phase=="hub":
-  draw_rect(Rect2(59,661,232,79),Color("946b46"));draw_rect(Rect2(63,657,224,72),Color("c49b69"));draw_arc(Vector2(175,696),17,0,PI,20,Color("674f3b"),3,true)
- if phase=="compose":
-  draw_rect(Rect2(1177,555,194,157),Color("ac8157"));draw_rect(Rect2(1184,561,180,147),Color("d0ad7e"))
-func book_shape(r:Rect2,color:Color,caption:String) -> void:
- draw_rect(Rect2(r.position+Vector2(5,7),r.size),Color(0.25,0.18,0.1,0.17))
- draw_rect(Rect2(r.position+Vector2(3,4),r.size),Color("e5d7b6"))
- for y in range(int(r.end.y),int(r.end.y+5),2):draw_line(Vector2(r.position.x+5,y),Vector2(r.end.x,y),Color("b4a487"),1)
- draw_rect(r,color);draw_line(r.position+Vector2(10,0),Vector2(r.position.x+10,r.end.y),color.darkened(0.18),2)
- draw_string(SERIF,r.position+Vector2(17,21),Text.show(caption),HORIZONTAL_ALIGNMENT_LEFT,r.size.x-24,10,Color("f6ebce"))
+ Desk.book(self);Desk.scraps(self);Desk.tools(self);Desk.side_mail(self)
+ Desk.note(self,Rect2(671,9,341,120))
+ for i in CATEGORIES.size():
+  Paper.paint(self,Rect2(20,153+i*60,94,45),2 if category==CATEGORIES[i] else 1,true)
+  if category==CATEGORIES[i]:draw_line(Vector2(29,195+i*60),Vector2(103,195+i*60),Color("a76a48"),2)
+ Paper.paint(self,Rect2(142,734,275,47),1,true)
+ Paper.paint(self,Rect2(1199,735,208,56),1,true)
+ Desk.envelope_icon(self,Rect2(1210,751,28,20),Color("544c3f"))
+ for r in [Rect2(49,9,218,77),Rect2(280,9,269,77),Rect2(1240,9,68,78),Rect2(1319,9,68,78)]:Desk.rounded(self,r,Color(0.20,0.19,0.17,0.93),3)
+ draw_circle(Vector2(311,42),11,Color("e9b24e"))
+ for i in 8:draw_line(Vector2(311,42)+Vector2.from_angle(i*TAU/8)*16,Vector2(311,42)+Vector2.from_angle(i*TAU/8)*21,Color("e9b24e"),2,true)
+ draw_rect(Rect2(1261,22,22,26),Color("ede5d5"),false,2);draw_line(Vector2(1266,22),Vector2(1266,48),Color("ede5d5"),2)
+ draw_circle(Vector2(1353,34),10,Color("ede5d5"));draw_circle(Vector2(1353,34),4,Color("423e37"))
+ for i in 8:draw_line(Vector2(1353,34)+Vector2.from_angle(i*TAU/8)*10,Vector2(1353,34)+Vector2.from_angle(i*TAU/8)*14,Color("ede5d5"),4,true)
+
 func begin_modal() -> Control:
  close_modal();modal=Control.new();modal.size=Vector2(1440,810);modal.mouse_filter=Control.MOUSE_FILTER_STOP;add_child(modal)
  var shade=ColorRect.new();shade.color=Color(0.22,0.26,0.21,0.22);shade.size=modal.size;shade.mouse_filter=Control.MOUSE_FILTER_STOP;modal.add_child(shade)
@@ -201,15 +231,16 @@ func open_tray() -> void:
    elif not done:open_commission(who))
  button(modal,"放回托盘",Rect2(841,606,175,36),close_modal)
 func draft() -> Dictionary:
- if not state.drafts.has(draft_key):state.drafts[draft_key]={"pieces":[],"cuts":{},"extras":[],"approved":false,"paper_style":2}
+ if not state.drafts.has(draft_key):state.drafts[draft_key]={"pieces":[],"cuts":{},"extras":[],"approved":false,"paper_style":1,"layout_version":2}
  return state.drafts[draft_key]
 func start_composer(new_mode:String,person:String,transition:bool=true) -> void:
  close_modal();clear_papers()
  if is_instance_valid(composer):remove_child(composer);composer.queue_free()
  mode=new_mode;current=person if not person.is_empty() else "Mara";phase="compose";draft_key=mode+"_"+(current if mode=="HELP" else str(int(state.drift_index)) if mode=="REPLY" else "own")
- source_page=0
+ source_page=0;category="来信" if mode=="HELP" else "报纸"
  composer=Composer.new();composer.mode=mode;composer.owner_name=current;add_child(composer);move_child(composer,papers.get_index())
- composer.paper_style=int(draft().get("paper_style",2));composer.restore(draft().pieces)
+ migrate_draft_layout()
+ composer.paper_style=int(draft().get("paper_style",1));composer.restore(draft().pieces)
  composer.changed.connect(func():draft().approved=false;defer_save())
  composer.picked.connect(func():audio.play("PAPER_PICK",0.6))
  build_ui();save_game()
@@ -222,25 +253,49 @@ func sources() -> Array:
  if mode=="HELP":
   for d in Data.objects():
    if Data.CASES[current].ids.has(d.id):result.append(d)
- for common in Data.library():
-  if common.id=="common":result.append(common)
- for id in draft().extras:
-  for d in Data.library():
-   if d.id==id:result.append(d)
+ result.append_array(Data.library());result.append_array(Data.visual_sources())
  return result
+func category_sources() -> Array:
+ var ids={"报纸":["daily","coast","neighbor"],"书店":["novel","common","thanks"],"票据":["receipt","train","mic","record","menu","flyer"],"来信":Data.CASES[current].ids if mode=="HELP" else ["thanks","common"],"照片":["photo_harbor","photo_shop","photo_cafe"],"纪念":["clover","flower"]}
+ return sources().filter(func(d):return ids[category].has(d.id))
+func turn_source(next_category:String,delta:int) -> void:
+ if book_busy:return
+ book_busy=true;audio.play("PAGE_TURN",0.7)
+ if is_instance_valid(source_leaf):
+  source_turn=create_tween();source_turn.set_trans(Tween.TRANS_SINE);source_turn.tween_property(source_leaf,"scale:x",0.04,0.18)
+  await source_turn.finished
+ category=next_category;source_page=source_page+delta if delta!=0 else 0
+ build_ui()
+ if is_instance_valid(source_leaf):
+  source_leaf.scale.x=0.04;source_turn=create_tween();source_turn.set_trans(Tween.TRANS_SINE);source_turn.tween_property(source_leaf,"scale:x",1.0,0.23)
+  await source_turn.finished
+ book_busy=false
+func tray_position() -> Vector2:
+ var count=composer.fragments.size()
+ return Vector2(129+(count%2)*158,577+((count/2)%3)*39)
+func add_visual(d:Dictionary) -> void:
+ if phase!="compose":start_composer("SEND","",false)
+ var fragment=d.duplicate(true);fragment.fragment=true;fragment.word="";fragment.instance_id=d.id+"_"+str(Time.get_ticks_usec())
+ var paper=composer.add_fragment(fragment,tray_position());paper.scale=Vector2(0.8,0.8);paper.rotation_degrees=-4
+ audio.play("PAPER_PICK");defer_save()
+func add_tape() -> void:
+ add_visual({"id":"tape","kind":"tape","style":6,"tags":{}})
+func source_opened(d:Dictionary) -> void:
+ if phase!="compose":
+  var kept_category=category;var kept_page=source_page
+  start_composer("SEND","",false)
+  category=kept_category;source_page=kept_page;build_ui()
+ if d.has("asset_path"):add_visual(d)
+ else:open_cut(d)
+
 func build_sources() -> void:
- clear_papers()
- var entries=sources()
- source_page=clampi(source_page,0,maxi(0,(entries.size()-1)/2))
- for i in range(source_page*2,mini(entries.size(),source_page*2+2)):
-  var d=entries[i];var p=Piece.new();p.setup(d,Vector2(67,282+(i%2)*174),Vector2(283,158));p.movable=false;papers.add_child(p)
-  p.examined.connect(func(_p):open_cut(d));p.gui_input.connect(func(e):
-   if e is InputEventMouseButton and e.button_index==MOUSE_BUTTON_LEFT and e.pressed:open_cut(d))
- if entries.size()>2:
-  button(ui,"‹",Rect2(67,625,62,35),func():source_page-=1;build_ui())
-  button(ui,"›",Rect2(287,625,62,35),func():source_page+=1;build_ui())
-  label(ui,str(source_page+1)+" / "+str(ceili(entries.size()/2.0)),Rect2(169,629,90,31),18)
- if entries.is_empty():label(ui,"抽屉里有小镇的纸。\n挑一张，剪几个词。",Rect2(71,459,228,110),23)
+ var entries=category_sources()
+ source_page=posmod(source_page,maxi(1,entries.size()))
+ if entries.is_empty():return
+ var d=entries[source_page];source_leaf=BookPage.new();source_leaf.data=d;source_leaf.position=Vector2(116,127);source_leaf.size=Vector2(353,405)
+ source_leaf.cut_indices=draft().cuts.get(d.id,[]) if phase=="compose" else []
+ papers.add_child(source_leaf);source_leaf.opened.connect(source_opened)
+
 func open_cut(d:Dictionary) -> void:
  begin_modal();cut_source=d
  var sheet=CutSheet.new();sheet.data=d;sheet.position=Vector2(426,166);sheet.size=Vector2(555,495);sheet.removed=draft().cuts.get(d.id,[]).duplicate();modal.add_child(sheet)
@@ -248,8 +303,7 @@ func open_cut(d:Dictionary) -> void:
  sheet.cut.connect(func(region,index):
   var removed:Array=draft().cuts.get(d.id,[]);removed.append(index);removed.sort();draft().cuts[d.id]=removed
   var id=d.id+"_"+str(index)
-  var count=composer.fragments.size()
-  composer.add_fragment({"id":id,"instance_id":id,"word":region.word,"tags":region.tags,"fragment":true,"style":d.style,"print_variant":region.get("print_variant",CutStyle.variant(d)),"source":d.id,"cut_index":index},Vector2(531+(count%3)*43,315+((count/3)%6)*54));audio.play("PAPER_CUT");defer_save())
+  composer.add_fragment({"id":id,"instance_id":id,"word":region.word,"tags":region.tags,"fragment":true,"style":d.style,"print_variant":region.get("print_variant",CutStyle.variant(d)),"source":d.id,"cut_index":index},tray_position());audio.play("PAPER_CUT");defer_save())
  button(modal,"拿起剪刀",Rect2(442,679,157,43),func():sheet.scissors=true;sheet.queue_redraw();audio.play("TOOL_PICK"))
  button(modal,"‹",Rect2(614,679,56,43),func():sheet.turn_page(-1))
  button(modal,"›",Rect2(686,679,56,43),func():sheet.turn_page(1))
@@ -280,7 +334,7 @@ func take_library_word(word:String) -> void:
  var id="library_"+word
  for p in composer.fragments:
   if p.data.id==id:say("这片已经在桌上了。");close_modal();return
- composer.add_fragment({"id":id,"word":word,"tags":{"CONTINUITY":2} if word=="STILL" else {},"fragment":true,"style":3},Vector2(535,360));close_modal();build_ui();save_game()
+ composer.add_fragment({"id":id,"word":word,"tags":{"CONTINUITY":2} if word=="STILL" else {},"fragment":true,"style":3},Composer.PAGE.position+Vector2(36,145));close_modal();build_ui();save_game()
 func recover_selected() -> void:
  if not is_instance_valid(composer.selected):say("先拿起想放回的纸片。");return
  var d=composer.selected.data
@@ -301,11 +355,11 @@ func open_example() -> void:
  begin_modal()
  modal.get_child(0).color=Color(0.17,0.21,0.19,0.92)
  var preview=Composer.new();preview.read_only=true;preview.paper_style=2;modal.add_child(preview)
- for d in Data.example():
+ for d in Data.desk_example():
   var paper=preview.add_fragment(d.data,Vector2(d.at[0],d.at[1]));paper.scale=Vector2(d.zoom,d.zoom);paper.rotation_degrees=d.angle
- label(modal,"一封只用纸片拼成的信",Rect2(915,329,310,82),27,Color("f2ead9"))
- label(modal,"不同的字，从不同的纸上来。\n留一点空白，让它们一起说话。",Rect2(915,430,310,100),20,Color("f2ead9"))
- button(modal,"合上示例",Rect2(941,596,190,45),close_modal)
+ label(modal,"一封只用纸片拼成的信",Rect2(1050,329,310,82),27,Color("f2ead9"))
+ label(modal,"不同的字，从不同的纸上来。\n留一点空白，让它们一起说话。",Rect2(1050,430,310,100),20,Color("f2ead9"))
+ button(modal,"合上示例",Rect2(1060,596,190,45),close_modal)
  audio.play("PAGE_TURN")
 func show_recipient() -> bool:
  var case=Data.CASES[current];var verdict=Data.validate(composer.placed(),case.required,case.avoided)
@@ -324,7 +378,9 @@ func begin_packaging() -> void:
  if composer.placed().is_empty():say("先在信纸上留下一片纸，再让它出发。");return
  busy=true;save_game()
  await RenderingServer.frame_post_draw
- var image=get_viewport().get_texture().get_image().get_region(Rect2i(493,233,365,516));image.save_png(preview_path)
+ var screen=get_viewport().get_texture().get_image()
+ var screen_scale=Vector2(screen.get_size())/Vector2(1440,810)
+ var image=screen.get_region(Rect2i(Composer.PAGE.position*screen_scale,Composer.PAGE.size*screen_scale));image.save_png(preview_path)
  var texture=ImageTexture.create_from_image(image);composer.hide();papers.hide();clear_ui()
  hint_label=label(ui,"拿住信纸下沿，轻轻向上折。",Rect2(387,210,724,48),24);hint_label.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
  packing=Packing.new();packing.preview=texture;packing.mode=mode;packing.sound.connect(func(event):audio.play(event));packing.hint.connect(say);packing.finished.connect(on_sent);add_child(packing);move_child(packing,ui.get_index());busy=false
@@ -389,7 +445,7 @@ func keep_shared(word:String) -> bool:
  var id="shared_"+entry.letter_id
  var found=false
  for p in composer.fragments:found=found or p.data.id==id
- if not found:composer.add_fragment({"id":id,"word":word,"tags":{},"fragment":true,"style":3},Vector2(540,340))
+ if not found:composer.add_fragment({"id":id,"word":word,"tags":{},"fragment":true,"style":3},Composer.PAGE.position+Vector2(34,125))
  save_game();return true
 func save_game() -> void:
  if state.is_empty():return
@@ -405,3 +461,18 @@ func _notification(what:int) -> void:
 func _exit_tree() -> void:
  if is_instance_valid(ambient):ambient.stop()
  if is_instance_valid(audio):audio.shutdown()
+
+func migrate_draft_layout() -> void:
+ var d=draft()
+ if int(d.get("layout_version",1))>=2:return
+ # Preserve relative placement and apparent size on the same A4 sheet.
+ if FileAccess.file_exists(save_path) and not FileAccess.file_exists(save_path+".before_desk_layout.json"):
+  DirAccess.copy_absolute(save_path,save_path+".before_desk_layout.json")
+ var factor=Composer.PAGE.size.x/365.0
+ for piece in d.pieces:
+  var at=Composer.PAGE.position+(Vector2(piece.position[0],piece.position[1])-Vector2(493,233))*factor
+  # Control transforms pivot about the paper center, not its upper-left corner.
+  var probe=Composer.new();var scrap=probe.add_fragment(piece.data)
+  at+=scrap.pivot_offset*(factor-1.0);probe.free()
+  piece.position=[at.x,at.y];piece.scale=[piece.scale[0]*factor,piece.scale[1]*factor]
+ d.layout_version=2
