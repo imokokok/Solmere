@@ -492,7 +492,7 @@ func paper_and_exchange() -> bool:
 	await click("宽笔"); await canvas_path(canvas,[Vector2(405,120),Vector2(485,120)],4)
 	await click("细笔"); await canvas_path(canvas,[Vector2(396,132),Vector2(501,132)],3)
 	checkpoint("26-paper-craft")
-	await click("贴出去 · 怪味特供"); await hold(3)
+	await click("贴出去：怪味特供"); await hold(3)
 	if not require(not game._poster_data.is_empty(),"decorated photo poster actually published"): return false
 	await click("海报",game.hud); await click("继续编辑已贴出的海报"); await hold(3)
 	if not require(not game._poster_canvas.strokes.is_empty(),"published poster reopened with strokes and editable layers"): return false

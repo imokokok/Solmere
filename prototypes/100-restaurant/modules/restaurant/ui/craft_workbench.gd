@@ -86,7 +86,7 @@ func build(owner_game, paper, record: Dictionary, dish: Dictionary, is_recipe :=
 		token.payload={"type":"sticker","kind":kinds[i]}
 		token.canvas=canvas
 		_place(token,Vector2(950+(i%5)*72,248+int(i/5)*74),Vector2(68,69))
-	_label("这一餐的材料 · 拖到纸上",Vector2(951,401),18)
+	_label("这一餐的材料，拖到纸上",Vector2(951,401),18)
 	var scroll := ScrollContainer.new()
 	scroll.vertical_scroll_mode=ScrollContainer.SCROLL_MODE_DISABLED
 	_place(scroll,Vector2(950,429),Vector2(360,82))
@@ -136,7 +136,7 @@ func build(owner_game, paper, record: Dictionary, dish: Dictionary, is_recipe :=
 	_ink_button("移到底层",Vector2(583,662),Vector2(102,29),canvas.send_selected_back)
 	_ink_button("恢复原图",Vector2(694,662),Vector2(98,29),canvas.restore_selected_cut)
 	_ink_button("重做",Vector2(808,662),Vector2(68,29),canvas.redo)
-	status = _label("双击字迹可改写 · 拖动边角调整大小与方向",Vector2(945,665),14)
+	status = _label("双击字迹可改写，拖动边角调整大小与方向",Vector2(945,665),14)
 	status.size=Vector2(365,34)
 	status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	# Selecting a decoration exposes its two continuous dimensions, not a wall of transforms.

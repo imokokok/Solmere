@@ -10,7 +10,7 @@ var fields: Array[TextEdit] = []
 
 static func from_dish(dish: Dictionary, catalog: Array) -> Dictionary:
 	if dish.get("ingredients",[]).is_empty():
-		return {"version":1,"materials":"番茄一颗\n面条一份\n清水、少许盐","steps":["番茄洗净，\n切成小块。","番茄入锅，\n炒出汁。","加入清水和面条，\n慢慢煮软。","关火调味，\n盛进汤碗。"],"source":"做法示例 · 配图由你画"}
+		return {"version":1,"materials":"番茄一颗\n面条一份\n清水、少许盐","steps":["番茄洗净，\n切成小块。","番茄入锅，\n炒出汁。","加入清水和面条，\n慢慢煮软。","关火调味，\n盛进汤碗。"],"source":"做法示例，配图由你画"}
 	var method = preload("res://modules/restaurant/domain/recipe_method.gd")
 	var names: PackedStringArray = []
 	for item in method.targets({"dish":dish}):
@@ -27,7 +27,7 @@ static func from_dish(dish: Dictionary, catalog: Array) -> Dictionary:
 	var words: Array = []
 	for i in 4:
 		words.append("、".join(groups[i]).left(80) if not groups[i].is_empty() else ["准备材料。","按做法搭配材料。","留意这餐的状态。","慢慢摆盘。"][i])
-	return {"version":1,"materials":"\n".join(names).left(180),"steps":words,"source":"按成品状态整理 · 配图由你画"}
+	return {"version":1,"materials":"\n".join(names).left(180),"steps":words,"source":"按成品状态整理，配图由你画"}
 
 static func valid(data: Variant) -> bool:
 	if not data is Dictionary or data.get("version") != 1: return false

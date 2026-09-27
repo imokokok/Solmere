@@ -1,0 +1,21 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+CAPTURE intro result=0 bounds=[P: (330.0, 40.0), S: (940.0, 666.0)] pixels=(1440, 851)
+CAPTURE help result=0 bounds=[P: (330.0, 40.0), S: (940.0, 809.0)] pixels=(1440, 851)
+CAPTURE help-end result=0 bounds=[P: (330.0, 40.0), S: (940.0, 809.0)] pixels=(1440, 851)
+CAPTURE order result=0 bounds=[P: (440.0, 80.0), S: (720.0, 708.0)] pixels=(1440, 851)
+CAPTURE recipe result=0 bounds=[P: (185.0, 40.0), S: (1230.0, 827.0)] pixels=(1440, 851)
+CAPTURE feedback result=0 bounds=[P: (300.0, 40.0), S: (1000.0, 760.0)] pixels=(1440, 851)
+CAPTURE feedback-end result=0 bounds=[P: (300.0, 40.0), S: (1000.0, 760.0)] pixels=(1440, 851)
+CAPTURE letters result=0 bounds=[P: (310.0, 80.0), S: (980.0, 752.0)] pixels=(1440, 851)
+CAPTURE receipt result=0 bounds=[P: (405.0, 188.0), S: (790.0, 530.0)] pixels=(1440, 851)
+CAPTURE small-intro result=0 bounds=[P: (330.0, 40.0), S: (940.0, 666.0)] pixels=(1150, 680)
+CAPTURE small-help result=0 bounds=[P: (330.0, 40.0), S: (940.0, 809.0)] pixels=(1150, 680)
+CAPTURE small-help-end result=0 bounds=[P: (330.0, 40.0), S: (940.0, 809.0)] pixels=(1150, 680)
+CAPTURE small-order result=0 bounds=[P: (440.0, 80.0), S: (720.0, 708.0)] pixels=(1150, 680)
+CAPTURE small-recipe result=0 bounds=[P: (185.0, 40.0), S: (1230.0, 827.0)] pixels=(1150, 680)
+CAPTURE small-feedback result=0 bounds=[P: (300.0, 40.0), S: (1000.0, 760.0)] pixels=(1150, 680)
+CAPTURE small-feedback-end result=0 bounds=[P: (300.0, 40.0), S: (1000.0, 760.0)] pixels=(1150, 680)
+CAPTURE small-receipt result=0 bounds=[P: (405.0, 188.0), S: (790.0, 530.0)] pixels=(1150, 680)
+TEXT_LAYOUT_CAPTURES_COMPLETE

@@ -61,7 +61,7 @@ func _draw() -> void:
 	else:
 		for i in range(3): _words(title.substr(i * 20, 20), Vector2(58, 42 + i * 25), 21, Color("76523d"), 435)
 	draw_polyline(PackedVector2Array([Vector2(57, 96), Vector2(277, 99), Vector2(492, 95)]), Color("b47050"), 2, true)
-	_words("100饭店  /  每一餐，慢慢记下来", Vector2(59, 126), 16, Color("847456"), 435)
+	_words("100饭店：每一餐，慢慢记下来", Vector2(59, 126), 16, Color("847456"), 435)
 	if record.is_empty():
 		for i in range(3):
 			_sketch(Vector2(278, 239 + i * 170), i)
@@ -73,7 +73,7 @@ func _draw() -> void:
 			photo_size *= minf(472.0 / photo_size.x, 272.0 / photo_size.y)
 			draw_texture_rect(_image, Rect2(Vector2(280, 308) - photo_size * 0.5, photo_size), false)
 		elif is_instance_valid(_dish_sketch):
-			_words("成品状态示意 · 拍照后可保留实际摆盘", Vector2(65, 465), 16, Color("847456"), 450)
+			_words("成品状态示意，拍照后可保留实际摆盘", Vector2(65, 465), 16, Color("847456"), 450)
 		elif not is_instance_valid(_collage) or not _collage.visible:
 			_words("这一页还没有照片", Vector2(160, 318), 21, Color("847456"), 310)
 		_words("主厨  " + str(record.get("author", "匿名主厨")), Vector2(57, 491), 19, Color("76523d"), 448)

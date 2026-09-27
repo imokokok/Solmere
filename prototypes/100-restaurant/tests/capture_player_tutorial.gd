@@ -378,7 +378,7 @@ func run() -> void:
 	await type_text(poster._text_editor,"今日推荐 · 番茄蛋"); poster.finish_text(); await frames(2)
 	await click("加入料理照片"); await hold(2)
 	game._poster_canvas.add_sticker("heart"); await hold(1)
-	await click("贴出去 · 家常料理"); await hold(2)
+	await click("贴出去：家常料理"); await hold(2)
 	if not require(not game._poster_data.is_empty(),"actual photo poster saved and published in kitchen"): return
 	checkpoint("08-poster")
 	chapter_label.text="08 / 下一锅之前"

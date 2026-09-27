@@ -1,0 +1,10 @@
+{
+  "modules/restaurant/restaurant.gd": "15a0566ccd38660d5e5e555667fcc87b89b05e5dd1e6dfff146b8e4479a032d5",
+  "modules/restaurant/ui/customer_order_paper.gd": "dc281bae5bf4d78184b12c27e9df1be422de2f0a44cb683d6a5479ca6093bd5a",
+  "modules/restaurant/ui/craft_workbench.gd": "54b4c7cf432c3a65830083b73360c37fc829d44ab298ec87b5d0b5f038184517",
+  "modules/restaurant/ui/recipe_page.gd": "ffe7f67df0e853a38a2705cf34f57aa4baf93432f47b4cf1e03f54fb988cf90e",
+  "modules/restaurant/ui/recipe_sheet.gd": "9c498a7c7f050dc54f6bea70fd94a2669f16d5b6e5791d7f0f6c450e065ed886",
+  "tests/capture_player_tutorial.gd": "083bad36b911a6d095b354210c7fdc0a680657666191630ad876aaabc46c2cd8",
+  "tests/capture_complete_kitchen.gd": "a12e4b08cd93e53c52ffc4b9c3e729e78026b1b47b3b86c9c83a934efc895e54",
+  "tools/capture_text_layout.gd": "8d852ec41d00f7308f3e9d8b1e3efbfaa0265cbd61ec9fb1f3ebcd7d9d95abd1"
+}

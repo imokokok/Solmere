@@ -113,7 +113,7 @@ func _ready() -> void :
 	world.focus_changed.connect(_focus)
 	world.held_changed.connect( func(title: String):
 		if not title.is_empty():
-			_notify("手中：" + title + "   /   松手或点击台面放下")
+			_notify("手中：" + title + "。松手或点击台面放下。")
 		elif is_instance_valid(toast_label) and toast_label.text.begins_with("手中："):
 			toast_time = 0
 			toast_label.visible = false)
@@ -357,6 +357,51 @@ func _text(text: String, font_size: int = 18, color: Color = MUTED) -> Label:
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return label
 
+# Reading pages share a hierarchy: spaced sections, then hanging bullet rows.
+# A separate marker keeps wrapped lines aligned with the text, not the bullet.
+func _reading_section(parent: Node, title: String, font_size: int = 21) -> VBoxContainer:
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_bottom", 8)
+	parent.add_child(margin)
+	var section := VBoxContainer.new()
+	section.add_theme_constant_override("separation", 8)
+	margin.add_child(section)
+	if not title.is_empty():
+		var heading := _label(section, title, Vector2.ZERO, font_size, ACCENT)
+		heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return section
+
+func _reading_line(parent: Node, text: String, font_size: int = 18, color: Color = MUTED) -> Label:
+	var words := _label(parent, text, Vector2.ZERO, font_size, color)
+	words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	words.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	words.add_theme_constant_override("line_spacing", 4)
+	return words
+
+func _reading_bullets(parent: Node, items: Array, font_size: int = 18) -> void:
+	for item in items:
+		if str(item).strip_edges().is_empty(): continue
+		var row := _row(parent)
+		row.add_theme_constant_override("separation", 8)
+		var marker := _label(row, "•", Vector2.ZERO, font_size, CREAM)
+		marker.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		marker.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+		marker.custom_minimum_size.x = 14
+		_reading_line(row, str(item), font_size)
+
+func _reading_scroll(height: float = 560) -> VBoxContainer:
+	var scroll := ScrollContainer.new()
+	scroll.name = "ReadingScroll"
+	scroll.custom_minimum_size.y = height
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	modal_body.add_child(scroll)
+	var content := VBoxContainer.new()
+	content.name = "ReadingSections"
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_theme_constant_override("separation", 20)
+	scroll.add_child(content)
+	return content
+
 func _button(parent: Node, text: String, callback: Callable, min_width: float = 0) -> Button:
 	var button: = Button.new()
 	button.text = text
@@ -436,17 +481,27 @@ func _close_modal() -> void :
 	_update_recipe_guide()
 
 func _show_intro() -> void :
-	_open_modal("intro", "100饭店", 820)
-	_text("100 RESTAURANT  /  自由烹饪", 14, ACCENT)
-	_text("老板把今天的厨房交给你。\n给客人做一顿正常的午餐，或者一场意想不到的味觉实验。", 23, CREAM)
-	_text("客人会说出想吃的味道。直接从冰箱、架子和篮子取材，在砧板用刀切开，放入锅里控制火候，再装盘出餐。收班获得营业收入的 30%。")
-	_text("营业时间显示为 10:00—14:00；默认约 12 分钟的实际游玩对应这 4 小时。准备期不限时。", 16)
-	_text("%d 种可用材料  ·  拿取 / 切配 / 下锅  ·  自由组合\n原创菜谱留存  ·  手绘海报  ·  各有偏好的街坊" % session.active_ingredients().size())
-	var row: = _row(modal_body)
+	_open_modal("intro", "100饭店", 940)
+	_paper_modal()
+	_text("老板把今天的厨房交给你。
+做一顿家常午餐，或者试试意想不到的味道。", 23, CREAM)
+	var cooking := _reading_section(modal_body, "今天可以做些什么")
+	_reading_bullets(cooking, [
+		"听听客人的口味，从冰箱和架子取材，切配、下锅，再装盘出餐。",
+		"%d 种材料自由组合，也可以把作品留成菜谱或手绘海报。" % session.active_ingredients().size()])
+	var hours := _reading_section(modal_body, "营业与练习")
+	_reading_bullets(hours, [
+		"准备期不限时，可以先熟悉厨房。",
+		"营业时钟为 10:00—14:00，默认对应约 12 分钟游玩；收班获得营业收入的 30%。"])
+	var controls := _reading_section(modal_body, "先记住这三个动作")
+	_reading_bullets(controls, [
+		"取放：鼠标拖拽物品，松手放下。架上材料也可点击拿取、再次点击放下。",
+		"切配：按住刀柄，让刀刃划过右侧菜板上的食材。",
+		"装盘：单击盘子打开摆盘；按住可拖动餐盘。拖锅时按住右键可倾倒。"])
+	var row := _row(modal_body)
 	_button(row, "开始今天的营业", _start_shift, 270)
 	_button(row, "先在厨房练习", func(): _started = true;_close_modal();_notify("准备期不限时。点击右上角“暂停 / 帮助”可开始营业。"), 240)
 	_paper_action(row, "收起围裙", _request_exit, "arrow", 180)
-	_text("操作：鼠标拖拽 · 松手放下 · 点击工具操作\n拿刀切配 / 单击盘子摆盘，按住可拖动 · 拖锅时按住右键倾倒", 16)
 
 func _start_shift() -> void :
 	_started = true
@@ -465,21 +520,39 @@ func _show_pause() -> void :
 	_paper_action(modal_body, "收班，收起围裙", func(): _settle(false);_request_exit(), "arrow")
 
 func _show_help() -> void :
-	_open_modal("help", "从一颗番茄开始", 870)
-	_text("01  取材", 22, ACCENT)
-	_text("%d 种材料分层放在冰箱和奇物架上，箭头可翻层。每件取出后原位留空。点击拿取，再点击放下；台面上的食材可以拖拽。TAB 可搜索。" % session.active_ingredients().size())
-	_text("02  切配与入锅", 22, ACCENT)
-	_text("食材放在固定的右侧菜板。按住刀柄，沿箭头让刀刃标记从食材一侧划到另一侧；落刀位置决定薄片厚度，提刀返回不会切。拿刀时按 R 转刀 90°，滚轮微调角度，对准切片横向划切成块。松手放刀；拖住其中一片可把同批切块一起送入锅中。")
-	_text("03  掌握火候", 22, ACCENT)
-	_text("在灶台选火力，观察变色、焦边与沸腾。每块独立受热；锅容纳 6 份原料、最多 48 个切块，总容量 1500 ml。拿起铲子推拌；调料瓶口对准锅，按住出料、松开停止。")
-	_text("04  留下你的招牌", 22, ACCENT)
-	_text("点击盘子装盘、旋转或淋酱，也可拖锅时按住右键倾倒。拍下成品，在菜谱纸上画画、贴照片、写做法。保存后点“分享这一页”，朋友用浏览器就能看，也能导回游戏。")
-	_text("05  下一锅之前", 22, ACCENT)
-	_text("关火并装盘后，拖起水槽旁的抹布，在水流下打湿，再拖过空锅擦掉残留。脏抹布可冲洗；未清洁的锅会把上一道菜的味道带进下一道菜。海绵用来擦台面溢出的水和调料。")
+	_open_modal("help", "从一颗番茄开始", 940)
+	_paper_modal()
+	_text("按做饭顺序查阅，需要时随时回来看看。", 17)
+	var content := _reading_scroll()
+	var stock := _reading_section(content, "01  取材")
+	_reading_bullets(stock, [
+		"%d 种材料分层放在冰箱和奇物架上，用箭头翻层，按 TAB 可搜索。" % session.active_ingredients().size(),
+		"点击拿取，再点击放下；台面上的食材也可以拖拽。",
+		"每件取出后原位留空。未加工原料和调料瓶可拖回原位，瓶内余量保留。"])
+	var cutting := _reading_section(content, "02  切配与入锅")
+	_reading_bullets(cutting, [
+		"把食材放在固定的右侧菜板上。按住刀柄，沿箭头让刀刃标记从食材一侧划到另一侧；落刀位置决定薄片厚度，提刀返回不会切。",
+		"拿刀时按 R 转刀 90°，滚轮微调角度，对准切片横向划切成块。",
+		"松手放刀。拖住其中一片，可把同批切块一起送入锅中。"])
+	var heat := _reading_section(content, "03  掌握火候")
+	_reading_bullets(heat, [
+		"在灶台选火力，观察变色、焦边与沸腾；每块食材独立受热。",
+		"拿起铲子推拌。调料瓶口对准锅，按住出料，松开停止。",
+		"锅可容纳 6 份原料、最多 48 个切块，总容量约 1500 ml。"])
+	var craft := _reading_section(content, "04  留下你的招牌")
+	_reading_bullets(craft, [
+		"单击盘子打开摆盘，可移动、旋转食物或淋酱；拖锅时按住右键也能倾倒。",
+		"拍下成品，在菜谱纸上画画、贴照片、写做法，然后保存。",
+		"保存后点“分享这一页”，朋友可以用浏览器阅读，也能导回游戏。"])
+	var clean := _reading_section(content, "05  下一锅之前")
+	_reading_bullets(clean, [
+		"关火并装盘后，拖起水槽旁的抹布，在水流下打湿，再拖过空锅擦掉残留。",
+		"脏抹布可以冲洗；未清洁的锅会把上一道菜的味道带进下一道菜。",
+		"海绵用来擦台面溢出的水和调料。"])
 	_button(modal_body, "知道了，回厨房", _close_modal)
 
 func _focus(title: String, hint: String) -> void :
-	hint_label.text = (title + " · " + hint) if not title.is_empty() else "拖拽食材到锅里，点击工具操作"
+	hint_label.text = (title + "：" + hint) if not title.is_empty() else "拖拽食材到锅里，点击工具操作"
 
 func _notify(message: String) -> void :
 	if is_instance_valid(toast_label):
@@ -552,7 +625,7 @@ func _update_hud() -> void :
 	if not is_instance_valid(clock_label):
 		return
 	var shift_minute := 10 * 60 + roundi(240.0 * clampf(session.elapsed / maxf(session.duration, 1.0), 0.0, 1.0))
-	clock_label.text = "准备营业  /  不限时" if session.phase == "prep" else "日班  %02d:%02d—14:00" % [shift_minute / 60, shift_minute % 60]
+	clock_label.text = "准备营业（不限时）" if session.phase == "prep" else "日班  %02d:%02d—14:00" % [shift_minute / 60, shift_minute % 60]
 	money_label.text = "¥ %.2f" % session.revenue
 	var npc: Dictionary = session.current_customer
 	_order_paper.update_order(npc,session.customer_wait,_preference_text(npc) + "\n" + str(npc.get("habit","")))
@@ -569,10 +642,10 @@ func _update_hud() -> void :
 			if float(thermal.get("liquid_kg",0.0))>float(thermal.get("initial_kg",1.0))*0.12:
 				state="逐渐化开" if str(thermal.get("phase",""))!="puree" else "软烂出汁"
 		if str(item.get("id", "")) == "noodles" and float(item.get("softness", 0.0)) > 0.02:
-			state += "·变软%d%%" % roundi(float(item.get("softness", 0.0)) * 100.0)
-		names.append("%s%s · %s" % [def.get("name", item["id"]), "·切" if item.get("cut", false) else "", state])
+			state += "，变软%d%%" % roundi(float(item.get("softness", 0.0)) * 100.0)
+		names.append("%s%s：%s" % [def.get("name", item["id"]), "（已切）" if item.get("cut", false) else "", state])
 	var fire_name: String = {"low": "小火", "medium": "中火", "high": "大火"}[session.heat_level]
-	dish_label.text = "%s · %s" % [fire_name + "加热" if session.heating else ("已关火 · 锅有余热" if world.reactions.pan_c>65.0 else "已关火"), " / ".join(names) if not names.is_empty() else "把食材拖进锅中，拿刀在菜板切配，点击盘子摆盘"]
+	dish_label.text = "%s：%s" % [fire_name + "加热" if session.heating else ("已关火，锅有余热" if world.reactions.pan_c>65.0 else "已关火"), "；".join(names) if not names.is_empty() else "把食材拖进锅中，拿刀在菜板切配，点击盘子摆盘"]
 	for level in _fire_buttons:
 		_fire_buttons[level].set_pressed_no_signal(level == (session.heat_level if session.heating else "off"))
 		_fire_buttons[level].disabled = session.phase == "closed"
@@ -600,7 +673,7 @@ func _preference_text(npc: Dictionary) -> String:
 	var dislike_names: PackedStringArray = []
 	for tag in npc.get("likes", []): like_names.append(str(tags.get(tag, _definition(str(tag)).get("name", tag))))
 	for tag in npc.get("dislikes", []): dislike_names.append(str(tags.get(tag, _definition(str(tag)).get("name", tag))))
-	return "喜欢：%s  /  不爱：%s" % ["、".join(like_names), "、".join(dislike_names)]
+	return "喜欢：%s\n不爱：%s" % ["、".join(like_names), "、".join(dislike_names)]
 
 func _definition(id: String) -> Dictionary:
 	for entry in session.ingredients:
@@ -608,7 +681,7 @@ func _definition(id: String) -> Dictionary:
 	return {}
 
 func _show_pantry() -> void :
-	_open_modal("pantry", "食材架  /  自由搭配", 1120)
+	_open_modal("pantry", "食材架", 1120)
 	_text("每种原料本班备一件；未加工原料和调料瓶可拖回原位，用过的瓶子保留余量。", 16)
 	var search: = LineEdit.new()
 	search.placeholder_text = "搜索食材，例如：番茄、虾、袜子…"
@@ -638,7 +711,7 @@ func _refresh_pantry() -> void :
 	for entry in session.active_ingredients():
 		if _pantry_category != "all" and entry.get("category", "basic") != _pantry_category: continue
 		if not _pantry_search.is_empty() and not str(entry.get("name", "")).contains(_pantry_search) and not str(entry.get("id", "")).contains(_pantry_search): continue
-		var button: = _button(_pantry_grid, "%s\n%.0f g  ·  %s" % [entry["name"], float(entry.get("mass", 0.15)) * 1000.0, "需做熟" if entry.get("needs_cook", false) else "自由处理"], func(): _take_ingredient(entry), 198)
+		var button: = _button(_pantry_grid, "%s\n%.0f g，%s" % [entry["name"], float(entry.get("mass", 0.15)) * 1000.0, "需做熟" if entry.get("needs_cook", false) else "自由处理"], func(): _take_ingredient(entry), 198)
 		button.custom_minimum_size.y = 162
 		button.name = "Pantry_" + str(entry.id)
 		button.alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -661,7 +734,7 @@ func _refresh_pantry() -> void :
 			card.content_margin_top = 82
 			card.content_margin_bottom = 8
 			button.add_theme_stylebox_override(state, card)
-		button.tooltip_text = "质量 %.2f kg · 摩擦 %.2f · 弹性 %.2f\n怪异度 %d%%" % [entry.get("mass", 0.15), entry.get("friction", 0.6), entry.get("bounce", 0.1), int(float(entry.get("weirdness", 0)) * 100)]
+		button.tooltip_text = "质量 %.2f kg，摩擦 %.2f，弹性 %.2f\n怪异度 %d%%" % [entry.get("mass", 0.15), entry.get("friction", 0.6), entry.get("bounce", 0.1), int(float(entry.get("weirdness", 0)) * 100)]
 		if not world.get_dispense_mode(entry).is_empty():
 			button.tooltip_text += "\n" + world.ingredient_operation_hint(entry)
 
@@ -780,38 +853,47 @@ func _show_serve_feedback() -> void:
 	_pending_serve_result.clear()
 	world.clear_food()
 	_food_by_physics.clear()
-	_open_modal("feedback", "这一口，客人怎么说", 860)
-	var feedback_head := _row(modal_body)
+	_open_modal("feedback", "这一口，客人怎么说", 1000)
+	_paper_modal()
+	var content := _reading_scroll(550)
+	var feedback_head := _row(content)
 	var sketch = preload("res://modules/restaurant/ui/customer_sketch.gd").new()
 	sketch.customer_id = str(result.get("customer_id", "guest"))
 	feedback_head.add_child(sketch)
 	var feedback_title := VBoxContainer.new()
+	feedback_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	feedback_title.add_theme_constant_override("separation", 8)
 	feedback_head.add_child(feedback_title)
-	_label(feedback_title, "%s  /  %d 分" % [result.get("customer", "客人"), result.get("score", 0)], Vector2.ZERO, 25, ACCENT)
-	_label(feedback_title, "画在反馈纸上的小像  ·  %s" % result.get("role", "食客"), Vector2.ZERO, 17, MUTED)
-	_text("%s  ·  %s" % [result.get("role", "食客"), result.get("reaction", "")], 18)
-	var mood_row: = _row(modal_body)
-	var before_icon: = MoodIcon.new()
+	_reading_line(feedback_title, "%s的评价：%d 分" % [result.get("customer", "客人"), result.get("score", 0)], 25, ACCENT)
+	_reading_line(feedback_title, str(result.get("role", "食客")), 17)
+	_reading_line(feedback_title, str(result.get("reaction", "")), 18)
+	var taste := _reading_section(content, "这一餐的感受")
+	_reading_line(taste, "“%s”" % result.get("feedback", "谢谢招待。"), 25, CREAM)
+	_reading_bullets(taste, Array(str(result.get("detail", "")).split("\n")))
+	if not str(result.get("ordered_recipe_title", "")).is_empty():
+		_reading_bullets(taste, ["点单：《%s》，与菜谱实材匹配 %d%%。" % [result.ordered_recipe_title, roundi(maxf(0.0, float(result.get("recipe_match", 0.0))) * 100.0)]])
+	var mood := _reading_section(content, "餐前与餐后")
+	var mood_row := _row(mood)
+	var before_icon := MoodIcon.new()
 	before_icon.mood = float(result.get("mood_before", 50))
 	mood_row.add_child(before_icon)
 	_label(mood_row, "餐前 %d" % result.get("mood_before", 50), Vector2.ZERO, 18)
-	var after_icon: = MoodIcon.new()
+	var after_icon := MoodIcon.new()
 	after_icon.mood = float(result.get("mood_after", 50))
 	mood_row.add_child(after_icon)
-	_label(mood_row, "餐后 %d   变化 %+d" % [result.get("mood_after", 50), result.get("mood_delta", 0)], Vector2.ZERO, 18, ACCENT)
-	if not str(result.get("ordered_recipe_title", "")).is_empty():
-		_text("点单：《%s》  /  与菜谱实材匹配 %d%%" % [result.ordered_recipe_title, roundi(maxf(0.0, float(result.get("recipe_match", 0.0))) * 100.0)], 18)
-	_text("“%s”" % result.get("feedback", "谢谢招待。"), 25, CREAM)
-	if not str(result.get("detail", "")).is_empty(): _text(str(result.detail), 20)
-	_text("这次做得好，我会直接夸你；没做到的地方也写清楚，下次再一起试。" if int(result.get("score", 0)) < 80 else "这顿饭让我记住了，我愿意把这份称赞留在纸上。", 17, MUTED)
-	_text("餐费 ¥%.2f   小费 ¥%.2f   赔偿 ¥%.2f\n本单净收入 ¥%.2f   本班合计 ¥%.2f" % [result.get("meal_fee", 0), result.get("tip", 0), result.get("compensation", 0), result.get("payment", 0), session.revenue], 22)
+	_label(mood_row, "餐后 %d，变化 %+d" % [result.get("mood_after", 50), result.get("mood_delta", 0)], Vector2.ZERO, 18, ACCENT)
+	var bill := _reading_section(content, "本单账目")
+	_reading_bullets(bill, [
+		"餐费 ¥%.2f，小费 ¥%.2f，赔偿 ¥%.2f。" % [result.get("meal_fee", 0), result.get("tip", 0), result.get("compensation", 0)],
+		"本单净收入 ¥%.2f；本班合计 ¥%.2f。" % [result.get("payment", 0), session.revenue]])
 	var letter_index := _record_feedback(result)
+	var reply_section := _reading_section(content, "给客人回一句")
 	var reply := TextEdit.new()
 	reply.placeholder_text = "写给这位客人的回复……"
-	reply.custom_minimum_size = Vector2(790, 62)
-	modal_body.add_child(reply)
-	var row: = _row(modal_body)
-	_button(row, "保存回复", func(): _save_reply(letter_index, reply.text), 160)
+	reply.custom_minimum_size.y = 80
+	reply_section.add_child(reply)
+	_button(reply_section, "保存回复", func(): _save_reply(letter_index, reply.text), 160)
+	var row := _row(modal_body)
 	_button(row, "继续招待下一位", _close_modal, 280)
 	_button(row, "把这道菜写入菜谱", _show_recipe_editor, 320)
 
@@ -820,7 +902,7 @@ func _new_diy_recipe() -> void :
 
 func _show_recipe_editor(record: Dictionary = {}, illustrated: bool = false) -> void :
 	world.audio.play_effect("paper")
-	_open_authoring("recipe_editor", "厨房手作 · 留住这一餐")
+	_open_authoring("recipe_editor", "厨房手作：留住这一餐")
 	illustrated=illustrated or record.get("poster",{}).has("recipe_sheet")
 	_editing_recipe_id = str(record.get("id", ""))
 	_active_recipe_draft_key = _editing_recipe_id if not _editing_recipe_id.is_empty() else ("new_illustrated" if illustrated else "new")
@@ -867,22 +949,24 @@ func _stash_recipe_draft() -> void:
 		_recipe_drafts[_active_recipe_draft_key] = {"title":_title_input.text,"author":_author_input.text,"notes":_notes_input.text,"dish":_recipe_dish.duplicate(true),"thumbnail":_recipe_photo,"poster":poster}
 
 func _show_order_paper() -> void:
-	_open_modal("order_paper","客人留的小纸条",650)
-	var paper=preload("res://modules/restaurant/ui/paper_surface.gd").new()
-	paper.custom_minimum_size=Vector2(590,520)
+	_open_modal("order_paper", "客人留的小纸条", 720)
+	var paper = preload("res://modules/restaurant/ui/paper_surface.gd").new()
+	paper.custom_minimum_size = Vector2(684, 600)
 	modal_body.add_child(paper)
-	var words=Label.new()
-	words.text=_order_paper.full_text
-	words.add_theme_font_override("font",preload("res://modules/restaurant/ui/paper_ink.gd").font())
-	words.add_theme_font_size_override("font_size",27)
-	words.add_theme_color_override("font_color",Color("5b4935"))
-	words.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	words.size_flags_horizontal=Control.SIZE_EXPAND_FILL
-	var scroll=ScrollContainer.new()
-	scroll.position=Vector2(32,28)
-	scroll.size=Vector2(526,462)
+	var scroll := ScrollContainer.new()
+	scroll.position = Vector2(32, 28)
+	scroll.size = Vector2(620, 542)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	paper.add_child(scroll)
-	scroll.add_child(words)
+	var content := VBoxContainer.new()
+	content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_theme_font_override("font", preload("res://modules/restaurant/ui/paper_ink.gd").font())
+	content.add_theme_constant_override("separation", 22)
+	scroll.add_child(content)
+	_reading_line(content, _order_paper.heading.text, 29, Color("5b4935"))
+	for group in _order_paper.reading_sections:
+		var section := _reading_section(content, str(group.title), 24)
+		_reading_bullets(section, group.items, 22)
 
 func _open_authoring(kind: String, title: String) -> void :
 	_open_modal(kind, title, 1400)
@@ -1060,13 +1144,13 @@ func _show_cookbook() -> void :
 	list.add_theme_constant_override("separation", 10)
 	scroll.add_child(list)
 	_label(list, "先从一碗热面开始", Vector2.ZERO, 23, CREAM)
-	_paper_action(list, "番茄清汤面  ·  厨房示范", func(): _view_recipe(RecipeMethod.starter()))
-	_label(list, "我的菜谱  /  %d 页" % recipes.size(), Vector2.ZERO, 21, ACCENT)
+	_paper_action(list, "番茄清汤面（厨房示范）", func(): _view_recipe(RecipeMethod.starter()))
+	_label(list, "我的菜谱（%d 页）" % recipes.size(), Vector2.ZERO, 21, ACCENT)
 	if recipes.is_empty():
 		var empty: = _label(list, "还没有写下自己的菜谱。\n\n做好一道菜、拍张照片，\n把今天的做法记在这里。", Vector2.ZERO, 21, MUTED)
 		empty.custom_minimum_size.y = 210
 	for record in recipes:
-		var button: = _button(list, "%s    /    %s\n%s" % [record.get("title", "未命名"), record.get("author", "匿名主厨"), _dish_names(record.get("dish", {}))], func(): _view_recipe(record))
+		var button: = _button(list, "%s\n主厨：%s\n材料：%s" % [record.get("title", "未命名"), record.get("author", "匿名主厨"), _dish_names(record.get("dish", {}))], func(): _view_recipe(record))
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.clip_text = true
 		button.custom_minimum_size.y = 90
@@ -1107,13 +1191,15 @@ func _view_recipe(record: Dictionary) -> void :
 	full_title.text = str(record.get("title", ""))
 	full_title.add_theme_font_size_override("font_size", 23)
 	method.add_child(full_title)
-	var ingredients := _label(method, _dish_names(record.get("dish", {})), Vector2.ZERO, 20, CREAM)
-	ingredients.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label(method, "厨房示范 · 状态示意" if record.get("reference", false) else "按成品状态整理 · 过程图为做法示意", Vector2.ZERO, 16, MUTED)
+	var materials := _reading_section(method, "这道菜的材料")
+	_reading_line(materials, _dish_names(record.get("dish", {})), 20, CREAM)
+	_label(method, "厨房示范，过程图为状态示意" if record.get("reference", false) else "按成品状态整理，过程图为做法示意", Vector2.ZERO, 16, MUTED)
 	var sequence := RecipeMethod.steps(record, session.ingredients)
+	var steps := _reading_section(method, "做法")
+	steps.add_theme_constant_override("separation", 20)
 	for i in range(sequence.size()):
 		var step: Dictionary = sequence[i]
-		var line := _row(method)
+		var line := _row(steps)
 		var sketch := RecipeVignette.new()
 		sketch.stage = step.art
 		sketch.catalog = session.ingredients
@@ -1122,13 +1208,14 @@ func _view_recipe(record: Dictionary) -> void :
 		line.add_child(sketch)
 		var words := VBoxContainer.new()
 		words.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		words.add_theme_constant_override("separation", 6)
 		line.add_child(words)
 		var heading := _label(words, "%02d  %s" % [i + 1, step.title], Vector2.ZERO, 22, CREAM)
 		heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var detail := _label(words, step.detail, Vector2.ZERO, 17, MUTED)
 		detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	if _recipe_stand.page._image != null:
-		_label(method, "这次做好的样子 · 实拍", Vector2.ZERO, 21, CREAM)
+		_label(method, "成品实拍", Vector2.ZERO, 21, CREAM)
 		var photo := TextureRect.new()
 		photo.name = "ActualRecipePhoto"
 		photo.texture = _recipe_stand.page._image
@@ -1137,9 +1224,8 @@ func _view_recipe(record: Dictionary) -> void :
 		photo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		method.add_child(photo)
 	if not str(record.get("notes", "")).is_empty():
-		_label(method, "主厨的叮嘱", Vector2.ZERO, 20, ACCENT)
-		var notes := _label(method, record.notes, Vector2.ZERO, 18, MUTED)
-		notes.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var notes := _reading_section(method, "主厨的叮嘱")
+		_reading_line(notes, str(record.notes))
 	var page_row := _row(modal_body)
 	var previous_page := _paper_action(page_row, "← 上一页", func(): _turn_recipe(-1), "arrow", 175)
 	previous_page.disabled = _recipe_page_index == 0
@@ -1172,7 +1258,7 @@ func _view_drawing_recipe(record: Dictionary) -> void:
 	words.add_theme_constant_override("separation",22); columns.add_child(words)
 	_label(words,"菜名和配图，都是你的笔迹",Vector2.ZERO,27,CREAM)
 	_text_in(words,"材料与步骤留在纸上，\n下次做菜，翻开这一页就能看。",21)
-	_label(words,"主厨 · "+str(record.get("author","主厨")),Vector2.ZERO,20,MUTED)
+	_label(words,"主厨："+str(record.get("author","主厨")),Vector2.ZERO,20,MUTED)
 	_label(words,"尚未记录实际用料" if record.get("dish",{}).get("ingredients",[]).is_empty() else _dish_names(record.dish),Vector2.ZERO,18,MUTED)
 	_paper_action(words,"继续 DIY",func(): _show_recipe_editor(record),"book",240)
 	_paper_action(words,"分享这一页",func(): _share_recipe_page(record),"book",240)
@@ -1217,7 +1303,7 @@ func _turn_recipe(direction: int) -> void:
 	_recipe_turning = false
 func _share_recipe_page(record: Dictionary) -> void:
 	var dialog := FileDialog.new()
-	dialog.title = "分享这一页 · 朋友用浏览器就能看"
+	dialog.title = "分享这一页：朋友用浏览器就能看"
 	dialog.access = FileDialog.ACCESS_FILESYSTEM
 	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE
 	dialog.filters = PackedStringArray(["*.html ; 图文菜谱（内附可编辑菜谱文件）", "*.json ; 只导出这一页的可编辑菜谱"])
@@ -1294,10 +1380,10 @@ func _update_recipe_guide() -> void:
 	if not recipe_guide.active: return
 	recipe_guide.update(_recipe_snapshot())
 	if recipe_guide.index >= recipe_guide.sequence.size():
-		_guide_text.text = "这一餐做好了  ·  可以拍照留作菜谱，或出餐给客人。"
+		_guide_text.text = "这一餐做好了。可以拍照留作菜谱，或出餐给客人。"
 	else:
 		var step: Dictionary = recipe_guide.sequence[recipe_guide.index]
-		_guide_text.text = "%d / %d  %s  ·  %s" % [recipe_guide.index + 1, recipe_guide.sequence.size(), step.title, step.detail]
+		_guide_text.text = "%d / %d  %s：%s" % [recipe_guide.index + 1, recipe_guide.sequence.size(), step.title, step.detail]
 		if step.kind == "take" and not bool(_stock.get(str(step.target.id), true)):
 			_guide_text.text += " 这份若已丢弃或用完，需要下次营业再备。"
 		for item in session.dish:
@@ -1329,7 +1415,7 @@ func _file_dialog(exporting: bool) -> void :
 
 func _show_poster() -> void :
 	world.audio.play_effect("paper")
-	_open_authoring("poster", "海报工作台  /  从一张白纸开始")
+	_open_authoring("poster", "海报工作台")
 	_poster_canvas = PosterCanvas.new()
 	modal_body.add_child(_poster_canvas)
 	var desk = preload("res://modules/restaurant/ui/craft_workbench.gd").new()
@@ -1340,9 +1426,9 @@ func _show_poster() -> void :
 	var tag_row := _row(modal_body)
 	var load_previous = _paper_action(tag_row,"继续编辑已贴出的海报",func(): _poster_canvas.import_data(_poster_data),"book",260)
 	load_previous.disabled=_poster_data.is_empty()
-	_button(tag_row, "贴出去 · 家常料理", func(): _publish_poster(["comfort", "fresh", "vegetable"]), 300)
-	_button(tag_row, "贴出去 · 怪味特供", func(): _publish_poster(["odd", "bold"]), 300)
-	_button(tag_row, "贴出去 · 甜点小食", func(): _publish_poster(["sweet", "dairy"]), 300)
+	_button(tag_row, "贴出去：家常料理", func(): _publish_poster(["comfort", "fresh", "vegetable"]), 300)
+	_button(tag_row, "贴出去：怪味特供", func(): _publish_poster(["odd", "bold"]), 300)
+	_button(tag_row, "贴出去：甜点小食", func(): _publish_poster(["sweet", "dairy"]), 300)
 
 func _publish_poster(tags: Array) -> void :
 	_poster_data = _poster_canvas.export_data()
@@ -1368,11 +1454,11 @@ func _settle(show_result: bool = true) -> void :
 	_open_modal("result", "今天也好好做饭了", 790)
 	_paper_modal()
 	modal_panel.position.y = 188
-	_text("100饭店   /   今日小记", 18, ACCENT)
-	var receipt := HSeparator.new()
-	modal_body.add_child(receipt)
-	_text("营业收入    ¥ %.2f\n主厨收入    ¥ %.2f" % [result.get("revenue", 0), result.get("share", 0)], 32, CREAM)
-	_text("成功招待 %d 位  ·  离开 %d 位\n分成按营业收入的 30%% 计算。" % [result.get("served", 0), result.get("missed", 0)], 20)
+	var income := _reading_section(modal_body, "今日账目")
+	_reading_line(income, "营业收入    ¥ %.2f\n主厨收入    ¥ %.2f" % [result.get("revenue", 0), result.get("share", 0)], 32, CREAM)
+	_reading_line(income, "分成按营业收入的 30% 计算。")
+	var guests := _reading_section(modal_body, "今天的招待")
+	_reading_bullets(guests, ["成功招待 %d 位客人。" % result.get("served", 0), "离开 %d 位客人。" % result.get("missed", 0)])
 	_text("你留下的菜谱还在，下一位主厨可以接着做。", 18)
 	var actions := _row(modal_body)
 	var leave := _paper_action(actions, "收起围裙", _request_exit, "arrow", 280)
@@ -1440,7 +1526,7 @@ func _return_broth_action() -> void:
 		_plating_canvas.status.emit("锅里空间不够，先倒出一些汤。" if float(session.presentation.get("broth_ml", 0.0)) > 0.001 else "汤碗里还没有汤。")
 
 func _show_plating() -> void :
-	_open_modal("plating", "摆盘工作台  /  让这一餐成为你的作品", 1100)
+	_open_modal("plating", "摆盘工作台", 1100)
 	modal_panel.position.y = 140
 	var columns: = _row(modal_body)
 	_plating_canvas = preload("res://modules/restaurant/ui/plating_canvas.gd").new()
@@ -1579,8 +1665,13 @@ func _show_letters() -> void:
 		list.add_child(paper)
 		var body := VBoxContainer.new()
 		paper.add_child(body)
-		_label(body, "%s  ·  %d 分  ·  %s" % [entry.customer, entry.score, entry.get("time", "")], Vector2.ZERO, 20, ACCENT)
-		_label(body, "“%s”\n%s" % [entry.feedback, entry.detail], Vector2.ZERO, 17, CREAM).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		body.add_theme_constant_override("separation", 16)
+		_reading_line(body, "%s的评价：%d 分" % [entry.customer, entry.score], 21, ACCENT)
+		_reading_line(body, str(entry.get("time", "")), 16)
+		var review := _reading_section(body, "客人的话")
+		_reading_line(review, "“%s”" % entry.feedback, 21, CREAM)
+		_reading_bullets(review, Array(str(entry.detail).split("\n")))
+		_label(body, "我的回信", Vector2.ZERO, 21, ACCENT)
 		var edit := TextEdit.new()
 		edit.text = str(entry.get("reply", ""))
 		edit.placeholder_text = "写回复……"

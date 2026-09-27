@@ -6,6 +6,7 @@ var body: Label
 var footer: Label
 var mood: Control
 var full_text := ""
+var reading_sections: Array[Dictionary] = []
 
 func _ready() -> void:
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -42,20 +43,28 @@ func _label(point: Vector2, box: Vector2, font_size: int) -> Label:
 	return value
 
 func update_order(npc: Dictionary, wait: float, preference: String) -> void:
+	reading_sections.clear()
 	mood.visible = not npc.is_empty()
 	if npc.is_empty():
 		heading.text = "留给主厨"
 		body.text = "今天，慢慢来。\n\n先做一道你喜欢的菜，等街坊们来坐坐。"
-		footer.text = "100饭店 · 今日的小纸条"
+		footer.text = "100饭店的小纸条"
+		reading_sections.append({"title":"慢慢来", "items":["先做一道你喜欢的菜，等街坊们来坐坐。"]})
 	else:
 		heading.text = str(npc.get("name","这位客人")) + " 的一餐"
 		heading.add_theme_font_size_override("font_size",20 if heading.text.length()>6 else 24)
 		var words := str(npc.get("quote","今天想吃点什么？"))
-		if npc.has("ordered_recipe"): words += "\n\n想点《%s》。" % str(npc.ordered_recipe.get("title",""))
-		if npc.get("preferences_known",false): words += "\n\n小叮嘱：" + preference
+		reading_sections.append({"title":"今天想吃", "items":[words]})
+		if npc.has("ordered_recipe"):
+			var order := "想点《%s》。" % str(npc.ordered_recipe.get("title",""))
+			words += "\n\n" + order
+			reading_sections.append({"title":"点的菜", "items":[order]})
+		if npc.get("preferences_known",false):
+			words += "\n\n小叮嘱：" + preference
+			reading_sections.append({"title":"口味与习惯", "items":Array(preference.split("\n"))})
 		body.text = words
 		mood.mood = float(npc.get("mood_before",50))
-		footer.text = "还能等 %d:%02d · 拿近读" % [int(ceil(wait))/60,int(ceil(wait))%60]
+		footer.text = "还能等 %d:%02d，拿近读" % [int(ceil(wait))/60,int(ceil(wait))%60]
 	full_text = heading.text + "\n\n" + body.text
 
 func _draw() -> void:
