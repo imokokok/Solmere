@@ -4,7 +4,6 @@ const L=preload("res://scripts/localization.gd")
 var g: Node2D
 var paper_atlas: Texture2D=preload("res://assets/open_pack/stationery/painted-papers.png")
 var envelope_fibre: Texture2D=preload("res://assets/open_pack/paper/Papier13.png")
-var botanical_mark: Texture2D=preload("res://assets/open_pack/icons/tree.svg")
 var letter_pos:=Vector2(720,290)
 var inserted:=false
 var flap:=0.0
@@ -123,18 +122,26 @@ func mail_input(p: Vector2, down: bool) -> void:
 	if down:
 		if mailed==0 and Rect2(mail_pos-Vector2(165,112),Vector2(330,200)).has_point(p):
 			if mailbox<0.9: mailbox=1;say();g.audio.play("ENVELOPE_CLOSE")
-			else: drag="mail"
+			mail_start=mail_pos;drag="mail"
 		elif mailed>=1 and Rect2(920,245,330,260).has_point(p):
 			if mailbox<0.1: mailbox=1;say()
 			else: drag="lid"
 	else:
-		if drag=="mail" and MOUTH.grow(35).has_point(p):
-			mail_start=mail_pos;mailed=0.001;g.audio.play("ENVELOPE_INSERT")
+		if drag=="mail":
+			if mail_target_accepts(mail_pos):
+				mail_start=mail_pos;mailed=0.001;g.audio.play("ENVELOPE_INSERT")
+			else:
+				# A missed drop must remain visible and recoverable, never behind the box.
+				mail_pos=mail_start;g.audio.play("PAPER_MOVE",0.35)
 		elif drag=="lid" and mailbox<0.15:
 			closing=true;delivery_ready=true;mailbox=0;g.audio.play("MAIL_DROP")
 			g.send_letter()
 			delivery_ready=false;closing=false
 		drag="";say();g.changed()
+func mail_target_accepts(at:Vector2)->bool:
+	var face:=Rect2(at+Vector2(-220,-115)*.68,Vector2(440,245)*.68)
+	var mouth:=MOUTH.grow(16)
+	return mailbox>=.9 and face.intersection(mouth).get_area()>=mouth.get_area()*.12
 func tick(delta: float) -> void:
 	time+=delta
 	if not active(): return
@@ -157,7 +164,10 @@ func tick(delta: float) -> void:
 		if cool>=1.8 and g.stage=="WAX_SEAL": g.stage="SEND";g.build_ui();say();g.changed()
 	if mailed>0 and mailed<1:
 		mailed=minf(1,mailed+delta/0.85)
-		mail_pos=mail_start.lerp(Vector2(1080,565),smoothstep(0,1,mailed))
+		# First align the lower edge with the lip in front, then slide behind it.
+		var entry:=Vector2(1085,391.6)
+		if mailed<.24:mail_pos=mail_start.lerp(entry,smoothstep(0,.24,mailed))
+		else:mail_pos=entry.lerp(Vector2(1085,565),smoothstep(.24,1,mailed))
 		if mailed>=1: say();g.changed()
 func serialize() -> Dictionary:
 	var state: Dictionary={}
@@ -206,11 +216,13 @@ func candle_art() -> void:
 	for n in 3:
 		g.draw_line(Vector2(139+n*16,483),Vector2(139+n*16,501+n*9),Color("f4e3bf"),5,true)
 	g.draw_line(Vector2(160,480),WICK,Color("50453a"),3,true)
-	poly([Vector2(116,576),Vector2(122,619),Vector2(143,628),Vector2(180,628),Vector2(199,617),Vector2(205,575)],"708575")
-	ellipse(Vector2(160,576),Vector2(44,10),Color("acb59a"))
-	ellipse(Vector2(160,575),Vector2(35,6),Color("d7c397"))
-	g.draw_arc(Vector2(211,594),17,-PI*.5,PI*.5,24,Color("aab394"),5,true)
-	g.draw_line(Vector2(128,587),Vector2(131,612),Color("96a28a"),3,true)
+	ellipse(Vector2(160,617),Vector2(50,10),Color("6d8070"))
+	ellipse(Vector2(160,612),Vector2(49,9),Color("afb69a"))
+	ellipse(Vector2(160,611),Vector2(39,6),Color("e0d1ad"))
+	ellipse(Vector2(160,606),Vector2(29,5),Color("ddc9a0"))
+	var rim:=PackedVector2Array()
+	for i in 25:rim.append(Vector2(160+cos(PI*i/24.0)*49,612+sin(PI*i/24.0)*9))
+	g.draw_polyline(rim,Color("84967e"),2.5,true)
 	if candle: flame(WICK)
 func stamp_art(at: Vector2) -> void:
 	ellipse(at+Vector2(6,9),Vector2(41,12),Color(0.2,0.15,0.1,0.15))
@@ -264,23 +276,22 @@ func envelope(at: Vector2 = Vector2(720,545), scale: float = 1.0, show_letter: b
 			g.draw_texture_rect_region(g.letter_preview,Rect2(letter_pos-Vector2(143,58),Vector2(286,maxf(0,minf(116,visible_height-7)))),Rect2(Vector2.ZERO,Vector2(g.letter_preview.get_size())*Vector2(1,0.333*minf(1,(visible_height-7)/116))))
 		if letter_pos.y-45<665: g.draw_line(letter_pos+Vector2(-144,-45),letter_pos+Vector2(144,-45),Color("d8ccb1"))
 	# Front pocket occludes the letter continuously as it crosses the opening.
-	envelope_paper([Vector2(500,430),Vector2(720,575),Vector2(940,430),Vector2(940,675),Vector2(500,675)],"dedbcf")
-	envelope_paper([Vector2(500,675),Vector2(720,511),Vector2(940,675)],"edeadd")
-	g.draw_line(Vector2(503,672),Vector2(720,513),Color("c3ac86"),1.4)
-	g.draw_line(Vector2(937,672),Vector2(720,513),Color("c3ac86"),1.4)
+	envelope_paper([Vector2(500,430),Vector2(748,525),Vector2(500,675)],"dedbcf")
+	envelope_paper([Vector2(940,430),Vector2(692,525),Vector2(940,675)],"dedbcf")
+	envelope_paper([Vector2(500,675),Vector2(720,500),Vector2(940,675)],"edeadd")
+	g.draw_line(Vector2(503,672),Vector2(720,501),Color("c3ac86"),1.4)
+	g.draw_line(Vector2(937,672),Vector2(720,501),Color("c3ac86"),1.4)
 	if flap>0:
 		envelope_paper([Vector2(500,430),Vector2(940,430),Vector2(720,270+flap*255)],"e8e5d8")
 		g.draw_line(Vector2(500,430),Vector2(720,270+flap*255),Color("b8a07d"),1.4)
 		g.draw_line(Vector2(940,430),Vector2(720,270+flap*255),Color("b8a07d"),1.4)
-	if flap>0.8:
-		g.draw_texture_rect(botanical_mark,Rect2(704,452,32,43),false,Color(0.26,0.31,0.25,clampf((flap-0.8)*5,0,0.8)))
 	if Rect2(500,430,440,245).has_point(pool): wax_art()
 	g.draw_set_transform(Vector2.ZERO)
 func envelope_paper(vertices: Array, color: String) -> void:
 	var points:=PackedVector2Array(vertices);var coords:=PackedVector2Array()
 	for point in points:coords.append((point-Vector2(500,270))/Vector2(440,405))
 	g.draw_colored_polygon(points,Color(color));g.draw_polygon(points,PackedColorArray([Color(1,1,1,0.48)]),coords,envelope_fibre)
-	var edge:=points.duplicate();edge.append(points[0]);g.draw_polyline(edge,Color(0.99,0.98,0.92,0.65),1.2,true)
+	var edge:=points.duplicate();edge.append(points[0]);g.draw_polyline(edge,Color(0.99,0.98,0.92,0.42),0.8,true)
 func draw() -> void:
 	if g.stage=="ENVELOPE": envelope(Vector2(720,545),1,true)
 	elif g.stage=="WAX_SEAL":
@@ -301,8 +312,6 @@ func draw() -> void:
 		g.paper(Rect2(268,568,89,66),Color("b9a383"))
 		for n in 9: bead(Vector2(282+n%3*26,582+n/3*16),0.9,n)
 		g.text_at("蜡粒",Vector2(284,659),17)
-		if drag=="pellets":
-			for n in 5: bead(pointer+Vector2((n%3-1)*13,(n/3)*11),0.8,n)
 		g.draw_line(spoon+Vector2(19,-3),spoon+Vector2(105,-38),Color("696763"),12,true)
 		g.draw_line(spoon+Vector2(22,-6),spoon+Vector2(104,-41),Color("c2b9a3"),3,true)
 		ellipse(spoon+Vector2(0,3),Vector2(40,24),Color("6b6861"))
@@ -317,6 +326,8 @@ func draw() -> void:
 		g.draw_polyline(rim,Color("b9ab8d"),3,true)
 		if phase=="POURING": g.draw_line(spoon+Vector2(0,8),pool,Color("b96649"),3+sin(pour*PI)*3,true)
 		if phase=="POUR": g.draw_arc(SEAM,25,0,TAU,48,Color(0.55,0.32,0.2,0.45),1,true)
+		if drag=="pellets":
+			for n in 5: bead(pointer+Vector2((n%3-1)*13,(n/3)*11),0.8,n)
 		stamp_art(stamp)
 		g.text_at("火漆印章",Vector2(1098,543),18)
 		if phase=="MELT" or (phase=="STAMP" and drag=="stamp"):
@@ -336,7 +347,7 @@ func draw_mailbox() -> void:
 	var lid_y:=376-mailbox*120
 	poly([Vector2(915,376),Vector2(1250,376),Vector2(1235,lid_y),Vector2(930,lid_y)],"6e8d88")
 	g.draw_line(Vector2(930,lid_y),Vector2(1235,lid_y),Color("b3beb0"),3,true)
-	if mailed<1: envelope(mail_pos,lerpf(0.68,0.48,mailed))
+	if mailed>=.24 and mailed<1: envelope(mail_pos,lerpf(0.68,0.48,inverse_lerp(.24,1,mailed)))
 	g.draw_rect(Rect2(915,480,335,206),Color("4c6c6b"))
 	g.draw_rect(Rect2(921,482,323,9),Color("91a59a"))
 	g.draw_rect(Rect2(970,555,222,72),Color("ddd2b9"))
@@ -351,6 +362,7 @@ func draw_mailbox() -> void:
 	g.draw_rect(Rect2(1037,638,88,26),Color("355452"))
 	g.draw_circle(Vector2(1080,652),4,Color("b5a174"))
 	g.text_at("SOLMERE · POST",Vector2(987,730),17)
+	if mailed<.24:envelope(mail_pos,.68)
 
 func soft_contour(points: PackedVector2Array) -> PackedVector2Array:
 	var result:=PackedVector2Array()

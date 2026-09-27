@@ -295,8 +295,6 @@ func build_ui() -> void:
 		else:
 			button("收下车票，开始写信  →",Rect2(590,555,450,49),advance_dialogue,true)
 		label_at("第一封委托    /    夏季，仍然",Rect2(585,651,650,30),17)
-	elif stage == "FOLDING":
-		label_at("保留那些恰好的空白。",Rect2(515,147,700,50),26)
 	elif stage in ["SEND","BOTTLE"]:
 		if letter_mode!="npc":
 			label_at("给漂流瓶写一个标题",Rect2(360,166,460,28),17)
