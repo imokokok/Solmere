@@ -255,7 +255,7 @@
     "modules/restaurant/world/knife_tool.gd.uid": "68752460e3e7378b1795d20bd1561ce46e6dc4c24653c0f4a092e82f03ca7bb9",
     "modules/restaurant/world/pan_art.gd": "c8ba3d86836bb3bd1244007c6d0faf6e35bcaadf3be582263add8a8d933866f9",
     "modules/restaurant/world/pan_art.gd.uid": "96cc0593685ac3c8a3c4a9f496272dfd673faf868da99c53db70a9efe2f6308e",
-    "modules/restaurant/world/pan_controller.gd": "160c1a83c0c7228601e6a3fe9c8a3b0fec11e4809e7b1932b1ac463a8f988620",
+    "modules/restaurant/world/pan_controller.gd": "c3a469c174c81758175bfaea7185e3c8e86e03765a8e2351db1d2326aefe714f",
     "modules/restaurant/world/pan_controller.gd.uid": "fe1b7fc7b4af8d58a6fcea4e36927fa880302e33614889702e395976a84fff29",
     "modules/restaurant/world/pan_geometry.gd": "05852f5493135ae5831a30497c8064dc63bc29c948216d910341d4b61df503c3",
     "modules/restaurant/world/pan_geometry.gd.uid": "bd50500cd3472131450c8d7f9b0eed0c9c205b176e20a08980af11333c066947",

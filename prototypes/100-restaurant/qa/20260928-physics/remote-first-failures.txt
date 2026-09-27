@@ -1,0 +1,15 @@
+Initial remote run: https://github.com/imokokok/Solmere/actions/runs/36333449700
+Commit: 94d719daa0175169f444860032368fedabf1c950
+Result: failure; 43 of 45 Godot scripts passed. Exact failure excerpts follow.
+
+2026-09-27T16:31:39.2588178Z FAIL tests/test_force_liquid_lid.gd: exit 1
+2026-09-27T16:31:39.2589861Z LIFT_METRICS food=(635.7302, 501.8662) start=(733.31, 680.635) pan=(-114.8843, -68.62061) angle=-0.00434435904026
+2026-09-27T16:31:39.2590574Z COLD lid=(790.3401, 697.6387) angle=-0.18335975706577 pan=(694.0638, 708.8121) seat=(695.3608, 688.4119) contact=2
+2026-09-27T16:31:39.2591165Z LID_METRICS pressure=0.0 lift=0.0 covered=false
+2026-09-27T16:31:39.2591556Z ERROR: cold loose lid rests on actual rim with no invented pressure
+2026-09-27T16:31:39.2593057Z ERROR: sustained boiling raises pressure and physically lifts lid
+2026-09-27T16:31:39.2594440Z FAIL: force liquid lid, 18 checks
+2026-09-27T16:32:50.6879269Z FAIL tests/test_handdrawn_assets.gd: exit 1
+2026-09-27T16:32:50.6880381Z ERROR: stacked food warms only through its real contact without equalising instantly
+2026-09-27T16:32:50.6882187Z FAIL: hand-drawn assets, 229 checks
+2026-09-27T16:36:45.6109068Z FAIL: full checks, 45/45 Godot scripts; 2 failed steps. Logs: /home/runner/work/Solmere/Solmere/prototypes/100-restaurant/.runtime/checks

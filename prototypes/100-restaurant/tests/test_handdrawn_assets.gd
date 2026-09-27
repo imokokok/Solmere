@@ -116,6 +116,23 @@ func run() -> void:
 			await create_timer(0.4).timeout
 		await create_timer(1.0).timeout
 		expect(game.session.dish.size() == 2, "individually dropped mushroom pieces enter the pan")
+		# Independent drops can correctly settle apart. Build a real contact pair
+		# before testing contact heat, rather than assuming one landing arrangement.
+		for i in parts.size():
+			parts[i].stop_board_settle()
+			parts[i].freeze=true
+			parts[i].lock_rotation=true
+			parts[i].rotation=0.0
+			parts[i].linear_velocity=Vector2.ZERO
+			parts[i].angular_velocity=0.0
+			parts[i].position=world.pan.point(Vector2(810,560))+Vector2(0,-65*i)
+		await physics_frame
+		await physics_frame
+		for part in parts: part.freeze=false
+		await create_timer(1.2).timeout
+		var touching: bool = parts[0].get_colliding_bodies().has(parts[1])
+		print("CONTACT_PAIR touching=",touching," positions=",parts[0].position,",",parts[1].position)
+		expect(touching, "thermal fixture establishes actual native contact between mushroom pieces")
 		var thermal = preload("res://modules/restaurant/domain/food_thermal.gd")
 		var sa: Dictionary = world.reactions.ensure_state(parts[0])
 		var sb: Dictionary = world.reactions.ensure_state(parts[1])
@@ -124,6 +141,7 @@ func run() -> void:
 		sa.core_c=120.0
 		sb.core_c=22.0
 		world.reactions._exchange_food_heat(parts,0.25)
+		print("CONTACT_HEAT cores=",sa.core_c,",",sb.core_c)
 		expect(absf(float(sa.core_c)*ca+float(sb.core_c)*cb-(120.0*ca+22.0*cb))<0.00001, "food contact transfers equal and opposite thermal energy")
 		expect(float(sa.core_c)<120 and float(sb.core_c)>22 and float(sb.core_c)<float(sa.core_c), "stacked food warms only through its real contact without equalising instantly")
 		sa.core_c=22.0
@@ -133,6 +151,7 @@ func run() -> void:
 		world.set_dish(game.session.dish, game.session.ingredients)
 		for part in parts:
 			expect(part.get_node("FoodArt").heat >= 6 and part.get_meta("fragment_polygon") == saved[part.get_instance_id()], "cooked mushroom retains authored slices and heat")
+			part.lock_rotation=false
 		game._interact("plate")
 		game._plate_bodies(parts)
 		for part in parts:

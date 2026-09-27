@@ -18,6 +18,31 @@ func _run() -> void:
 	game.world.begin_food_drag(Vector2(85,220),true)
 	_expect(game.world._held.position.distance_to(Vector2(85,220))<0.01 and game.world.held_grip.local_anchor.length()<0.01, "inventory grip starts at the press even if the OS cursor has already moved")
 	game.world.discard_held()
+	# A loose ingredient can visually overlap the handle above the fixed board.
+	# Pan input runs before food input, so it must yield at opaque food pixels.
+	game.world.spawn_ingredient(game._definition("potato"))
+	var handle_food: RigidBody2D = game.world._held
+	game.world.drop_held(false, false)
+	await physics_frame
+	await process_frame
+	handle_food.stop_board_settle()
+	handle_food.freeze = true
+	var covered_handle: Vector2 = game.world.pan.point(Vector2(1035,578))
+	handle_food.position = covered_handle
+	handle_food.reset_physics_interpolation()
+	await physics_frame
+	await process_frame
+	_expect(game.world._food_at(covered_handle) == handle_food and not game.world.pan.can_grab(covered_handle), "visible food over the pan handle owns its opaque pixels")
+	_mouse(covered_handle, "down")
+	await process_frame
+	_expect(game.world._held == handle_food and not game.world.pan.active, "actual press picks the front food instead of the handle behind it")
+	_mouse(covered_handle, "up")
+	await process_frame
+	if game.world.pan.active: game.world.pan.release_pan()
+	game.world._pickup(handle_food)
+	game.world.discard_held()
+	await process_frame
+	_expect(game.world.pan.can_grab(covered_handle), "uncovered handle remains grabbable after the front food is removed")
 	# Grab food directly from a shelf on mouse-down, and release above a GUI panel.
 	game.storage_display.reveal_ingredient("egg")
 	var button = game.find_child("Ingredient_egg", true, false)

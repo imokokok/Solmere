@@ -74,13 +74,22 @@ func run() -> void:
 	inv=pan.runoff.inventory()
 	expect(absf(pan.water_ml+pan.rim_water_ml+inv.flight_ml+inv.surface_ml+inv.floor_ml+inv.sink_ml+inv.sink_overflow_ml+inv.drained_ml+inv.wiped_ml-1700)<0.00001,"60 Hz fallback also conserves liquid")
 	expect(pan.water_ml<0.01,"inverted pan eventually empties below the lower rim")
-	pan.angle=0
-	pan.move_to(pan.HOME)
-	pan.rigid.freeze=false
-	pan.set_physics_process(true)
-	pan.runoff.set_physics_process(true)
+	# The liquid phase manually advances a frozen vessel. Start the lid phase in
+	# a fresh physical world, rather than reusing a partly-flushed solver pose.
+	game.queue_free()
+	await process_frame
+	game=preload("res://modules/restaurant/restaurant.tscn").instantiate()
+	game.configure({"repository_path":"user://physics_lid_%s/book.json"%Crypto.new().generate_random_bytes(16).hex_encode(),"shift_seconds":600})
+	root.add_child(game)
+	await process_frame
+	game._start_shift()
+	w=game.world
+	w.audio.muted=true
+	pan=w.pan
 	pan.water_ml=600
 	pan.water_heat=22
+	await create_timer(0.3).timeout
+	expect(absf(pan.rigid.position.x-(pan.PIVOT+pan.HOME).x)<2,"fresh cold fixture begins on the stove before lid placement")
 	var lid=pan.lid
 	lid.parked=false
 	lid.rigid.freeze=false

@@ -206,7 +206,9 @@ func contains(p: Vector2) -> bool:
 
 func can_grab(p: Vector2) -> bool:
 	var local: = local_point(p)
-	if Rect2(925, 561, 173, 35).has_point(local): return true
+	# The handle artwork is behind loose food. Its generous grab rectangle must
+	# not intercept an opaque food pixel that the player can visibly pick up.
+	if Rect2(925, 561, 173, 35).has_point(local): return world._food_at(p) == null
 	var geometry := preload("res://modules/restaurant/world/pan_geometry.gd")
 	var rim: = (local - geometry.CENTER) / geometry.RADIUS
 	return rim.length() > 0.86 and rim.length() < 1.12 and world._food_at(p) == null
