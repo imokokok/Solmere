@@ -1,0 +1,22 @@
+; Standalone Soulmere sample-sequencer prototype.
+; Open this file directly in Godot 4.7.2.
+
+config_version=5
+
+[application]
+
+config/name="Soulmere Sample Sequencer Prototype"
+run/main_scene="res://main.tscn"
+
+[display]
+
+window/size/viewport_width=1600
+window/size/viewport_height=900
+window/size/window_width_override=1440
+window/size/window_height_override=810
+window/stretch/mode="canvas_items"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

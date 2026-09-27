@@ -80,7 +80,6 @@ func _ready() -> void:
 		else: play())
 	_place(play_control,Vector2(65,377),Vector2(165,43))
 	clock_label=label("",18); _place(clock_label,Vector2(250,383),Vector2(190,30))
-	_place(button("格子音序器",open_sequencer),Vector2(424,377),Vector2(162,43))
 	make_control=button("拿去做唱片 →",request_visual)
 	_place(make_control,Vector2(598,377),Vector2(245,43))
 	mv=VisualCanvas.new(); mv.name="AlwaysVisibleMV"; mv.mouse_filter=MOUSE_FILTER_IGNORE
@@ -393,13 +392,6 @@ func request_visual() -> void:
 	confirmation.description=("当前视角 "+GameState.current_role+"\n" if CharacterSystem.switch_unlocked() else "")+"封面与压片交付会用去 60 分钟。\n工程已保留；取消不会结算这段时间。"
 	confirmation.confirm_text="开始制作"; add_child(confirmation)
 	confirmation.accepted.connect(func(): confirmation.queue_free(); await open_visual())
-
-func open_sequencer() -> void:
-	stop()
-	var sequencer=load("res://extensions/sample_sequencer/SampleSequencerScreen.gd").new()
-	sequencer.timeline_studio=self
-	get_parent().add_child(sequencer)
-	hide()
 
 func _exit_tree() -> void:
 	if monitor_locked: get_node("/root/WorldSound").lock_monitor(false)
