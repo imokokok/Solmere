@@ -190,13 +190,15 @@ class Tool extends Button:
 	var symbol := "pencil"
 	var canvas
 	var mode := "draw"
+	var brush := ""
 	func _ready() -> void:
 		for state in ["normal","hover","pressed","focus"]: add_theme_stylebox_override(state,StyleBoxEmpty.new())
 		for name in ["font_color","font_hover_color","font_pressed_color"]: add_theme_color_override(name,Color.TRANSPARENT)
 		mouse_entered.connect(queue_redraw); mouse_exited.connect(queue_redraw)
 		mouse_default_cursor_shape=Control.CURSOR_POINTING_HAND
 	func _draw() -> void:
-		var color := Color("607f72") if canvas.mode==mode else Color("8b7657")
+		var chosen: bool=canvas.mode==mode and (brush.is_empty() or canvas.brush_kind==brush)
+		var color := Color("607f72") if chosen else Color("8b7657")
 		var p := Vector2(size.x/2,29)
 		if symbol in ["pencil","ink"]:
 			draw_colored_polygon(PackedVector2Array([p+Vector2(-25,9),p+Vector2(20,-16),p+Vector2(26,-6),p+Vector2(-21,17)]),Color("cc965d") if symbol=="pencil" else Color("698a7a"))
@@ -210,4 +212,4 @@ class Tool extends Button:
 			draw_arc(p+Vector2(0,3),15,0,PI,24,color,2,true)
 			for x in [-12,-4,4,12]: draw_line(p+Vector2(x,3),p+Vector2(x,-16+abs(x)*0.3),color,3,true)
 		draw_string(Ink.font(),Vector2(0,69),text,HORIZONTAL_ALIGNMENT_CENTER,size.x,16,color)
-		if canvas.mode==mode or is_hovered(): draw_line(Vector2(10,74),Vector2(size.x-10,73),color,2,true)
+		if chosen or is_hovered(): draw_line(Vector2(10,74),Vector2(size.x-10,73),color,2,true)

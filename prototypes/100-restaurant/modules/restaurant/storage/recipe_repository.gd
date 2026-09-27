@@ -239,6 +239,10 @@ func _validate_record(record: Dictionary, allow_retired: bool = false) -> Dictio
 	var poster = record.get("poster", {})
 	if not poster is Dictionary or not _valid_poster(poster):
 		return _failure("纸面笔画或素材图层数据无效。")
+	if poster.has("recipe_sheet"):
+		var sheet=preload("res://modules/restaurant/ui/recipe_sheet.gd")
+		if not sheet.has_title(poster) or not sheet.has_drawing(poster):
+			return _failure("图解菜谱需要手写菜名和至少一幅亲手画的步骤配图。")
 	# Written instructions now live directly on paper and are valid DIY content.
 	var dish_result: = _validate_dish(record.get("dish", {}), _poster_has_content(poster) or not str(record.get("notes", "")).strip_edges().is_empty(), allow_retired)
 	if not dish_result.ok:
@@ -368,7 +372,7 @@ func _valid_poster(poster: Dictionary) -> bool:
 		return false
 	if not poster.get("strokes", []) is Array or not poster.get("stickers", []) is Array:
 		return false
-	if poster.get("strokes", []).size() > 128 or poster.get("stickers", []).size() > 32:
+	if poster.get("strokes", []).size() > PosterCanvas.MAX_STROKES or poster.get("stickers", []).size() > 32:
 		return false
 	for stroke in poster.get("strokes", []):
 		if not stroke is Dictionary or not stroke.get("points") is Array or stroke.points.size() > 512:
@@ -388,8 +392,9 @@ func _valid_poster(poster: Dictionary) -> bool:
 		if not PosterCanvas.validate_sticker(sticker):
 			return false
 	for key in poster:
-		if key not in ["version", "caption", "strokes", "stickers"]:
+		if key not in ["version", "caption", "strokes", "stickers", "recipe_sheet"]:
 			return false
+	if poster.has("recipe_sheet") and not preload("res://modules/restaurant/ui/recipe_sheet.gd").valid(poster.recipe_sheet): return false
 	return JSON.stringify(poster).to_utf8_buffer().size() < MAX_FILE_BYTES
 
 func _valid_point(point: Variant) -> bool:

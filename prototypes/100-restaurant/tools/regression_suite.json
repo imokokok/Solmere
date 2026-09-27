@@ -33,6 +33,7 @@
     "tests/test_collage_input.gd",
     "modules/restaurant/storage/paper_recipe_test.gd",
     "tests/test_recipe_diy.gd",
+    "tests/test_recipe_drawing.gd",
     "tests/test_tape_editing.gd",
     "tests/test_tape_tools.gd",
     "tests/test_seasoning.gd",

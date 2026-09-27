@@ -32,7 +32,7 @@ var result = repository.import_from("user://friend_cookbook.json")
 
 `thumbnail` 为不带 `data:` 前缀的 PNG base64 字符串，最大 1 MiB，图片最大 1024×1024，因此 JSON 单文件可携带照片；可用 `Marshalls.raw_to_base64(image.save_png_to_buffer())` 创建。`photo` 只作为旧调用别名读入，仍必须是 PNG base64，输出统一为 `thumbnail`。不接受照片文件路径或 URL。
 
-海报/菜谱纸面 `poster` 由 `PosterCanvas.export_data()` 返回：`version: 1, caption: String, strokes: [{points: [[x,y], ...], color: RGBA十六进制, width: 归一化画笔宽}], stickers: [...]`。初始纸面完全空白，不显示默认标题、照片、食材或装饰；`caption` 只兼容旧记录，不自动绘制，文字必须显式加入图层。`dish_texture` 也不自动显示，照片使用 `add_photo()` 显式加入。
+海报/菜谱纸面 `poster` 由 `PosterCanvas.export_data()` 返回：`version: 1, caption: String, strokes: [{points: [[x,y], ...], color: RGBA十六进制, width: 归一化画笔宽}], stickers: [...]`。自由拼贴纸面初始完全空白，不显示默认标题、照片、食材或装饰；`caption` 只兼容旧记录，不自动绘制，文字必须显式加入图层。`dish_texture` 也不自动显示，照片使用 `add_photo()` 显式加入。
 
 所有素材层共有 `kind / position:[0..1,0..1] / scale / rotation`，旋转可省略，存在时在 `-PI..PI`。`kind` 可为 `star / heart / leaf / tape` 装饰；`ingredient` 额外保存白名单 `id`、布尔 `cut`、可选 `heat:0..60`；`text` 保存最长 120 字的 `text` 与十六进制 `color`；`photo` 保存 `png` 字段（内嵌 PNG base64，单层最大 512 KiB、512×512）。新增食材/文字/照片层尺寸范围 `0.04–0.28`。最多 32 层共用同一上限，所有纸面及照片计入总文件 16 MiB 上限。
 
@@ -53,3 +53,9 @@ var result = repository.import_from("user://friend_cookbook.json")
 把菜谱数据接入线上时，应另加服务端认证、内容管理、审核、图片托管、冲突与离线合并规则，并维持这个 JSON 版本边界。不要直接把本地喜欢数当成线上排名。
 
 非空实作料理可选 `dish.water_ml`（有限数值 0–1500）。缺省为 0，版本1旧文件继续兼容；JSON交换保留水量。纯纸面作品不带实际料理指标。
+
+## 图解菜谱纸面（2026-09-27）
+
+`poster` 可另含 `recipe_sheet: {version: 1, materials: String, steps: [String, String, String, String], source: String}`，保存预写或用户改写的材料与四步说明。材料最多 200 字、每步最多 120 字、来源说明最多 60 字；拒绝未知键和错误结构。涂鸦数据仍为独立 `strokes`，容量最多 512 条、每条最多 512 个点，32 素材层和 16 MiB 文件上限保留。
+
+图解菜谱的画布是 560×760 的竖版整页，标题笔画也在其中；不能用旧横版拼贴比例显示。保存时要求标题区域有玩家笔画，至少一个配图区有笔画，只有预写文字的页不能保存为作品。纸面名称来自手写笔画，`record.title` 为“手绘菜谱 N”索引，不做文字识别。没有实际料理时，`dish` 仍仅保存 `ingredients: []`，说明文字中的示例食材不能注入实际用料或评分。可选字段缺失时完全保留旧拼贴格式。

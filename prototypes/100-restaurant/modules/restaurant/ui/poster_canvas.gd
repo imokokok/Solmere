@@ -2,6 +2,11 @@ extends Control
 
 signal changed
 const Ink = preload("res://modules/restaurant/ui/paper_ink.gd")
+const RecipeSheet = preload("res://modules/restaurant/ui/recipe_sheet.gd")
+var recipe_sheet: Dictionary = {}
+var _recipe_sheet_layer: Control
+var _erasing := false
+var eraser_radius := 13.0
 var _text_edit_index := -1
 var _text_editor: TextEdit
 var _text_original := ""
@@ -24,8 +29,9 @@ var draw_paper: = true
 var selected_index: = -1
 var mode: = "select":
 	set(value):
-		mode = value if value in ["select", "draw", "cut", "write"] else "select"
+		mode = value if value in ["select", "draw", "cut", "write", "erase", "instructions"] else "select"
 		_drawing = false
+		_erasing = false
 		_dragging_layer = false
 		_stop_tape_drag()
 		_cut_points.clear()
@@ -62,7 +68,7 @@ var _tape_drag_anchor: = Vector2.ZERO
 var _tape_drag_axis: = Vector2.RIGHT
 var _tape_drag_factor: = 1.0
 const PAPER: = Color.WHITE
-const MAX_STROKES: = 128
+const MAX_STROKES: = 512
 const MAX_STICKERS: = 32
 
 func _ready() -> void :
@@ -87,6 +93,7 @@ func clear_canvas() -> void :
 	queue_redraw()
 
 func undo() -> void :
+	_erasing=false
 	finish_text()
 	_drawing = false
 	_dragging_layer = false
@@ -99,6 +106,7 @@ func undo() -> void :
 	stickers = previous.stickers
 	caption = previous.get("caption", "")
 	dish_texture = previous.get("dish_texture")
+	recipe_sheet=previous.get("recipe_sheet",{}).duplicate(true)
 	selected_index = -1
 	_rebuild_layers()
 	changed.emit()
@@ -364,7 +372,9 @@ func finish_cut() -> bool:
 
 func export_data() -> Dictionary:
 	finish_text()
-	return {"version": 1, "strokes": strokes.duplicate(true), "stickers": stickers.duplicate(true), "caption": caption}
+	var result := {"version": 1, "strokes": strokes.duplicate(true), "stickers": stickers.duplicate(true), "caption": caption}
+	if not recipe_sheet.is_empty(): result["recipe_sheet"]=recipe_sheet.duplicate(true)
+	return result
 
 func import_data(data: Dictionary) -> void :
 	finish_text()
@@ -376,6 +386,7 @@ func import_data(data: Dictionary) -> void :
 	_drawing = false
 	_dragging_layer = false
 	selected_index = -1
+	recipe_sheet=data.recipe_sheet.duplicate(true) if RecipeSheet.valid(data.get("recipe_sheet")) else {}
 	caption = data.get("caption", "").left(120) if data.get("caption", "") is String else ""
 	var incoming_strokes = data.get("strokes", [])
 	if incoming_strokes is Array:
@@ -457,6 +468,9 @@ func _gui_input(event: InputEvent) -> void :
 		if event.pressed:
 			finish_text()
 			grab_focus()
+			if mode=="erase":
+				_remember(); _erasing=true; erase_at(event.position); accept_event(); return
+			if mode=="instructions": return
 			var text_hit := _hit_layer(event.position)
 			if mode == "write" or (event.double_click and text_hit >= 0 and stickers[text_hit].kind == "text"):
 				begin_text(event.position, text_hit if text_hit >= 0 and stickers[text_hit].kind == "text" else -1)
@@ -508,8 +522,9 @@ func _gui_input(event: InputEvent) -> void :
 					_drawing = true
 					strokes.append({"points": [_normalized(event.position)], "color": ink.to_html(), "width": clampf(brush_width / maxf(size.x, 1), 0.001, 0.08),"brush":brush_kind})
 			changed.emit()
-		elif _drawing or _dragging_layer or _tape_drag_side != 0:
+		elif _drawing or _dragging_layer or _tape_drag_side != 0 or _erasing:
 			_drawing = false
+			_erasing = false
 			_dragging_layer = false
 			_stop_tape_drag()
 			changed.emit()
@@ -521,7 +536,9 @@ func _gui_input(event: InputEvent) -> void :
 		accept_event()
 	elif event is InputEventMouseMotion:
 		_hover_position = event.position
-		if _tape_drag_side != 0:
+		if _erasing:
+			erase_at(event.position); accept_event()
+		elif _tape_drag_side != 0:
 			_stretch_tape_to(event.position)
 			accept_event()
 		elif _dragging_layer and selected_index >= 0:
@@ -532,6 +549,7 @@ func _gui_input(event: InputEvent) -> void :
 			var points: Array = strokes.back().points
 			if points.size() < 512:
 				points.append(_normalized(event.position))
+			changed.emit()
 			queue_redraw()
 			if is_instance_valid(_brush_overlay):
 				_brush_overlay.queue_redraw()
@@ -563,6 +581,52 @@ func _draw_brush() -> void :
 					_brush_overlay.draw_line(start+shift,end+shift,Color(color,0.27+strand*0.1),maxf(0.7,width*0.28),true)
 			else:
 				_brush_overlay.draw_line(start,end,Color(color,0.42) if stroke.get("brush","")=="marker" else color,width,true)
+				if stroke.get("brush","ink")=="ink":
+					_brush_overlay.draw_circle(start,width/2,color)
+					_brush_overlay.draw_circle(end,width/2,color)
+
+func erase_at(point: Vector2) -> void:
+	# Split touched ink, leaving printed words and the untouched parts of a stroke.
+	var remaining: Array = []
+	var erased := false
+	for stroke in strokes:
+		var sampled: Array = []
+		var radius := eraser_radius+float(stroke.width)*size.x/2
+		var points: Array = stroke.points
+		var touched := false
+		for i in points.size():
+			var start := _pixel(points[i])
+			var end := _pixel(points[mini(i+1,points.size()-1)])
+			if Geometry2D.get_closest_point_to_segment(point,start,end).distance_to(point)<=radius:
+				touched=true; break
+		if not touched:
+			remaining.append(stroke); continue
+		erased=true
+		for i in points.size():
+			var start := _pixel(points[i])
+			var end := _pixel(points[mini(i+1,points.size()-1)])
+			var count := maxi(1,ceili(start.distance_to(end)/maxf(radius/3,1)))
+			for j in count: sampled.append(start.lerp(end,float(j)/count))
+		var run: Array = []
+		for pixel in sampled:
+			if pixel.distance_to(point)>radius:
+				run.append(_normalized(pixel))
+			elif not run.is_empty():
+				_append_ink_fragments(remaining,stroke,run); run=[]
+		if not run.is_empty(): _append_ink_fragments(remaining,stroke,run)
+	if erased and remaining.size()<=MAX_STROKES:
+		strokes=remaining
+		if is_instance_valid(_brush_overlay): _brush_overlay.queue_redraw()
+		changed.emit()
+
+func _append_ink_fragments(target: Array, stroke: Dictionary, points: Array) -> void:
+	var offset := 0
+	while offset<points.size():
+		var fragment: Dictionary=stroke.duplicate(true)
+		fragment.points=points.slice(offset,mini(offset+512,points.size()))
+		target.append(fragment)
+		if offset+512>=points.size(): break
+		offset+=511
 
 func _base_extent(index: int) -> Vector2:
 	if index >= 0 and index < stickers.size() and stickers[index].kind in DECORATION_KINDS:
@@ -624,6 +688,10 @@ func _hit_layer(point: Vector2) -> int:
 	return -1
 
 func _rebuild_layers() -> void :
+	if is_instance_valid(_recipe_sheet_layer):
+		remove_child(_recipe_sheet_layer); _recipe_sheet_layer.queue_free(); _recipe_sheet_layer=null
+	if not recipe_sheet.is_empty():
+		_recipe_sheet_layer=RecipeSheet.new(); add_child(_recipe_sheet_layer); _recipe_sheet_layer.build(self)
 	if not is_instance_valid(_layer_root):
 		_layer_root = Node2D.new()
 		_layer_root.name = "CollageLayers"
@@ -957,8 +1025,9 @@ func _input(event: InputEvent) -> void :
 		get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
 		var transforming: = not _transform_mode.is_empty()
-		if transforming or _tape_drag_side != 0 or _dragging_layer or _drawing:
+		if transforming or _tape_drag_side != 0 or _dragging_layer or _drawing or _erasing:
 			_drawing = false
+			_erasing = false
 			_dragging_layer = false
 			_stop_tape_drag()
 			changed.emit()
@@ -968,6 +1037,7 @@ func _notification(what: int) -> void :
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT or what == NOTIFICATION_VISIBILITY_CHANGED:
 		if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT or not is_visible_in_tree():
 			_transform_mode = ""
+			_erasing = false
 			_dragging_layer = false
 			_drawing = false
 			_stop_tape_drag()
@@ -1068,14 +1138,16 @@ func _drop_data(point: Vector2, data: Variant) -> void:
 	if _can_drop_data(point,data): place_material(data,point)
 
 func _snapshot() -> Dictionary:
-	return {"strokes":strokes.duplicate(true),"stickers":stickers.duplicate(true),"caption":caption,"dish_texture":dish_texture}
+	return {"strokes":strokes.duplicate(true),"stickers":stickers.duplicate(true),"caption":caption,"dish_texture":dish_texture,"recipe_sheet":recipe_sheet.duplicate(true)}
 
 func redo() -> void:
+	_erasing=false
 	finish_text()
 	if _redo_history.is_empty(): return
 	_history.append(_snapshot())
 	var next: Dictionary = _redo_history.pop_back()
 	strokes=next.strokes; stickers=next.stickers; caption=next.caption; dish_texture=next.dish_texture
+	recipe_sheet=next.get("recipe_sheet",{}).duplicate(true)
 	selected_index=-1
 	_rebuild_layers()
 	changed.emit()

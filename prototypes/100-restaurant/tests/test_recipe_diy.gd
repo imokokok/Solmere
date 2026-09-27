@@ -62,7 +62,7 @@ func _test_new_paper_recipe() -> Dictionary:
 	_expect(game.session.dish.is_empty() and game._last_dish.is_empty(), "DIY entry fixture has never cooked a dish")
 	game._show_cookbook()
 	await _layout()
-	var new_button: Button = _button("新建 DIY 菜谱")
+	var new_button: Button = _button("自由拼贴手记")
 	_expect(new_button != null and not new_button.disabled, "cookbook offers a usable new-DIY-recipe button before cooking")
 	if new_button == null:
 		return {}
@@ -194,7 +194,7 @@ func _test_edit_and_copy(first: Dictionary) -> void:
 	# not auto-fill paper or inherit the previously edited recipe's photograph.
 	game._show_cookbook()
 	await _layout()
-	await _click_text("新建 DIY 菜谱")
+	await _click_text("自由拼贴手记")
 	_expect(not game._recipe_canvas.has_content() and _dish_ids(game._recipe_dish) == ["tomato"], "new DIY paper stays blank while offering the actual current meal as reference")
 	_expect(game._recipe_photo.is_empty(), "new DIY recipe does not inherit the old recipe thumbnail")
 	_expect(game.session.dish == physical_before and game._last_dish == last_before, "new DIY entry preserves the current and last cooked dishes")

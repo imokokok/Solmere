@@ -31,6 +31,9 @@ func setup(value: Dictionary) -> void:
 		paper.position = Vector2(42, 170)
 		paper.custom_minimum_size = Vector2.ZERO
 		paper.size = Vector2(476, 476.0 * 460.0 / 850.0)
+		if not paper.recipe_sheet.is_empty():
+			paper.position=Vector2.ZERO
+			paper.size=Vector2(560,760)
 		paper.visible = paper.has_content()
 		_collage = paper
 	if _image == null and (not is_instance_valid(_collage) or not _collage.visible) and not record.get("dish", {}).get("ingredients", []).is_empty():
@@ -50,6 +53,7 @@ func _ready() -> void:
 
 func _draw() -> void:
 	preload("res://modules/restaurant/ui/paper_surface.gd").paint(self,Rect2(0,0,560,760))
+	if record.get("poster",{}).has("recipe_sheet"): return
 	draw_line(Vector2(30, 25), Vector2(30, 730), Color("c68d6c", 0.4), 1.5)
 	var title := str(record.get("title", "厨房食谱"))
 	if title.length() <= 14:

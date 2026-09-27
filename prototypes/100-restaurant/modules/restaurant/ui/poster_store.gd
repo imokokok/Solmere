@@ -104,7 +104,7 @@ func _valid_data(data: Dictionary) -> bool:
 	if data.get("version") != 1 or not data.get("caption", "") is String or data.get("caption", "").length() > 120:
 		return false
 	for key in data:
-		if key not in ["version", "caption", "strokes", "stickers", "tags"]:
+		if key not in ["version", "caption", "strokes", "stickers", "tags", "recipe_sheet"]:
 			return false
 	if data.has("tags"):
 		if not data.tags is Array or data.tags.size() > 16:
@@ -114,7 +114,7 @@ func _valid_data(data: Dictionary) -> bool:
 				return false
 	if not data.get("strokes", []) is Array or not data.get("stickers", []) is Array:
 		return false
-	if data.get("strokes", []).size() > 128 or data.get("stickers", []).size() > 32:
+	if data.get("strokes", []).size() > Canvas.MAX_STROKES or data.get("stickers", []).size() > 32:
 		return false
 	for stroke in data.get("strokes", []):
 		if not stroke is Dictionary or not stroke.get("points") is Array:
@@ -135,6 +135,7 @@ func _valid_data(data: Dictionary) -> bool:
 	for sticker in data.get("stickers", []):
 		if not Canvas.validate_sticker(sticker):
 			return false
+	if data.has("recipe_sheet") and not preload("res://modules/restaurant/ui/recipe_sheet.gd").valid(data.recipe_sheet): return false
 	return JSON.stringify(data).to_utf8_buffer().size() < MAX_BYTES
 
 func _number(value: Variant) -> bool:

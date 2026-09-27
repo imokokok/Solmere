@@ -816,13 +816,14 @@ func _show_serve_feedback() -> void:
 	_button(row, "把这道菜写入菜谱", _show_recipe_editor, 320)
 
 func _new_diy_recipe() -> void :
-	_show_recipe_editor()
+	_show_recipe_editor({},true)
 
-func _show_recipe_editor(record: Dictionary = {}) -> void :
+func _show_recipe_editor(record: Dictionary = {}, illustrated: bool = false) -> void :
 	world.audio.play_effect("paper")
 	_open_authoring("recipe_editor", "厨房手作 · 留住这一餐")
+	illustrated=illustrated or record.get("poster",{}).has("recipe_sheet")
 	_editing_recipe_id = str(record.get("id", ""))
-	_active_recipe_draft_key = _editing_recipe_id if not _editing_recipe_id.is_empty() else "new"
+	_active_recipe_draft_key = _editing_recipe_id if not _editing_recipe_id.is_empty() else ("new_illustrated" if illustrated else "new")
 	var paper_record: Dictionary = _recipe_drafts.get(_active_recipe_draft_key,record).duplicate(true)
 	if record.is_empty():
 		_recipe_dish = (session.plate() if not session.dish.is_empty() else _last_dish).duplicate(true)
@@ -837,9 +838,18 @@ func _show_recipe_editor(record: Dictionary = {}) -> void :
 	_recipe_canvas = PosterCanvas.new()
 	modal_body.add_child(_recipe_canvas)
 	if paper_record.has("poster"): _recipe_canvas.import_data(paper_record.poster)
-	var desk = preload("res://modules/restaurant/ui/craft_workbench.gd").new()
-	modal_body.add_child(desk)
-	desk.build(self,_recipe_canvas,paper_record,_recipe_dish)
+	var desk
+	if illustrated:
+		if _recipe_canvas.recipe_sheet.is_empty():
+			_recipe_canvas.recipe_sheet=preload("res://modules/restaurant/ui/recipe_sheet.gd").from_dish(_recipe_dish,session.ingredients)
+			_recipe_canvas._rebuild_layers()
+		desk=preload("res://modules/restaurant/ui/recipe_drawing_workbench.gd").new()
+		modal_body.add_child(desk)
+		desk.build(self,_recipe_canvas,paper_record)
+	else:
+		desk=preload("res://modules/restaurant/ui/craft_workbench.gd").new()
+		modal_body.add_child(desk)
+		desk.build(self,_recipe_canvas,paper_record,_recipe_dish)
 	_title_input=desk.title_input
 	_author_input=desk.author_input
 	_notes_input=desk.notes_input
@@ -853,7 +863,7 @@ func _show_recipe_editor(record: Dictionary = {}) -> void :
 func _stash_recipe_draft() -> void:
 	if _modal_kind != "recipe_editor" or _active_recipe_draft_key.is_empty() or not is_instance_valid(_recipe_canvas) or not is_instance_valid(_title_input): return
 	var poster: Dictionary = _recipe_canvas.export_data()
-	if _recipe_canvas.has_content() or not _title_input.text.strip_edges().is_empty() or not _notes_input.text.strip_edges().is_empty():
+	if _recipe_canvas.has_content() or poster.has("recipe_sheet") or not _title_input.text.strip_edges().is_empty() or not _notes_input.text.strip_edges().is_empty():
 		_recipe_drafts[_active_recipe_draft_key] = {"title":_title_input.text,"author":_author_input.text,"notes":_notes_input.text,"dish":_recipe_dish.duplicate(true),"thumbnail":_recipe_photo,"poster":poster}
 
 func _show_order_paper() -> void:
@@ -957,7 +967,19 @@ func _snapshot_photo() -> void :
 	layer.visible = true
 
 func _save_recipe(as_copy: bool = false) -> void :
-	if _title_input.text.strip_edges().is_empty():
+	var poster: Dictionary=_recipe_canvas.export_data()
+	var title: String=_title_input.text.strip_edges()
+	var notes: String=_notes_input.text.left(2000)
+	if poster.has("recipe_sheet"):
+		var sheet=preload("res://modules/restaurant/ui/recipe_sheet.gd")
+		if not sheet.has_title(poster):
+			_editor_status.text="先用涂鸦笔，在纸页顶部手写菜名。"; return
+		if not sheet.has_drawing(poster):
+			_editor_status.text="再给一道步骤画上自己的配图。"; return
+		if title.is_empty() or as_copy: title="手绘菜谱 %d" % (repository.load_recipes().size()+1)
+		notes="材料：\n"+str(poster.recipe_sheet.materials)
+		for i in 4: notes+="\n%d. %s" % [i+1,poster.recipe_sheet.steps[i]]
+	elif title.is_empty():
 		_editor_status.text = "先在纸页上方写下菜名，再收进菜谱。"
 		return
 	var clean_dish: Dictionary = _recipe_dish.duplicate(true)
@@ -965,7 +987,7 @@ func _save_recipe(as_copy: bool = false) -> void :
 		if entry is Dictionary:
 			entry.erase("physics_id")
 			entry.erase("off_heat")
-	var record: = {"title": _title_input.text.strip_edges(), "author": _author_input.text.strip_edges(), "notes": _notes_input.text.left(2000), "dish": clean_dish, "thumbnail": _recipe_photo, "poster": _recipe_canvas.export_data()}
+	var record: = {"title": title, "author": _author_input.text.strip_edges(), "notes": notes, "dish": clean_dish, "thumbnail": _recipe_photo, "poster": poster}
 	var target_id: String = "" if as_copy else _editing_recipe_id
 	if not target_id.is_empty(): record["id"] = target_id
 	if repository.save_recipe(record):
@@ -1023,6 +1045,7 @@ func _show_cookbook() -> void :
 	_text("翻到想做的那一页，带着它回厨房。", 18)
 	var row: = _row(modal_body)
 	_paper_action(row, "新建 DIY 菜谱", _new_diy_recipe, "book", 260)
+	_paper_action(row,"自由拼贴手记",func(): _show_recipe_editor(),"book",190)
 	_button(row, "导出菜谱文件", func(): _file_dialog(true), 210)
 	_button(row, "导入其他人的菜谱", func(): _file_dialog(false), 240)
 	var recipes: Array = repository.load_recipes()
@@ -1059,6 +1082,8 @@ func _view_recipe(record: Dictionary) -> void :
 			break
 	_recipe_selected = record
 	_recipe_stand.setup(record)
+	if record.get("poster",{}).has("recipe_sheet"):
+		_view_drawing_recipe(record); return
 	_open_modal("recipe", str(record.get("title", "菜谱")), 1230)
 	_paper_modal()
 	modal_body.add_theme_constant_override("separation", 10)
@@ -1137,6 +1162,34 @@ func _view_recipe(record: Dictionary) -> void :
 			_notify("谢谢，你的喜欢已记下。" if liked else "这次没有新增喜欢：" + repository.get_last_error()), 150)
 	_paper_action(row, "翻到目录", _show_cookbook, "arrow", 210)
 	if session.phase == "closed": _text("今天已经收班。先收好做法，下次营业再试。", 16)
+
+func _view_drawing_recipe(record: Dictionary) -> void:
+	_open_modal("recipe","翻开亲手画的菜谱",1230)
+	_paper_modal()
+	var columns := _row(modal_body)
+	_recipe_page_preview(columns,Vector2(485,658))
+	var words := VBoxContainer.new(); words.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	words.add_theme_constant_override("separation",22); columns.add_child(words)
+	_label(words,"菜名和配图，都是你的笔迹",Vector2.ZERO,27,CREAM)
+	_text_in(words,"材料与步骤留在纸上，\n下次做菜，翻开这一页就能看。",21)
+	_label(words,"主厨 · "+str(record.get("author","主厨")),Vector2.ZERO,20,MUTED)
+	_label(words,"尚未记录实际用料" if record.get("dish",{}).get("ingredients",[]).is_empty() else _dish_names(record.dish),Vector2.ZERO,18,MUTED)
+	_paper_action(words,"继续 DIY",func(): _show_recipe_editor(record),"book",240)
+	_paper_action(words,"分享这一页",func(): _share_recipe_page(record),"book",240)
+	if not record.get("dish",{}).get("ingredients",[]).is_empty():
+		_paper_action(words,"照着做这道菜",func(): _start_recipe_guide(record),"check",240)
+	_paper_action(words,"翻到目录",_show_cookbook,"arrow",240)
+	var row := _row(modal_body)
+	var previous := _paper_action(row,"← 上一页",func(): _turn_recipe(-1),"arrow",175)
+	previous.disabled=_recipe_page_index==0
+	_label(row,"第 %d / %d 页" % [_recipe_page_index+1,_recipe_pages.size()],Vector2.ZERO,19,MUTED)
+	var next := _paper_action(row,"下一页 →",func(): _turn_recipe(1),"arrow",175)
+	next.disabled=_recipe_page_index>=_recipe_pages.size()-1
+
+func _text_in(parent: Node, words: String, font_size: int) -> void:
+	var label := _label(parent,words,Vector2.ZERO,font_size,CREAM)
+	label.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	label.custom_minimum_size.x=620
 
 func _turn_recipe(direction: int) -> void:
 	if _recipe_turning or _modal_kind != "recipe" or _recipe_pages.is_empty(): return

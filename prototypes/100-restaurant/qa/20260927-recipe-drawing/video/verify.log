@@ -1,0 +1,51 @@
+/private/tmp/solmere-recipe-drawing-verify.swift:8:25: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+ 6 | let url = URL(fileURLWithPath: CommandLine.arguments[1])
+ 7 | let asset = AVURLAsset(url: url)
+ 8 | guard let track = asset.tracks(withMediaType: .video).first else { fatalError("No video track") }
+   |                         `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+ 9 | let duration = CMTimeGetSeconds(asset.duration)
+10 | guard duration > 65 && duration < 75 else { fatalError("Unexpected duration: \(duration)") }
+
+/private/tmp/solmere-recipe-drawing-verify.swift:9:39: warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+ 7 | let asset = AVURLAsset(url: url)
+ 8 | guard let track = asset.tracks(withMediaType: .video).first else { fatalError("No video track") }
+ 9 | let duration = CMTimeGetSeconds(asset.duration)
+   |                                       `- warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+10 | guard duration > 65 && duration < 75 else { fatalError("Unexpected duration: \(duration)") }
+11 | let generator = AVAssetImageGenerator(asset: asset)
+
+/private/tmp/solmere-recipe-drawing-verify.swift:16:31: warning: 'copyCGImage(at:actualTime:)' was deprecated in macOS 15.0: Use generateCGImageAsynchronouslyForTime:completionHandler: instead [#DeprecatedDeclaration]
+14 | generator.requestedTimeToleranceAfter = .zero
+15 | for second in [2, 18, 34, 48, 68] {
+16 |     let image = try generator.copyCGImage(at: CMTime(seconds: Double(second), preferredTimescale: 600), actualTime: nil)
+   |                               `- warning: 'copyCGImage(at:actualTime:)' was deprecated in macOS 15.0: Use generateCGImageAsynchronouslyForTime:completionHandler: instead [#DeprecatedDeclaration]
+17 |     let file = URL(fileURLWithPath: CommandLine.arguments[2], isDirectory: true).appendingPathComponent("encoded-\(second)s.png")
+18 |     guard let destination = CGImageDestinationCreateWithURL(file as CFURL, UTType.png.identifier as CFString, 1, nil) else { fatalError("Cannot save checkpoint") }
+
+/private/tmp/solmere-recipe-drawing-verify.swift:22:47: warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+20 |     guard CGImageDestinationFinalize(destination) else { fatalError("Cannot write checkpoint") }
+21 | }
+22 | print("VERIFIED: \(duration) seconds, \(track.naturalSize.width)x\(track.naturalSize.height), \(track.nominalFrameRate) fps; decoded checkpoints at 2,18,34,48,68 seconds")
+   |                                               `- warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+23 |
+24 | let reader = try AVAssetReader(asset: asset)
+
+/private/tmp/solmere-recipe-drawing-verify.swift:22:74: warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+20 |     guard CGImageDestinationFinalize(destination) else { fatalError("Cannot write checkpoint") }
+21 | }
+22 | print("VERIFIED: \(duration) seconds, \(track.naturalSize.width)x\(track.naturalSize.height), \(track.nominalFrameRate) fps; decoded checkpoints at 2,18,34,48,68 seconds")
+   |                                                                          `- warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+23 |
+24 | let reader = try AVAssetReader(asset: asset)
+
+/private/tmp/solmere-recipe-drawing-verify.swift:22:103: warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+20 |     guard CGImageDestinationFinalize(destination) else { fatalError("Cannot write checkpoint") }
+21 | }
+22 | print("VERIFIED: \(duration) seconds, \(track.naturalSize.width)x\(track.naturalSize.height), \(track.nominalFrameRate) fps; decoded checkpoints at 2,18,34,48,68 seconds")
+   |                                                                                                       `- warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+23 |
+24 | let reader = try AVAssetReader(asset: asset)
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+VERIFIED: 71.26666666666667 seconds, 1352.0x852.0, 15.0 fps; decoded checkpoints at 2,18,34,48,68 seconds
+FULL DECODE: 1069 frames

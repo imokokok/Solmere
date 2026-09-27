@@ -1,0 +1,28 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+RECIPE_DRAW_STAGE 0 图解菜谱 DIY：做法已经在纸上，菜名和配图由你用笔画
+DRAW_CHECK button: 新建 DIY 菜谱
+DRAW_CHECK page starts without pre-drawn names or pictures
+RECIPE_DRAW_STAGE 82 ① 用涂鸦笔在最上面手写菜名：给这一页取名「番茄面」
+DRAW_CHECK button: 细笔
+RECIPE_DRAW_STAGE 301 ② 第一步：旁边的做法已经写好，自己画番茄、刀和切块
+RECIPE_DRAW_STAGE 400 ③ 第二步：画一口锅，把番茄小块画进锅里
+RECIPE_DRAW_STAGE 497 ④ 第三步：给煮面这一步画锅、水、面条和热气
+RECIPE_DRAW_STAGE 637 ⑤ 第四步：画一碗做好的面，把这份做法补成完整图解
+RECIPE_DRAW_STAGE 790 画错了，橡皮擦只擦自己的笔画；预写文字会留下来
+DRAW_CHECK button: 橡皮擦
+RECIPE_DRAW_STAGE 825 ⑥ 收进菜谱：手写菜名和四幅配图会原样保存
+DRAW_CHECK name consists of actual ink strokes
+DRAW_CHECK illustrations contain no prefab stickers, photos or font title layers
+DRAW_CHECK button: 收进我的菜谱
+DRAW_CHECK one paper-only recipe saved without invented cooked food
+DRAW_CHECK button: 手绘菜谱 1
+RECIPE_DRAW_STAGE 895 ⑦ 保存后还能继续画；重新打开，完整笔迹和做法都在
+DRAW_CHECK button: 继续 DIY
+DRAW_CHECK reopen restores every title and picture stroke
+DRAW_CHECK button: 保存修改
+DRAW_CHECK continuing the drawing updates the same page
+DRAW_CHECK button: 手绘菜谱 1
+RECIPE_DRAW_STAGE 1001 完成：上面是亲手写的菜名，下面是自己画的四步做法
+PASS: recipe drawing video, 1069 frames, 71.2666666666667 seconds
