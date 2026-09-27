@@ -392,4 +392,3 @@ func _world_puff(center: Vector2, radius: Vector2, color: Color, seed := 0.0) ->
 		var p := center + Vector2(cos(angle), sin(angle)) * radius * edge
 		points.append(_paint_target.to_local(world.to_global(p)))
 	_paint_target.draw_colored_polygon(points, color)
-

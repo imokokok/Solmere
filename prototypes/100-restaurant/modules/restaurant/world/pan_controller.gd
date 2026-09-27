@@ -348,4 +348,3 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT and is_instance_valid(world):
 		suspend()
 		faucet_on = false
-

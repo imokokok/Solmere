@@ -184,4 +184,3 @@ func clear() -> void:
 	wiped_ml=0.0
 	received_ml=0.0
 	recent_rate=0.0
-
