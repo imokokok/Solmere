@@ -4,7 +4,7 @@ const CREAM := Color("fff6e5")
 const INK := Color("31658b")
 const TERRACOTTA := Color("31658b")
 const SEA := Color("31658b")
-const LETTER_DESIGN_SIZE := Vector2i(1440, 900)
+const LETTER_DESIGN_SIZE := Vector2i(1440, 810)
 const LETTER_HOST_BAR_HEIGHT := 72.0
 
 var module_id := ""
@@ -199,7 +199,7 @@ func _experience_completed() -> bool:
 		"translation":
 			return bool(experience.get("finished"))
 		"ghostwriting":
-			return str(experience.get("stage")) == "END"
+			return bool(experience.get("solmere_completed"))
 		"chess":
 			return bool(experience.get("solmere_completed"))
 		"contemplation":
@@ -233,12 +233,11 @@ func _complete() -> void:
 	if module_id == "contemplation":
 		outcome["interaction"].merge(experience.observation_result(),true)
 	if module_id == "ghostwriting":
-		# END is reached only after NPC delivery or a successful real public publish.
+		# V3 completes after the local resident's accepted letter is postmarked.
 		experience.save_game()
 		outcome["letter"]={"preview_path":str(experience.preview_path),"title":str(experience.letter_title),"owner":GameState.current_role}
-		var public_id := int(experience.get("bottle_published_id"))
-		outcome["contribution_accepted"] = str(experience.get("letter_mode")) == "npc" or public_id > 0
-		outcome["acceptance"] = {"location":"handcraft_shop","source":"public_letter_publish" if public_id > 0 else "npc_letter_delivery","external_id":str(public_id),"stage":str(experience.get("stage"))}
+		outcome["contribution_accepted"] = bool(experience.get("solmere_completed"))
+		outcome["acceptance"] = {"location":"handcraft_shop","source":"offline_letter_office_v3","external_id":"","stage":"POSTMARKED"}
 	if not GameplayModuleSystem.complete_external(module_id, outcome, metadata.get("external_results", {})):
 		GameState.load_save_data(rollback_snapshot)
 		submitting = false

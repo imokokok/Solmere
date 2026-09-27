@@ -1,0 +1,980 @@
+{
+  "schema_version": 1,
+  "note": "Offline fictional letters authored for Solmere. No real player or network claims.",
+  "letters": [
+    {
+      "letter_id": "offline_solmere_01",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "I KEEP",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "LEAVING",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "before",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "ANYTHING",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "CAN BECOME",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        },
+        {
+          "word": "HOME",
+          "position": [
+            128,
+            240
+          ],
+          "rotation": -2,
+          "style": 3
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ],
+        [
+          128,
+          240
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1,
+        1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lemon",
+      "shareable_fragments": [
+        "LEAVING",
+        "ANYTHING",
+        "HOME"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_02",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "TODAY",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "I LEFT",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "A LIGHT",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "ON",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "FOR MYSELF",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lighthouse",
+      "shareable_fragments": [
+        "LIGHT",
+        "TODAY",
+        "MYSELF"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_03",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "THE LAST",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "FERRY",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "WAITED",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "ONE MORE",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "MINUTE",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Train",
+      "shareable_fragments": [
+        "WAITED",
+        "FERRY",
+        "MINUTE"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_04",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "I AM",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "LEARNING",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "TO SAY",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "NO",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "SOFTLY",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lemon",
+      "shareable_fragments": [
+        "LEARNING",
+        "NO",
+        "SOFTLY"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_05",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "SOME DAYS",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "THE SEA",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "IS ENOUGH",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lighthouse",
+      "shareable_fragments": [
+        "SEA",
+        "ENOUGH",
+        "DAYS"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_06",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "DAD KEPT",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "MY DRAWING",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "IN HIS",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "WORK COAT",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2
+      ],
+      "paper_type": "cotton",
+      "stamp": "Train",
+      "shareable_fragments": [
+        "DRAWING",
+        "KEPT",
+        "COAT"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_07",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "I MISS",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "THE PERSON",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "I WAS",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "BEFORE",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "I KNEW",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lemon",
+      "shareable_fragments": [
+        "MISS",
+        "BEFORE",
+        "KNEW"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_08",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "AT SIX",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "THE BAKERY",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "KNOWS",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "MY NAME",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lighthouse",
+      "shareable_fragments": [
+        "SIX",
+        "NAME",
+        "KNOWS"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_09",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "MY OLD",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "RADIO",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "STILL",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "FINDS",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "A SONG",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Train",
+      "shareable_fragments": [
+        "RADIO",
+        "SONG",
+        "STILL"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_10",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "WE SAT",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "WITHOUT",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "FIXING",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "ANYTHING",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lemon",
+      "shareable_fragments": [
+        "SAT",
+        "WITHOUT",
+        "ANYTHING"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_11",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "THE GARDEN",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "TOOK",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "ITS TIME",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "SO CAN",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        },
+        {
+          "word": "I",
+          "position": [
+            18,
+            192
+          ],
+          "rotation": -1,
+          "style": 1
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ],
+        [
+          18,
+          192
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2,
+        -1
+      ],
+      "paper_type": "cotton",
+      "stamp": "Lighthouse",
+      "shareable_fragments": [
+        "GARDEN",
+        "TIME",
+        "I"
+      ]
+    },
+    {
+      "letter_id": "offline_solmere_12",
+      "fictional": true,
+      "fragment_list": [
+        {
+          "word": "I SAVED",
+          "position": [
+            18,
+            0
+          ],
+          "rotation": -2,
+          "style": 1
+        },
+        {
+          "word": "A SEAT",
+          "position": [
+            128,
+            48
+          ],
+          "rotation": 1,
+          "style": 3
+        },
+        {
+          "word": "FOR",
+          "position": [
+            18,
+            96
+          ],
+          "rotation": 0,
+          "style": 2
+        },
+        {
+          "word": "TOMORROW",
+          "position": [
+            128,
+            144
+          ],
+          "rotation": 2,
+          "style": 4
+        }
+      ],
+      "positions": [
+        [
+          18,
+          0
+        ],
+        [
+          128,
+          48
+        ],
+        [
+          18,
+          96
+        ],
+        [
+          128,
+          144
+        ]
+      ],
+      "rotations": [
+        -2,
+        1,
+        0,
+        2
+      ],
+      "paper_type": "cotton",
+      "stamp": "Train",
+      "shareable_fragments": [
+        "SEAT",
+        "SAVED",
+        "TOMORROW"
+      ]
+    }
+  ]
+}
