@@ -1,15 +1,35 @@
 """Transaction, persistence and real HTTP tests for two independent players."""
 import concurrent.futures
+import base64
 import io
 import json
+import random
 from pathlib import Path
 import tempfile
 import threading
 import unittest
+import struct
+import zlib
+from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 from wsgiref.simple_server import make_server
 from app import Service
+
+
+def png_image(width, height, pixels):
+    def chunk(kind, data):
+        return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data))
+    raw = b'\x89PNG\r\n\x1a\n'
+    raw += chunk(b'IHDR',struct.pack('>IIBBBBB',width,height,8,6,0,0,0))
+    rows = b''.join(b'\x00'+pixels[y*width*4:(y+1)*width*4] for y in range(height))
+    raw += chunk(b'IDAT',zlib.compress(rows))
+    raw += chunk(b'IEND',b'')
+    return base64.b64encode(raw).decode()
+
+
+def png_pixel(red):
+    return png_image(1,1,bytes([red,0,0,255]))
 
 
 class BottleTests(unittest.TestCase):
@@ -111,6 +131,61 @@ class BottleTests(unittest.TestCase):
         self.assertEqual(self.call('/v1/letters',self.a,{'title':'x','art_png':'invalid','request_id':'invalid-png-check'})[0],400)
         self.assertFalse(self.call('/v1/me',self.a)[1]['player']['reply_required'])
 
+    def test_all_art_pages_survive_retry_restart_and_reply(self):
+        pages = [png_pixel(10),png_pixel(200)]
+        body = {'title':'两页拼贴','caption':'完整正文','request_id':'multi-page-request-001',
+                'art_png':pages[0],'art_pages':pages}
+        code,sent = self.call('/v1/letters',self.a,body)
+        self.assertEqual(code,200)
+        self.assertEqual(sent['page_count'],2)
+        code,retry = self.call('/v1/letters',self.a,body)
+        self.assertEqual(code,200)
+        self.assertTrue(retry['replayed'])
+        self.assertEqual(retry['letter_id'],sent['letter_id'])
+        self.assertEqual(retry['page_count'],2)
+        changed = dict(body,art_pages=[pages[0],png_pixel(99)])
+        self.assertEqual(self.call('/v1/letters',self.a,changed)[0],409)
+        replacement = Service(self.db)
+        code,received = self.call('/v1/letters/'+str(sent['letter_id']),self.b,app=replacement)
+        self.assertEqual(code,200)
+        self.assertEqual(received['letter']['art_pages'],pages)
+        self.assertEqual(received['letter']['art_png'],pages[0])
+        listing = self.call('/v1/letters',self.b)[1]['letters']
+        self.assertNotIn('art_pages',next(item for item in listing if item['id']==sent['letter_id']))
+        reply = dict(body,request_id='multi-page-reply-001',parent_id=sent['letter_id'])
+        code,answered = self.call('/v1/letters',self.b,reply,app=replacement)
+        self.assertEqual(code,200)
+        self.assertEqual(self.call('/v1/letters/'+str(answered['letter_id']),self.a,app=replacement)[1]['letter']['art_pages'],pages)
+
+    def test_invalid_later_pages_cannot_commit_or_consume_send(self):
+        first = png_pixel(10)
+        body = {'title':'不可丢页','request_id':'invalid-later-page-001','art_png':first}
+        for pages in [[first,'invalid'],[first,''],[first,False],'not-a-list',[first]*65]:
+            self.assertIn(self.call('/v1/letters',self.a,dict(body,art_pages=pages))[0],[400,413])
+        self.assertEqual(self.call('/v1/letters',self.a,dict(body,art_pages=[png_pixel(20)]))[0],400)
+        with patch('app.MAX_TOTAL_PNG',1):
+            self.assertEqual(self.call('/v1/letters',self.a,dict(body,art_pages=[first,first]))[0],413)
+        self.assertFalse(self.call('/v1/me',self.a)[1]['player']['reply_required'])
+        self.assertEqual(self.call('/v1/letters',self.a,dict(body,art_pages=[first]))[0],200)
+
+    def test_legacy_art_and_idempotency_survive_schema_upgrade(self):
+        first = png_pixel(42)
+        body = {'title':'旧版单页','request_id':'legacy-art-request-001','art_png':first}
+        code,sent = self.call('/v1/letters',self.a,body)
+        self.assertEqual(code,200)
+        # Emulate the schema preceding multi-page storage, including old hashes.
+        with self.app.connect() as db:
+            db.execute('ALTER TABLE letters DROP COLUMN art_pages_json')
+        replacement = Service(self.db)
+        code,received = self.call('/v1/letters/'+str(sent['letter_id']),self.b,app=replacement)
+        self.assertEqual(code,200)
+        self.assertEqual(received['letter']['art_pages'],[first])
+        code,retry = self.call('/v1/letters',self.a,dict(body,art_pages=[first]),app=replacement)
+        self.assertEqual(code,200)
+        self.assertEqual(retry['letter_id'],sent['letter_id'])
+        self.assertEqual(retry['page_count'],1)
+        self.assertIn('art_pages',self.call('/health',app=replacement)[1]['capabilities'])
+
     def test_pagination_reaches_old_letters(self):
         for i in range(15):
             self.post(self.register('寄信人'+str(i)))
@@ -131,7 +206,14 @@ class BottleTests(unittest.TestCase):
                 req=Request(base+path,data=raw,headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'})
                 with urlopen(req,timeout=3) as response:
                     return json.load(response)
-            letter=request('/v1/letters',self.a,{'title':'HTTP 测试','caption':'来自甲','request_id':'http-original-123'})
+            large = png_image(512,256,random.Random(42).randbytes(512*256*4))
+            pages = [large,png_pixel(123)]
+            payload = {'title':'HTTP 测试','caption':'来自甲','request_id':'http-original-123',
+                       'art_png':large,'art_pages':pages}
+            self.assertGreater(len(json.dumps(payload).encode()),1_100_000)
+            letter=request('/v1/letters',self.a,payload)
+            self.assertEqual(letter['page_count'],2)
+            self.assertEqual(request('/v1/letters/'+str(letter['letter_id']),self.b)['letter']['art_pages'],pages)
             request('/v1/letters',self.b,{'title':'回信','caption':'来自乙','request_id':'http-reply-123','parent_id':letter['letter_id']})
             inbox=request('/v1/letters?view=inbox',self.a)
             self.assertEqual(inbox['letters'][0]['caption'],'来自乙')

@@ -13,8 +13,10 @@ import time
 from urllib.parse import parse_qs
 import uuid
 
-MAX_BODY = 1_100_000
+MAX_BODY = 18_000_000
 MAX_PNG = 750_000
+MAX_PAGES = 64
+MAX_TOTAL_PNG = 12_000_000
 
 
 class APIError(Exception):
@@ -53,6 +55,8 @@ class Service:
             columns = {row[1] for row in db.execute('PRAGMA table_info(letters)')}
             if 'letter_data_json' not in columns:
                 db.execute("ALTER TABLE letters ADD COLUMN letter_data_json TEXT NOT NULL DEFAULT '{}'")
+            if 'art_pages_json' not in columns:
+                db.execute("ALTER TABLE letters ADD COLUMN art_pages_json TEXT NOT NULL DEFAULT '[]'")
             for i, (title, caption) in enumerate([
                 ('给第一个捡到瓶子的人', '这是一封事务所准备的起航信。\n今天你注意到了什么不起眼的东西？\n可以给它留下一点位置。'),
                 ('窗边的空位', '这是一封事务所准备的起航信。\n如果给今天的天气配一种颜色，\n你会从哪张纸上裁下来？'),
@@ -121,7 +125,7 @@ class Service:
         path, method = env.get('PATH_INFO',''), env.get('REQUEST_METHOD','GET')
         with closing(self.connect()) as db:
             if path=='/health' and method=='GET':
-                return {'service':'collage-letter','version':2}
+                return {'service':'collage-letter','version':3,'capabilities':['art_pages']}
             if path=='/v1/players' and method=='POST':
                 body = self.body(env)
                 name = self.text(body.get('name','海边来客'), 24, True)
@@ -169,7 +173,7 @@ class Service:
 
     @staticmethod
     def select(art):
-        return 'SELECT l.id,l.author,l.parent,l.title,l.caption,l.created,l.letter_data_json,p.name'+(',l.art_png' if art else '')+', (SELECT COUNT(*) FROM letters r WHERE r.parent=l.id) AS reply_count FROM letters l JOIN players p ON p.id=l.author'
+        return 'SELECT l.id,l.author,l.parent,l.title,l.caption,l.created,l.letter_data_json,p.name'+(',l.art_png,l.art_pages_json' if art else '')+', (SELECT COUNT(*) FROM letters r WHERE r.parent=l.id) AS reply_count FROM letters l JOIN players p ON p.id=l.author'
 
     @staticmethod
     def letter(row, player):
@@ -185,7 +189,24 @@ class Service:
         data.setdefault('reply_chain_id', str(row['parent'] or row['id']))
         result['letter_data'] = data
         result['full_text'] = row['caption']
+        if 'art_pages_json' in result:
+            result['art_pages'] = json.loads(result.pop('art_pages_json'))
+            if not result['art_pages'] and result.get('art_png'):
+                result['art_pages'] = [result['art_png']]
         return result
+
+    @staticmethod
+    def validate_png(png):
+        if not isinstance(png,str) or len(png)>MAX_PNG*4//3+8:
+            raise APIError(413,'作品图片太大。')
+        try:
+            raw = base64.b64decode(png, validate=True)
+            width,height = struct.unpack('>II',raw[16:24])
+            if raw[:16]!=b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR' or not (1<=width<=1536 and 1<=height<=1536) or len(raw)>MAX_PNG:
+                raise ValueError()
+        except (ValueError, struct.error):
+            raise APIError(400,'作品需要有效且不超过 1536 像素的 PNG。')
+        return len(raw)
 
     def publish(self, db, player, body):
         request_id = str(body.get('request_id',''))
@@ -208,28 +229,35 @@ class Service:
             raise APIError(400, '信件资料过长。')
         metadata_json=json.dumps(metadata,ensure_ascii=False,sort_keys=True)
         png = body.get('art_png','')
-        if not isinstance(png,str) or len(png)>MAX_PNG*4//3+8:
-            raise APIError(413,'作品图片太大。')
+        pages = body.get('art_pages', [])
+        if not isinstance(pages,list) or len(pages)>MAX_PAGES:
+            raise APIError(400,f'作品最多 {MAX_PAGES} 页，请保留完整草稿后分信寄出。')
+        if pages:
+            total = sum(self.validate_png(page) for page in pages)
+            if total>MAX_TOTAL_PNG:
+                raise APIError(413,'作品总大小超过限制，请保留完整草稿后分信寄出。')
+            if png and png!=pages[0]:
+                raise APIError(400,'预览与作品第一页不一致。')
+            png = pages[0]
         if png:
-            try:
-                raw = base64.b64decode(png, validate=True)
-                width,height = struct.unpack('>II',raw[16:24])
-                if raw[:16]!=b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR' or not (1<=width<=1536 and 1<=height<=1536) or len(raw)>MAX_PNG:
-                    raise ValueError()
-            except (ValueError, struct.error):
-                raise APIError(400,'作品需要有效且不超过 1536 像素的 PNG。')
+            self.validate_png(png)
+        elif not isinstance(png,str):
+            raise APIError(400,'作品图片格式有误。')
         if not png and not caption.strip():
             raise APIError(400,'空信不能投进海里，请留下作品或文字。')
-        payload_hash = hashlib.sha256(json.dumps([parent,title,caption,png]+([metadata_json] if metadata else []),ensure_ascii=False).encode()).hexdigest()
+        # Keep legacy/single-page hashes stable across a service upgrade.
+        payload_hash = hashlib.sha256(json.dumps([parent,title,caption,png]+([metadata_json] if metadata else [])+([pages] if len(pages)>1 else []),ensure_ascii=False).encode()).hexdigest()
+        pages_json = json.dumps(pages, separators=(',', ':'))
         db.execute('BEGIN IMMEDIATE')
         try:
-            existing = db.execute('SELECT id,payload_hash FROM letters WHERE author=? AND request_id=?',(player['id'],request_id)).fetchone()
+            existing = db.execute('SELECT id,payload_hash,art_png,art_pages_json FROM letters WHERE author=? AND request_id=?',(player['id'],request_id)).fetchone()
             if existing:
                 if existing['payload_hash']!=payload_hash:
                     raise APIError(409,'这次寄信的内容已改变，请使用新的流水号。')
                 current = db.execute('SELECT * FROM players WHERE id=?',(player['id'],)).fetchone()
                 db.commit()
-                return {'letter_id':existing['id'],'player':self.public_player(current),'replayed':True}
+                page_count = len(json.loads(existing['art_pages_json'])) or int(bool(existing['art_png']))
+                return {'letter_id':existing['id'],'player':self.public_player(current),'replayed':True,'page_count':page_count}
             current = db.execute('SELECT * FROM players WHERE id=?',(player['id'],)).fetchone()
             if parent is None and current['debt']:
                 raise APIError(409,'你已发出一封信。请先回复另一位寄信人，再投出新的漂流瓶。')
@@ -241,12 +269,12 @@ class Service:
                     raise APIError(403,'请回复其他寄信人的信，不能用自己的信抵扣回信。')
                 if db.execute('SELECT 1 FROM letters WHERE author=? AND parent=?',(player['id'],parent)).fetchone():
                     raise APIError(409,'你已经回复过这封信，请选另一封。')
-            cursor = db.execute('INSERT INTO letters(author,parent,title,caption,art_png,created,request_id,payload_hash,letter_data_json) VALUES(?,?,?,?,?,?,?,?,?)',
-                                (player['id'],parent,title,caption,png,time.time(),request_id,payload_hash,metadata_json))
+            cursor = db.execute('INSERT INTO letters(author,parent,title,caption,art_png,created,request_id,payload_hash,letter_data_json,art_pages_json) VALUES(?,?,?,?,?,?,?,?,?,?)',
+                                (player['id'],parent,title,caption,png,time.time(),request_id,payload_hash,metadata_json,pages_json))
             db.execute('UPDATE players SET debt=? WHERE id=?',(int(parent is None),player['id']))
             current = db.execute('SELECT * FROM players WHERE id=?',(player['id'],)).fetchone()
             db.commit()
-            return {'letter_id':cursor.lastrowid,'player':self.public_player(current),'replayed':False}
+            return {'letter_id':cursor.lastrowid,'player':self.public_player(current),'replayed':False,'page_count':len(pages) or int(bool(png))}
         except Exception:
             db.rollback()
             raise

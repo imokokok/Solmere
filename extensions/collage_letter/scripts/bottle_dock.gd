@@ -29,6 +29,7 @@ var network_buttons: Array[Button] = []
 var row_buttons: Dictionary = {}
 var reading_letter: Dictionary = {}
 var show_plain_text:=false
+var reading_page:=0
 var view := "ocean"
 var before = null
 var cursors: Array = []
@@ -180,7 +181,7 @@ func show_letter(id: int) -> void:
 	if not active:return
 	lock(false)
 	if not result.ok:message.text=L.t(result.get("error","打开失败。"));return
-	reading_letter=result.letter;show_plain_text=false;render_letter();highlight_row(id);clear(reading_side)
+	reading_letter=result.letter;show_plain_text=false;reading_page=0;render_letter();highlight_row(id);clear(reading_side)
 	var letter:=reading_letter
 	add_label(reading_side,L.t(letter.title) if letter.is_seed else letter.title,25,false)
 	add_label(reading_side,(L.t(letter.name) if letter.is_seed else letter.name)+L.t(" · 事务所起航信" if letter.is_seed else " · 玩家来信"),16,false)
@@ -200,10 +201,20 @@ func show_letter(id: int) -> void:
 
 func render_letter() -> void:
 	clear(detail_box);detail_scroll.scroll_vertical=0
-	if not show_plain_text and not str(reading_letter.get("art_png","")).is_empty():
+	var pages:Array=reading_letter.get("art_pages",[])
+	if pages.is_empty() and not str(reading_letter.get("art_png","")).is_empty():pages=[reading_letter.art_png]
+	if not show_plain_text and not pages.is_empty():
+		reading_page=clampi(reading_page,0,pages.size()-1)
 		var image:=Image.new()
-		if image.load_png_from_buffer(Marshalls.base64_to_raw(reading_letter.art_png))==OK:
-			var art:=TextureRect.new();art.name="ReceivedLetterArtwork";art.texture=ImageTexture.create_from_image(image);art.custom_minimum_size=Vector2(0,minf(594,408.0*image.get_height()/maxi(1,image.get_width())));art.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;art.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_box.add_child(art);return
+		if image.load_png_from_buffer(Marshalls.base64_to_raw(str(pages[reading_page])))==OK:
+			var art_height:=minf(594,detail_scroll.size.y-(58 if pages.size()>1 else 0))
+			var art:=TextureRect.new();art.name="ReceivedLetterArtwork";art.texture=ImageTexture.create_from_image(image);art.custom_minimum_size=Vector2(0,minf(art_height,408.0*image.get_height()/maxi(1,image.get_width())));art.expand_mode=TextureRect.EXPAND_IGNORE_SIZE;art.stretch_mode=TextureRect.STRETCH_KEEP_ASPECT_CENTERED;detail_box.add_child(art)
+			if pages.size()>1:
+				var nav:=HBoxContainer.new();nav.name="ReceivedPageNavigation";detail_box.add_child(nav)
+				var previous:=add_button(nav,"‹",func():reading_page-=1;render_letter(),false,false);previous.name="ReceivedPagePrevious";previous.disabled=reading_page==0
+				var count:=add_label(nav,"%d / %d"%[reading_page+1,pages.size()],16,false);count.name="ReceivedPageCount";count.horizontal_alignment=HORIZONTAL_ALIGNMENT_CENTER
+				var next:=add_button(nav,"›",func():reading_page+=1;render_letter(),false,false);next.name="ReceivedPageNext";next.disabled=reading_page==pages.size()-1
+			return
 	show_readable_words(str(reading_letter.get("caption","")))
 
 func compose_new() -> void:
@@ -255,6 +266,11 @@ func show_readable_words(value:String) -> void:
 	var nav:=HBoxContainer.new();detail_box.add_child(nav)
 	add_button(nav,"‹",func():words.turn_page(-1),false,false)
 	add_button(nav,"›",func():words.turn_page(1),false,false)
-	add_button(nav,"Replay Writing",func():words.play_letter_animation(value),false,false)
-	add_button(nav,"Skip",words.skip,false,false)
+	var replay:=add_button(nav,"重看书写" if L.language=="zh" else "Replay Writing",func():words.play_letter_animation(value),false,false);replay.name="ReadingReplay"
+	var skip:=add_button(nav,"跳过" if L.language=="zh" else "Skip",words.skip,false,false);skip.name="ReadingSkip"
+	# Reserve room for words rather than giving both tiny arrows a quarter row.
+	for button in nav.get_children():
+		button.size_flags_horizontal=Control.SIZE_FILL;button.custom_minimum_size.x=36;button.add_theme_font_size_override("font_size",16)
+	replay.custom_minimum_size.x=150;replay.size_flags_horizontal=Control.SIZE_EXPAND_FILL
+	skip.custom_minimum_size.x=58
 	if is_instance_valid(g):words.audio=g.audio

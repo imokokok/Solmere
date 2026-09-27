@@ -80,7 +80,8 @@ func request(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary
 func request_once(url: String, path: String, identity: String, method: int, serialized: String) -> Dictionary:
 	var http := HTTPRequest.new()
 	http.timeout=12
-	http.body_size_limit=2_000_000
+	# Complete art pages plus up to 100 reply links with long Unicode prose.
+	http.body_size_limit=50_000_000
 	http.max_redirects=0
 	add_child(http)
 	var headers := PackedStringArray(["Content-Type: application/json"])

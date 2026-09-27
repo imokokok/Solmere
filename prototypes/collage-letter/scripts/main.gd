@@ -49,6 +49,8 @@ var letter_paper_root: Node2D
 var letter_data: Dictionary=preload("res://scripts/letter_data.gd").fresh()
 var writing_preferences: Dictionary={"speed":"Normal","volume":0.55,"reduce_motion":false}
 var sent_letters: Array=[]
+# Frozen completed pages keep all collage and exactly the same bytes on retry.
+var letter_page_pngs: Array=[]
 var glue_drawing:=false
 var glue_last:=Vector2.ZERO
 var save_path := "user://letter_v1.json"
@@ -190,7 +192,8 @@ func _ready() -> void:
 	await RenderingServer.frame_post_draw
 	load_game();load_voyage()
 	if stage!="WORKBENCH":
-		live_document=preload("res://scripts/letter_document.gd").new();add_child(live_document);await live_document.build(self);letter_preview=live_document.first_page()
+		live_document=preload("res://scripts/letter_document.gd").new();add_child(live_document);await live_document.build(self)
+		if letter_page_pngs.is_empty():letter_preview=live_document.first_page()
 	if stage=="DIALOGUE": stage="WORKBENCH"
 	pieces_root.visible=stage=="WORKBENCH"
 	update_material_slots()
@@ -740,10 +743,7 @@ func complete_letter() -> void:
 	letter_text_node.page=0
 	tool = "move"
 	build_ui()
-	if is_instance_valid(live_document):live_document.queue_free()
-	live_document=preload("res://scripts/letter_document.gd").new();add_child(live_document)
-	await live_document.build(self)
-	letter_preview=live_document.first_page()
+	await capture_letter_pages()
 	if not smoke:letter_preview.get_image().save_png(preview_path)
 	stage = "FOLDING"
 	letter_text_node.state=letter_text_node.State.FOLDING
@@ -756,6 +756,15 @@ func complete_letter() -> void:
 	changed()
 	busy=false
 	build_ui()
+
+func capture_letter_pages() -> void:
+	if is_instance_valid(live_document):live_document.queue_free()
+	live_document=preload("res://scripts/letter_document.gd").new();add_child(live_document)
+	await live_document.build(self)
+	letter_page_pngs.clear()
+	for page in live_document.pages:
+		letter_page_pngs.append(Marshalls.raw_to_base64(page.get_texture().get_image().save_png_to_buffer()))
+	letter_preview=live_document.first_page()
 
 func stage_input(mouse: Vector2, down: bool) -> void:
 	if busy:
@@ -806,6 +815,7 @@ func send_letter() -> void:
 	build_ui()
 
 func restart() -> void:
+	letter_page_pngs.clear();letter_preview=null
 	letter_text="";letter_text_node.load_text("");letter_data=preload("res://scripts/letter_data.gd").fresh();history_open=false
 	for piece in pieces_root.get_children():
 		pieces_root.remove_child(piece)
@@ -889,6 +899,7 @@ func save_game(force: bool = false) -> void:
 	data["commission_history"]=commission_history;data["commission_steps"]=commission_steps
 	data["example_return"]=example_return;data["sample_reply_due"]=sample_reply_due;data["sample_cycle"]=sample_cycle;data["typewriter_text"]=typewriter_text;data["typewriter_previous"]=typewriter_previous;data["letter_text"]=letter_text;data["letter_ink_color"]=letter_ink_color.to_html(false);data["blinds_open"]=blinds_open
 	data["letter_data"]=current_letter_data();data["writing_preferences"]=writing_preferences;data["sent_letters"]=sent_letters;data["letter_page"]=letter_text_node.page
+	data["letter_page_pngs"]=letter_page_pngs.duplicate()
 	data["bottle_finishing"]=bottle_finish.serialize()
 	if file:
 		file.store_string(JSON.stringify(data))
@@ -918,6 +929,7 @@ func load_game(force: bool = false) -> void:
 	typewriter_text=str(data.get("typewriter_text",""));typewriter_previous=data.get("typewriter_previous",{})
 	letter_data=preload("res://scripts/letter_data.gd").restore(data.get("letter_data",{}))
 	writing_preferences.merge(data.get("writing_preferences",{}),true);sent_letters=data.get("sent_letters",[])
+	letter_page_pngs=data.get("letter_page_pngs",[]).duplicate()
 	letter_text=str(data.get("letter_data",{}).get("full_text",data.get("letter_text","")));letter_text_node.load_text(letter_text)
 	letter_text_node.page=clampi(int(data.get("letter_page",0)),0,letter_text_node.page_count-1)
 	letter_ink_color=INK
@@ -1007,7 +1019,12 @@ func load_game(force: bool = false) -> void:
 		pieces_root.add_child(piece)
 	sync_letter_pages()
 	letter_text_node.page=clampi(int(data.get("letter_page",0)),0,letter_text_node.page_count-1)
-	if not smoke and FileAccess.file_exists(preview_path):
+	letter_preview=null
+	if not letter_page_pngs.is_empty():
+		var saved_preview:=Image.new()
+		if saved_preview.load_png_from_buffer(Marshalls.base64_to_raw(str(letter_page_pngs[0])))==OK:
+			letter_preview=ImageTexture.create_from_image(saved_preview)
+	elif not smoke and FileAccess.file_exists(preview_path):
 		letter_preview=ImageTexture.create_from_image(Image.load_from_file(preview_path))
 	pieces_root.visible=stage=="WORKBENCH"
 	refresh_paper_stack()
@@ -1246,6 +1263,7 @@ func open_bottles() -> void:
 	dock.open()
 
 func start_bottle(parent: Dictionary) -> void:
+	letter_page_pngs.clear()
 	# Keep the collage if the player brings the current open draft to the sea.
 	if stage!="WORKBENCH":
 		restart()
@@ -1264,7 +1282,8 @@ func start_bottle(parent: Dictionary) -> void:
 	build_ui()
 
 func send_bottle() -> void:
-	if not letter_preview:
+	if busy:return
+	if not letter_preview and stage!="BOTTLE":
 		say("没有找到信件作品，请回到桌边完成这封信。" if L.language=="zh" else "Return to the desk and finish your letter first.")
 		return
 	if letter_mode in ["example","local_bottle"]:
@@ -1285,22 +1304,31 @@ func send_bottle() -> void:
 			busy=false
 			say(connection.get("error","连接失败，请重试。"))
 			return
+	if letter_page_pngs.is_empty():
+		# Older sealed drafts have editable pieces but only a first-page cache.
+		await capture_letter_pages()
+		save_game()
+	if letter_page_pngs.size()>1:
+		var capabilities:Dictionary=await bottle.request("/health")
+		if not capabilities.get("ok",false) or not "art_pages" in capabilities.get("capabilities",[]):
+			busy=false
+			say("邮局尚不支持多页作品，请更新邮局服务后重试。所有页面仍保存在草稿中。" if L.language=="zh" else "Update the post office to send every page. Your complete draft is saved.")
+			return
 	if bottle_request_id.is_empty():
 		bottle_request_id=Crypto.new().generate_random_bytes(16).hex_encode()
 		save_game()
 	if is_instance_valid(title_entry):
 		title_entry.editable=false
-	var art:=letter_preview.get_image()
-	if art.get_width()>700 or art.get_height()>900:
-		var fit:=minf(700.0/art.get_width(),900.0/art.get_height())
-		art.resize(roundi(art.get_width()*fit),roundi(art.get_height()*fit),Image.INTERPOLATE_LANCZOS)
-	var payload: Dictionary={"request_id":bottle_request_id,"title":letter_title.strip_edges(),"caption":letter_text,"letter_data":current_letter_data(),"art_png":Marshalls.raw_to_base64(art.save_png_to_buffer())}
+	var payload: Dictionary={"request_id":bottle_request_id,"title":letter_title.strip_edges(),"caption":letter_text,"letter_data":current_letter_data(),"art_png":letter_page_pngs[0],"art_pages":letter_page_pngs.duplicate()}
 	payload["parent_id"]=int(reply_parent.id) if letter_mode=="reply" else null
 	var result: Dictionary=await bottle.publish(payload)
 	busy=false
 	if not result.ok:
 		say(result.get("error","寄出失败，信仍在这里，可以重试。"))
 		build_ui()
+		return
+	if letter_page_pngs.size()>1 and int(result.get("page_count",0))!=letter_page_pngs.size():
+		say("邮局未确认保存所有页面，作品和寄信编号已保留，请更新服务后重试。" if L.language=="zh" else "The post office has not confirmed every page. Your draft and request are kept for retry.")
 		return
 	bottle_published_id=int(result.letter_id)
 	final_feedback="漂流瓶 #%d 已留在海上。\n下一步：读一封来信，给另一个人回信。" % bottle_published_id if letter_mode=="bottle" else "回信 #%d 已送到对方的信箱。\n你现在可以投出新的漂流瓶了。" % bottle_published_id
@@ -1356,8 +1384,9 @@ func run_network_test() -> void:
 	assert(stage=="END" and not bottle.player.reply_required)
 	open_bottles()
 	await get_tree().create_timer(1).timeout
-	var dock: Node=get_child(get_child_count()-1)
-	assert(dock is CanvasLayer)
+	var docks:=get_children().filter(func(child):return child.get_script()==BottleDock)
+	assert(docks.size()==1)
+	var dock:Node=docks[0]
 	await dock.show_letter(original)
 	await capture_test("v2-bottle-dock")
 	print("NETWORK PASS: Godot A sends artwork / debt blocks send / B replies / A inbox / reply draft survives reload / A replies / debt clears / UI displays original artwork")

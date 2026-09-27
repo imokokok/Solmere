@@ -6,12 +6,18 @@ func build(game) -> void:
 	for old in pages:old.queue_free()
 	pages.clear()
 	for index in game.letter_text_node.page_count:
-		var view:=SubViewport.new();view.size=Vector2i(396,560);view.disable_3d=true;view.transparent_bg=true;view.render_target_update_mode=SubViewport.UPDATE_ALWAYS;add_child(view);pages.append(view)
+		# Keep the editing coordinate system: changing the text box repaginates
+		# the prose, and changing only the paper size moves/shrinks the cutouts.
+		var page_size:Vector2=game.LETTER.size
+		var view:=SubViewport.new();view.size=Vector2i(page_size);view.disable_3d=true;view.transparent_bg=true;view.render_target_update_mode=SubViewport.UPDATE_ALWAYS;add_child(view);pages.append(view)
 		var sheet:=Node2D.new();sheet.name="LetterPaper";view.add_child(sheet)
 		var surface:=Control.new();sheet.add_child(surface)
 		var style:int=game.letter_paper_style
-		surface.draw.connect(func():game.LetterPaper.paint(surface,Rect2(0,0,396,560),style,false))
-		var renderer=preload("res://scripts/letter_renderer.gd").new();renderer.name="LetterText";renderer.position=Vector2(28,35);renderer.size=Vector2(340,490);renderer.ink=game.letter_ink_color;sheet.add_child(renderer);renderer.load_text(game.letter_text);renderer.page=index
+		surface.draw.connect(func():game.LetterPaper.paint(surface,Rect2(Vector2.ZERO,page_size),style,false))
+		var renderer=preload("res://scripts/letter_renderer.gd").new();renderer.name="LetterText"
+		renderer.position=game.letter_text_node.position-game.LETTER.position;renderer.size=game.letter_text_node.size
+		renderer.font_size=game.letter_text_node.font_size;renderer.minimum_pages=game.letter_text_node.page_count
+		renderer.ink=game.letter_ink_color;sheet.add_child(renderer);renderer.load_text(game.letter_text);renderer.page=index
 		for original in game.pieces_root.get_children():
 			if int(original.get_meta("letter_page",0))!=index:continue
 			var piece=game.Piece.new()

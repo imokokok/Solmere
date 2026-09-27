@@ -2,7 +2,9 @@ extends SceneTree
 var failures := 0
 func check(ok: bool, message: String) -> void:
  if not ok: failures+=1;push_error(message)
-func _initialize() -> void: call_deferred("run")
+func _initialize() -> void:
+ process_frame.connect(func():RenderingServer.force_draw())
+ call_deferred("run")
 func run() -> void:
  if DisplayServer.get_name()=="headless" or not OS.get_cmdline_user_args().has("--isolated-save"): quit(2);return
  var state=root.get_node("GameState")
@@ -88,8 +90,26 @@ func run() -> void:
  check(letter.pieces_root.get_child_count()==1,"Original rectangle cut creates a paper piece")
  letter.selected.position=Vector2(700,390)
  letter.tape_start=Vector2(650,380);letter.finish_tape(Vector2(750,400))
+ letter.letter_text="海边的风很轻。\n".repeat(18)
+ letter.letter_text_node.load_text(letter.letter_text)
+ check(letter.letter_text_node.page_count==2,"Host regression prose spans two editing pages")
+ letter.letter_text_node.page=1
+ letter.take_material_whole(620,letter.LETTER.position+letter.LETTER.size*Vector2(.8,.8))
+ var second_page_piece=letter.selected
  await letter.complete_letter()
  check(letter.stage=="FOLDING" and letter.letter_preview!=null,"Original letter captures and folds")
+ check(letter.letter_page_pngs.size()==2 and letter.live_document.pages.size()==2,"Host freezes every completed page")
+ for page in letter.live_document.pages.size():
+  var view=letter.live_document.pages[page]
+  var renderer=view.get_node("LetterPaper/LetterText")
+  check(view.size==Vector2i(letter.LETTER.size),"Host completed page uses editing dimensions")
+  check(renderer.size==letter.letter_text_node.size and renderer.page==page,"Host text geometry and page stay unchanged")
+  check(renderer.lines.size()==letter.letter_text_node.lines.size(),"Host export keeps text line count")
+  for line in mini(renderer.lines.size(),letter.letter_text_node.lines.size()):
+   check(renderer.lines[line].range==letter.letter_text_node.lines[line].range and renderer.lines[line].page==letter.letter_text_node.lines[line].page,"Host export keeps exact text ranges and page breaks")
+  if page==1:
+   var copy=view.get_node("LetterPaper").get_child(view.get_node("LetterPaper").get_child_count()-1)
+   check(copy.position.is_equal_approx(second_page_piece.position-letter.LETTER.position) and copy.scale==second_page_piece.scale,"Host retains second-page clipping layout")
  check(letter.save_path.begins_with("user://letter_original_"),"Host saves isolated by character and journey")
  letter.audio.shutdown();host.queue_free();gameplay.cancel_session();await process_frame
  print("ORIGINAL_COLLAGE_HOST_TEST: ","PASS" if failures==0 else "FAIL"," failures=",failures," sources=",source_limit)
