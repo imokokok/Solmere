@@ -1,0 +1,152 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 4.1 Metal - 90.5 - Compatibility - Using Device: Apple - Apple M4
+
+Movie Maker mode enabled, recording movie in 1352×852 @ 24 FPS...
+TUTORIAL_STAGE 0 欢迎来到 100 饭店：今天，从一颗番茄做出自己的第一道菜
+TUTORIAL_CHECK button: 先在厨房练习
+TUTORIAL_STAGE 231 第一次来，可以先在准备期练习；准备期不限时，熟悉以后再开始营业
+TUTORIAL_STAGE 327 冰箱找食材，右侧菜板切配；左边水槽，中间炉灶，盘子用来装盘
+TUTORIAL_STAGE 534 冰箱和奇物架可以翻层；每件食材取出后，原位会留空
+TUTORIAL_STAGE 668 除了家常食材，还有奇物可以试；先用番茄和鸡蛋做一餐
+TUTORIAL_STAGE 706 按 TAB 打开食材柜，也可以直接搜索想找的原料
+2026-09-27 18:53:19.953 godot[70172:45435741] error messaging the mach port for IMKCFRunLoopWakeUpReliable
+TUTORIAL_STAGE 859 把番茄放到右侧菜板；按住刀柄，顺箭头从一侧压切到另一侧
+TUTORIAL_CHECK tomato has a visible storage slot
+TUTORIAL_CHECK tomato is picked up
+TUTORIAL_CHECK tomato is put down
+TUTORIAL_CHECK tomato reaches the cutting board
+TUTORIAL_CHECK held knife is visible over the cleared countertop
+TUTORIAL_CHECK knife creates physical tomato pieces
+TUTORIAL_STAGE 1118 拿刀时按 R 转 90°，滚轮微调；横向再切一次，就能切成块
+TUTORIAL_CHECK player-driven crosscut makes diced tomato pieces
+TUTORIAL_STAGE 1270 拖住同批的一片，就能把这一组切块一起送进锅口
+TUTORIAL_CHECK tomato pieces enter the pan through physics
+TUTORIAL_STAGE 1373 按住锅柄，向上轻甩；食材会跟着锅翻起来
+TUTORIAL_CHECK pan handle can be held for a real toss
+TUTORIAL_CHECK physical food lifts and turns when the pan is tossed
+TUTORIAL_STAGE 1525 鸡蛋在锅沿轻敲两次：先裂壳，再让蛋液落进锅里
+TUTORIAL_CHECK egg has a visible storage slot
+TUTORIAL_CHECK whole egg is picked up
+TUTORIAL_CHECK first rim strike cracks the held shell
+TUTORIAL_CHECK second strike pours egg and launches two shell pieces
+TUTORIAL_CHECK actual cracked egg admitted to pan
+TUTORIAL_STAGE 1680 食材准备好了，再开始今天的营业；记得先听听客人的想法
+TUTORIAL_CHECK button: 准备好了，开始营业
+TUTORIAL_STAGE 1733 先看看客人留的小纸条：今天的经历、想吃的味道，都在这里
+TUTORIAL_STAGE 1906 点击「聊聊口味」，还能听客人说今天的故事
+TUTORIAL_CHECK button: 聊聊口味
+TUTORIAL_CHECK button: 聊聊口味
+TUTORIAL_STAGE 2162 点击灶台的大火开始加热；看蛋液凝固和食材变色
+TUTORIAL_STAGE 2394 火候需要一点耐心；锅温升高后，会听到真实的煎炒声
+TUTORIAL_STAGE 2550 鸡蛋逐渐成形，转中火继续；留意中心熟度，别只看表面颜色
+TUTORIAL_CHECK real heat cooks the same egg
+TUTORIAL_STAGE 2626 做好后及时关火，让余热继续工作；烧焦的食物不会自动恢复
+TUTORIAL_STAGE 2670 瓶口对准锅内，按住挤出番茄酱；松开，就会停止出料
+TUTORIAL_CHECK seasoning available on physical rack
+TUTORIAL_CHECK real bottle picked up
+TUTORIAL_CHECK bottle dispenses through real press
+TUTORIAL_CHECK real seasoning reaches pan
+TUTORIAL_CHECK bottle left on worktop for plate sauce
+TUTORIAL_STAGE 2860 拿起木铲轻轻推拌，让切块和酱汁碰到一起
+TUTORIAL_CHECK wooden tool selected by input
+TUTORIAL_STAGE 3139 点击盘子进入摆盘；选择「全部装盘」，每一块都来自刚才那口锅
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK real bodies are plated
+TUTORIAL_STAGE 3289 在盘中拖动食物，选中后还能旋转；摆盘也能自由调整
+TUTORIAL_CHECK button: 顺时针
+TUTORIAL_STAGE 3482 切到「成品淋酱」，在盘边画一条酱汁；用量会从瓶中扣除
+TUTORIAL_CHECK button: 成品淋酱
+TUTORIAL_CHECK finite bottle sauce placed on real plate
+TUTORIAL_STAGE 3614 拍照并交给顾客：照片记录当前这一盘，不会换成预制菜图
+TUTORIAL_CHECK button: 拍照并交给顾客
+TUTORIAL_CHECK real plate photographed and served
+TUTORIAL_STAGE 3745 顾客各有口味，反馈会告诉你哪里能改；评分、心情和收入也会留下
+TUTORIAL_CHECK button: 看看客人的反馈
+TUTORIAL_CHECK one actual customer reviewed the served meal
+TUTORIAL_STAGE 3914 也可以写一封回复；这些反馈会留在「回信」里
+TUTORIAL_CHECK button: 保存回复
+TUTORIAL_CHECK button: 继续招待下一位
+TUTORIAL_STAGE 4094 打开菜谱，选择「新建 DIY 菜谱」，把刚刚做的这一餐留下来
+TUTORIAL_CHECK button: 新建 DIY 菜谱
+TUTORIAL_CHECK DIY starts from the actual served dish
+TUTORIAL_STAGE 4185 做法文字已经在纸上，也能按自己的习惯修改；配图仍由你来画
+TUTORIAL_CHECK button: 改材料和步骤
+TUTORIAL_STAGE 4276 先用细笔，在最上面手写菜名：这次叫它「番茄蛋」
+TUTORIAL_CHECK button: 细笔
+TUTORIAL_STAGE 4526 做法文字会按这餐的成品状态整理；旁边的番茄和刀，由你来画
+TUTORIAL_STAGE 4640 换一支颜色，画出锅里的番茄和鸡蛋
+TUTORIAL_STAGE 4769 第三步画锅铲和热气，把翻炒的动作记下来
+TUTORIAL_STAGE 4931 最后画一盘完成的料理：这是自己的图解，不是固定贴图
+TUTORIAL_STAGE 5094 画错了，橡皮擦只擦自己的笔画；预写文字会留下来
+TUTORIAL_CHECK button: 橡皮擦
+TUTORIAL_STAGE 5139 ⑥ 收进菜谱：手写菜名和四幅配图会原样保存
+TUTORIAL_CHECK name consists of actual ink strokes
+TUTORIAL_CHECK illustrations contain no prefab stickers, photos or font title layers
+TUTORIAL_CHECK button: 收进我的菜谱
+TUTORIAL_CHECK saved page contains the actual cooked dish
+TUTORIAL_CHECK edited printed materials survive saving
+TUTORIAL_CHECK button: 手绘菜谱 1
+TUTORIAL_STAGE 5230 ⑦ 保存后还能继续画；重新打开，完整笔迹和做法都在
+TUTORIAL_CHECK button: 继续 DIY
+TUTORIAL_CHECK reopen restores every title and picture stroke
+TUTORIAL_CHECK button: 保存修改
+TUTORIAL_CHECK continuing the drawing updates the same page
+TUTORIAL_CHECK button: 手绘菜谱 1
+TUTORIAL_STAGE 5363 完成：上面是亲手写的菜名，下面是自己画的四步做法
+TUTORIAL_STAGE 5421 材料和步骤也能修改；笔迹、文字和这一餐的记录都会一起保存
+TUTORIAL_CHECK button: 继续 DIY
+TUTORIAL_CHECK button: 改材料和步骤
+TUTORIAL_CHECK button: 保存修改
+TUTORIAL_CHECK button: 手绘菜谱 1
+TUTORIAL_STAGE 5577 「分享这一页」可导出图文文件；朋友用浏览器就能看这份菜谱
+TUTORIAL_CHECK button: 分享这一页
+TUTORIAL_STAGE 5668 保存过实际料理的菜谱还能「跟做」；提示会随取材、切配、装盘推进
+TUTORIAL_CHECK button: 照着做这道菜
+TUTORIAL_CHECK button: 番茄清汤面
+TUTORIAL_STAGE 5814 厨房也有示范菜谱，想做汤面时可以先翻一翻
+TUTORIAL_STAGE 5872 再给小店做张海报：放上刚拍的照片，写下今天的主厨推荐
+TUTORIAL_CHECK button: 纸上写字
+TUTORIAL_CHECK button: 加入料理照片
+TUTORIAL_CHECK button: 贴出去 · 家常料理
+TUTORIAL_CHECK actual photo poster saved and published in kitchen
+TUTORIAL_STAGE 6146 上一餐的残味会留在锅里；抹布打湿后，拖过空锅来清理
+TUTORIAL_CHECK faucet handle reaches requested position
+TUTORIAL_CHECK cloth wetted in running water
+TUTORIAL_CHECK faucet handle reaches requested position
+TUTORIAL_CHECK faucet handle reaches requested position
+TUTORIAL_CHECK faucet handle reaches requested position
+TUTORIAL_CHECK real strokes remove finite pan residue
+TUTORIAL_STAGE 6698 海绵负责台面洒漏；想丢掉拿错的东西，也可以用右下角清理按钮
+TUTORIAL_STAGE 6874 按住锅柄把锅搬到水槽；向下转动水龙头把手，接好水就关上
+TUTORIAL_CHECK pan carried under tap
+TUTORIAL_CHECK faucet handle reaches requested position
+TUTORIAL_CHECK faucet handle reaches requested position
+TUTORIAL_CHECK finite water supplied by faucet
+TUTORIAL_CHECK water-filled pan returned to stove
+TUTORIAL_STAGE 7208 盖上锅盖再加热，留意蒸汽；游戏里持续大火还可能把锅盖顶飞
+TUTORIAL_CHECK noodles has a visible storage slot
+TUTORIAL_CHECK noodles is picked up
+TUTORIAL_CHECK noodles is put down
+TUTORIAL_CHECK real lid seats on pan
+TUTORIAL_STAGE 7311 煮汤等待 · 4 倍速：水会受热，面条逐渐吸水变软
+TUTORIAL_CHECK real heat produces boiling water and visible lid steam
+TUTORIAL_STAGE 7590 汤烧开以后，拖开锅盖放出蒸汽，再把火关掉
+TUTORIAL_CHECK button: 全部装盘
+TUTORIAL_CHECK button: 汤碗
+TUTORIAL_STAGE 7725 做汤时选「汤碗」；从锅里盛汤，碗里的汤就是锅里减少的那部分
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK button: 从锅盛汤
+TUTORIAL_CHECK real broth moved into bowl
+TUTORIAL_STAGE 7832 忙完以后，在「暂停 / 帮助」里提前收班，查看今天的结算
+TUTORIAL_CHECK button: 提前收班并结算
+TUTORIAL_CHECK shift settles the one real meal
+TUTORIAL_STAGE 7981 从一颗番茄开始，把你的料理和故事，都留在这间小店
+TUTORIAL_STAGE 8101 实机画面 · 自动操作录制 · 字幕与转场为视频编排
+PASS: player tutorial, 87 checks, 8139 frames, 339.125 seconds
+--------------------------------------------------------------------------------
+Done recording movie at path: /private/tmp/solmere-player-tour-20260927/release-tutorial.avi
+4228 frames at 24 FPS (movie length: 00:02:56:04), recorded in 00:03:51 (76% of real-time speed).
+CPU render time: 19.01 seconds (average: 4.50 ms/frame)
+GPU render time: 0.00 seconds (average: 0.00 ms/frame)
+Encoding time: 43.13 seconds (average: 10.20 ms/frame)
+--------------------------------------------------------------------------------

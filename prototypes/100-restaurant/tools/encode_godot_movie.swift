@@ -4,14 +4,16 @@ import ImageIO
 import CoreGraphics
 import CoreVideo
 
-guard CommandLine.arguments.count == 4 else {
-    fputs("Usage: swift tools/encode_godot_movie.swift <frames-directory> <output.mp4> <fps>\n", stderr)
+guard (4...5).contains(CommandLine.arguments.count) else {
+    fputs("Usage: swift tools/encode_godot_movie.swift <frames-directory> <output.mp4> <fps> [bitrate]\n", stderr)
     exit(2)
 }
 
 let source = URL(fileURLWithPath: CommandLine.arguments[1], isDirectory: true)
 let output = URL(fileURLWithPath: CommandLine.arguments[2])
 let fps = Int(CommandLine.arguments[3]) ?? 24
+let bitrate = CommandLine.arguments.count == 5 ? (Int(CommandLine.arguments[4]) ?? 0) : 5_000_000
+guard fps > 0, bitrate > 0 else { fatalError("FPS and bitrate must be positive") }
 let files = try FileManager.default.contentsOfDirectory(at: source, includingPropertiesForKeys: nil)
     .filter { $0.lastPathComponent.hasPrefix("frame_") && $0.pathExtension == "jpg" }
     .sorted { $0.lastPathComponent < $1.lastPathComponent }
@@ -31,7 +33,7 @@ let settings: [String: Any] = [
     AVVideoWidthKey: width,
     AVVideoHeightKey: outputHeight,
     AVVideoCompressionPropertiesKey: [
-        AVVideoAverageBitRateKey: 5_000_000,
+        AVVideoAverageBitRateKey: bitrate,
         AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel
     ]
 ]

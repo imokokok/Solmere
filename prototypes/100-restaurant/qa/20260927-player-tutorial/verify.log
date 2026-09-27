@@ -1,0 +1,108 @@
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:15:23: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+13 | try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
+14 | let asset=AVURLAsset(url:url)
+15 | guard let video=asset.tracks(withMediaType:.video).first, let audio=asset.tracks(withMediaType:.audio).first else { fatalError("Missing video/audio") }
+   |                       `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+16 | let duration=asset.duration.seconds
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:15:75: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+13 | try FileManager.default.createDirectory(at: output, withIntermediateDirectories: true)
+14 | let asset=AVURLAsset(url:url)
+15 | guard let video=asset.tracks(withMediaType:.video).first, let audio=asset.tracks(withMediaType:.audio).first else { fatalError("Missing video/audio") }
+   |                                                                           `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+16 | let duration=asset.duration.seconds
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:16:20: warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+14 | let asset=AVURLAsset(url:url)
+15 | guard let video=asset.tracks(withMediaType:.video).first, let audio=asset.tracks(withMediaType:.audio).first else { fatalError("Missing video/audio") }
+16 | let duration=asset.duration.seconds
+   |                    `- warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+18 | guard duration>=300 && duration<=365 else { fatalError("Outside requested 5–6 minutes") }
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:17:46: warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+15 | guard let video=asset.tracks(withMediaType:.video).first, let audio=asset.tracks(withMediaType:.audio).first else { fatalError("Missing video/audio") }
+16 | let duration=asset.duration.seconds
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+   |                                              `- warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+18 | guard duration>=300 && duration<=365 else { fatalError("Outside requested 5–6 minutes") }
+19 | guard abs(audio.timeRange.duration.seconds-duration)<0.15 else { fatalError("Audio/video duration mismatch") }
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:17:73: warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+15 | guard let video=asset.tracks(withMediaType:.video).first, let audio=asset.tracks(withMediaType:.audio).first else { fatalError("Missing video/audio") }
+16 | let duration=asset.duration.seconds
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+   |                                                                         `- warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+18 | guard duration>=300 && duration<=365 else { fatalError("Outside requested 5–6 minutes") }
+19 | guard abs(audio.timeRange.duration.seconds-duration)<0.15 else { fatalError("Audio/video duration mismatch") }
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:17:116: warning: 'timeRange' was deprecated in macOS 13.0: Use load(.timeRange) instead [#DeprecatedDeclaration]
+15 | guard let video=asset.tracks(withMediaType:.video).first, let audio=asset.tracks(withMediaType:.audio).first else { fatalError("Missing video/audio") }
+16 | let duration=asset.duration.seconds
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+   |                                                                                                                    `- warning: 'timeRange' was deprecated in macOS 13.0: Use load(.timeRange) instead [#DeprecatedDeclaration]
+18 | guard duration>=300 && duration<=365 else { fatalError("Outside requested 5–6 minutes") }
+19 | guard abs(audio.timeRange.duration.seconds-duration)<0.15 else { fatalError("Audio/video duration mismatch") }
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:19:17: warning: 'timeRange' was deprecated in macOS 13.0: Use load(.timeRange) instead [#DeprecatedDeclaration]
+17 | print("Duration: \(duration)s; size: \(video.naturalSize); fps: \(video.nominalFrameRate); audio duration: \(audio.timeRange.duration.seconds)")
+18 | guard duration>=300 && duration<=365 else { fatalError("Outside requested 5–6 minutes") }
+19 | guard abs(audio.timeRange.duration.seconds-duration)<0.15 else { fatalError("Audio/video duration mismatch") }
+   |                 `- warning: 'timeRange' was deprecated in macOS 13.0: Use load(.timeRange) instead [#DeprecatedDeclaration]
+20 | let generator=AVAssetImageGenerator(asset:asset)
+21 | generator.appliesPreferredTrackTransform=true
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:26:23: warning: 'copyCGImage(at:actualTime:)' was deprecated in macOS 15.0: Use generateCGImageAsynchronouslyForTime:completionHandler: instead [#DeprecatedDeclaration]
+24 | for time in [3.0,22,47,76,107,139,162,188,216,247,276,301,duration-7] {
+25 |  if time>=duration { continue }
+26 |  let cg=try generator.copyCGImage(at:CMTime(seconds:time,preferredTimescale:600),actualTime:nil)
+   |                       `- warning: 'copyCGImage(at:actualTime:)' was deprecated in macOS 15.0: Use generateCGImageAsynchronouslyForTime:completionHandler: instead [#DeprecatedDeclaration]
+27 |  let file=output.appendingPathComponent("encoded-\(Int(time))s.png")
+28 |  let destination=CGImageDestinationCreateWithURL(file as CFURL,UTType.png.identifier as CFString,1,nil)!
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:41:41: warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+39 | }
+40 | guard reader.status == .completed else { fatalError("Decode failed") }
+41 | let expected=Int((duration*Double(video.nominalFrameRate)).rounded())
+   |                                         `- warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+42 | guard abs(count-expected)<=1 else { fatalError("Frame count mismatch \(count)/\(expected)") }
+43 | print("PASS: full H.264 decode, \(count) frames; audio track present and synchronized")
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:72:80: warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+70 | let rmsDb = 20 * log10(sqrt(squared/Double(audioSamples))/32767)
+71 | print("PASS: full AAC decode, \(audioSamples) samples; peak \(peakDb) dBFS, RMS \(rmsDb) dBFS; 0 clipped samples")
+72 | let metrics: [String: Any] = ["duration_seconds": duration, "width": Int(video.naturalSize.width), "height": Int(video.naturalSize.height), "fps": video.nominalFrameRate, "decoded_video_frames": count, "decoded_audio_samples": audioSamples, "audio_duration_seconds": audio.timeRange.duration.seconds, "aac_peak_dbfs": peakDb, "aac_rms_dbfs": rmsDb, "aac_clipped_samples": clipped, "complete_video_decode": true, "complete_audio_decode": true]
+   |                                                                                `- warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+73 | let json = try JSONSerialization.data(withJSONObject: metrics, options: [.prettyPrinted, .sortedKeys])
+74 | try json.write(to: output.appendingPathComponent("media-validation.json"))
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:72:120: warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+70 | let rmsDb = 20 * log10(sqrt(squared/Double(audioSamples))/32767)
+71 | print("PASS: full AAC decode, \(audioSamples) samples; peak \(peakDb) dBFS, RMS \(rmsDb) dBFS; 0 clipped samples")
+72 | let metrics: [String: Any] = ["duration_seconds": duration, "width": Int(video.naturalSize.width), "height": Int(video.naturalSize.height), "fps": video.nominalFrameRate, "decoded_video_frames": count, "decoded_audio_samples": audioSamples, "audio_duration_seconds": audio.timeRange.duration.seconds, "aac_peak_dbfs": peakDb, "aac_rms_dbfs": rmsDb, "aac_clipped_samples": clipped, "complete_video_decode": true, "complete_audio_decode": true]
+   |                                                                                                                        `- warning: 'naturalSize' was deprecated in macOS 13.0: Use load(.naturalSize) instead [#DeprecatedDeclaration]
+73 | let json = try JSONSerialization.data(withJSONObject: metrics, options: [.prettyPrinted, .sortedKeys])
+74 | try json.write(to: output.appendingPathComponent("media-validation.json"))
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:72:154: warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+70 | let rmsDb = 20 * log10(sqrt(squared/Double(audioSamples))/32767)
+71 | print("PASS: full AAC decode, \(audioSamples) samples; peak \(peakDb) dBFS, RMS \(rmsDb) dBFS; 0 clipped samples")
+72 | let metrics: [String: Any] = ["duration_seconds": duration, "width": Int(video.naturalSize.width), "height": Int(video.naturalSize.height), "fps": video.nominalFrameRate, "decoded_video_frames": count, "decoded_audio_samples": audioSamples, "audio_duration_seconds": audio.timeRange.duration.seconds, "aac_peak_dbfs": peakDb, "aac_rms_dbfs": rmsDb, "aac_clipped_samples": clipped, "complete_video_decode": true, "complete_audio_decode": true]
+   |                                                                                                                                                          `- warning: 'nominalFrameRate' was deprecated in macOS 13.0: Use load(.nominalFrameRate) instead [#DeprecatedDeclaration]
+73 | let json = try JSONSerialization.data(withJSONObject: metrics, options: [.prettyPrinted, .sortedKeys])
+74 | try json.write(to: output.appendingPathComponent("media-validation.json"))
+
+prototypes/100-restaurant/tools/verify_player_tutorial.swift:72:274: warning: 'timeRange' was deprecated in macOS 13.0: Use load(.timeRange) instead [#DeprecatedDeclaration]
+70 | let rmsDb = 20 * log10(sqrt(squared/Double(audioSamples))/32767)
+71 | print("PASS: full AAC decode, \(audioSamples) samples; peak \(peakDb) dBFS, RMS \(rmsDb) dBFS; 0 clipped samples")
+72 | let metrics: [String: Any] = ["duration_seconds": duration, "width": Int(video.naturalSize.width), "height": Int(video.naturalSize.height), "fps": video.nominalFrameRate, "decoded_video_frames": count, "decoded_audio_samples": audioSamples, "audio_duration_seconds": audio.timeRange.duration.seconds, "aac_peak_dbfs": peakDb, "aac_rms_dbfs": rmsDb, "aac_clipped_samples": clipped, "complete_video_decode": true, "complete_audio_decode": true]
+   |                                                                                                                                                                                                                                                                                  `- warning: 'timeRange' was deprecated in macOS 13.0: Use load(.timeRange) instead [#DeprecatedDeclaration]
+73 | let json = try JSONSerialization.data(withJSONObject: metrics, options: [.prettyPrinted, .sortedKeys])
+74 | try json.write(to: output.appendingPathComponent("media-validation.json"))
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+Duration: 339.1666666666667s; size: (1352.0, 852.0); fps: 24.0; audio duration: 339.1666666666667
+PASS: full H.264 decode, 8140 frames; audio track present and synchronized
+PASS: full AAC decode, 32560000 samples; peak -4.99775564042748 dBFS, RMS -37.81320994466751 dBFS; 0 clipped samples

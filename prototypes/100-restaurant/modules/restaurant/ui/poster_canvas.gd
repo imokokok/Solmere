@@ -1066,7 +1066,7 @@ func begin_text(point: Vector2, index := -1) -> void:
 	_text_editor.mouse_filter = Control.MOUSE_FILTER_STOP
 	_text_editor.text_changed.connect(_text_changed)
 	# A deferred focus event from the previous text must not finish its successor.
-	_text_editor.focus_exited.connect(_finish_unfocused_text.bind(_text_editor).call_deferred)
+	_text_editor.focus_exited.connect(_finish_unfocused_text.bind(_text_editor.get_instance_id()).call_deferred)
 	_text_editor.gui_input.connect(func(event):
 		if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE and not _text_editor.has_ime_text():
 			finish_text(true)
@@ -1076,7 +1076,9 @@ func begin_text(point: Vector2, index := -1) -> void:
 	_text_editor.set_caret_column(_text_editor.get_line(_text_editor.get_line_count()-1).length())
 	_edit_overlay.queue_redraw()
 
-func _finish_unfocused_text(editor: TextEdit) -> void:
+func _finish_unfocused_text(editor_id: int) -> void:
+	# The old layer may already be freed when this deferred callback runs.
+	var editor := instance_from_id(editor_id) as TextEdit
 	if is_instance_valid(editor) and editor == _text_editor and not editor.has_focus():
 		finish_text()
 

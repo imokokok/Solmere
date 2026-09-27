@@ -305,7 +305,7 @@ func _valid_id(value: String) -> bool:
 func _is_number(value: Variant) -> bool:
 	return (value is int or value is float) and is_finite(float(value))
 
-func _safe_json(value: Variant, depth: int) -> bool:
+func _safe_json(value: Variant, depth: int, field: String = "") -> bool:
 	if depth > 6:
 		return false
 	if value == null or value is bool:
@@ -315,7 +315,10 @@ func _safe_json(value: Variant, depth: int) -> bool:
 	if value is String:
 		return value.length() <= 2000
 	if value is Array:
-		if value.size() > 64:
+		# Real opened-egg outlines contain 89 vertices. Preserve those points;
+		# other arrays retain their original bound, and FoodSnapshot validates XY.
+		var limit := preload("res://modules/restaurant/domain/food_snapshot.gd").MAX_GEOMETRY_POINTS if field == "geometry" else 64
+		if value.size() > limit:
 			return false
 		for item in value:
 			if not _safe_json(item, depth + 1):
@@ -328,7 +331,7 @@ func _safe_json(value: Variant, depth: int) -> bool:
 			# GDScript dot assignment creates StringName keys; JSON writes them as strings.
 			if not (key is String or key is StringName) or str(key).length() > 64 or str(key).to_lower() in ["path", "url", "script", "resource", "resource_path"]:
 				return false
-			if not _safe_json(value[key], depth + 1):
+			if not _safe_json(value[key], depth + 1, str(key)):
 				return false
 		return true
 	return false

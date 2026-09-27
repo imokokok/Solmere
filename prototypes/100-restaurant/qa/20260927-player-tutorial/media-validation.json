@@ -1,0 +1,14 @@
+{
+  "aac_clipped_samples" : 0,
+  "aac_peak_dbfs" : -4.9977556404274797,
+  "aac_rms_dbfs" : -37.813209944667513,
+  "audio_duration_seconds" : 339.16666666666669,
+  "complete_audio_decode" : true,
+  "complete_video_decode" : true,
+  "decoded_audio_samples" : 32560000,
+  "decoded_video_frames" : 8140,
+  "duration_seconds" : 339.16666666666669,
+  "fps" : 24,
+  "height" : 852,
+  "width" : 1352
+}

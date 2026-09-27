@@ -1,9 +1,17 @@
 extends RefCounted
 ## Validate new nested visual state at import boundaries; legacy records remain valid.
+const MAX_GEOMETRY_POINTS := 128
 static func number(value: Variant, minimum: float, maximum: float) -> bool:
 	return (value is float or value is int) and is_finite(float(value)) and value>=minimum and value<=maximum
 
 static func valid(value: Dictionary) -> bool:
+	if value.has("geometry"):
+		var polygon = value.geometry
+		if not polygon is Array or polygon.size() > MAX_GEOMETRY_POINTS: return false
+		for point in polygon:
+			if not point is Array or point.size() != 2: return false
+			for coordinate in point:
+				if not number(coordinate, -2000, 2000): return false
 	if value.has("thermal") and not thermal_valid(value.thermal): return false
 	if value.has("surface_sauce") and not coating_valid(value.surface_sauce): return false
 	return true

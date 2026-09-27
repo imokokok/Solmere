@@ -1,0 +1,87 @@
+prototypes/100-restaurant/tools/mux_godot_movie.swift:11:31: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+ 9 | let audio = AVURLAsset(url: audioURL)
+10 | let composition = AVMutableComposition()
+11 | guard let sourceVideo = video.tracks(withMediaType: .video).first,
+   |                               `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+12 |       let sourceAudio = audio.tracks(withMediaType: .audio).first,
+13 |       let videoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid),
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:12:31: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+10 | let composition = AVMutableComposition()
+11 | guard let sourceVideo = video.tracks(withMediaType: .video).first,
+12 |       let sourceAudio = audio.tracks(withMediaType: .audio).first,
+   |                               `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+13 |       let videoTrack = composition.addMutableTrack(withMediaType: .video, preferredTrackID: kCMPersistentTrackID_Invalid),
+14 |       let audioTrack = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:16:74: warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+14 |       let audioTrack = composition.addMutableTrack(withMediaType: .audio, preferredTrackID: kCMPersistentTrackID_Invalid)
+15 | else { fatalError("Missing video or audio track") }
+16 | try videoTrack.insertTimeRange(CMTimeRange(start: .zero, duration: video.duration), of: sourceVideo, at: .zero)
+   |                                                                          `- warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+17 | videoTrack.preferredTransform = sourceVideo.preferredTransform
+18 | try audioTrack.insertTimeRange(CMTimeRange(start: .zero, duration: audio.duration), of: sourceAudio, at: .zero)
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:17:45: warning: 'preferredTransform' was deprecated in macOS 13.0: Use load(.preferredTransform) instead [#DeprecatedDeclaration]
+15 | else { fatalError("Missing video or audio track") }
+16 | try videoTrack.insertTimeRange(CMTimeRange(start: .zero, duration: video.duration), of: sourceVideo, at: .zero)
+17 | videoTrack.preferredTransform = sourceVideo.preferredTransform
+   |                                             `- warning: 'preferredTransform' was deprecated in macOS 13.0: Use load(.preferredTransform) instead [#DeprecatedDeclaration]
+18 | try audioTrack.insertTimeRange(CMTimeRange(start: .zero, duration: audio.duration), of: sourceAudio, at: .zero)
+19 | try? FileManager.default.removeItem(at: outputURL)
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:18:74: warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+16 | try videoTrack.insertTimeRange(CMTimeRange(start: .zero, duration: video.duration), of: sourceVideo, at: .zero)
+17 | videoTrack.preferredTransform = sourceVideo.preferredTransform
+18 | try audioTrack.insertTimeRange(CMTimeRange(start: .zero, duration: audio.duration), of: sourceAudio, at: .zero)
+   |                                                                          `- warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+19 | try? FileManager.default.removeItem(at: outputURL)
+20 | guard let exporter = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetHighestQuality) else {
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:27:10: warning: 'exportAsynchronously(completionHandler:)' was deprecated in macOS 15.0 [#DeprecatedDeclaration]
+25 | exporter.shouldOptimizeForNetworkUse = true
+26 | let done = DispatchSemaphore(value: 0)
+27 | exporter.exportAsynchronously { done.signal() }
+   |          `- warning: 'exportAsynchronously(completionHandler:)' was deprecated in macOS 15.0 [#DeprecatedDeclaration]
+28 | done.wait()
+29 | guard exporter.status == .completed else {
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:29:16: warning: 'status' was deprecated in macOS 15.0: Use states(updateInterval:) instead [#DeprecatedDeclaration]
+27 | exporter.exportAsynchronously { done.signal() }
+28 | done.wait()
+29 | guard exporter.status == .completed else {
+   |                `- warning: 'status' was deprecated in macOS 15.0: Use states(updateInterval:) instead [#DeprecatedDeclaration]
+30 |     fatalError("Movie export failed: \(exporter.error?.localizedDescription ?? "unknown")")
+31 | }
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:30:49: warning: 'error' was deprecated in macOS 15.0: Use export(to:as:) async throws instead [#DeprecatedDeclaration]
+28 | done.wait()
+29 | guard exporter.status == .completed else {
+30 |     fatalError("Movie export failed: \(exporter.error?.localizedDescription ?? "unknown")")
+   |                                                 `- warning: 'error' was deprecated in macOS 15.0: Use export(to:as:) async throws instead [#DeprecatedDeclaration]
+31 | }
+32 | let result = AVURLAsset(url: outputURL)
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:33:28: warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+31 | }
+32 | let result = AVURLAsset(url: outputURL)
+33 | print("MP4 ready: \(result.duration.seconds)s, video=\(result.tracks(withMediaType: .video).count), audio=\(result.tracks(withMediaType: .audio).count)")
+   |                            `- warning: 'duration' was deprecated in macOS 13.0: Use load(.duration) instead [#DeprecatedDeclaration]
+34 |
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:33:63: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+31 | }
+32 | let result = AVURLAsset(url: outputURL)
+33 | print("MP4 ready: \(result.duration.seconds)s, video=\(result.tracks(withMediaType: .video).count), audio=\(result.tracks(withMediaType: .audio).count)")
+   |                                                               `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+34 |
+
+prototypes/100-restaurant/tools/mux_godot_movie.swift:33:116: warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+31 | }
+32 | let result = AVURLAsset(url: outputURL)
+33 | print("MP4 ready: \(result.duration.seconds)s, video=\(result.tracks(withMediaType: .video).count), audio=\(result.tracks(withMediaType: .audio).count)")
+   |                                                                                                                    `- warning: 'tracks(withMediaType:)' was deprecated in macOS 13.0: Use loadTracks(withMediaType:) instead [#DeprecatedDeclaration]
+34 |
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+MP4 ready: 339.1666666666667s, video=1, audio=1

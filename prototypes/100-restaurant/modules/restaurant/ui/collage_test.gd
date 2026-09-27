@@ -34,6 +34,29 @@ func key(canvas: Control, code: int) -> void:
 	canvas._gui_input(event)
 
 func run() -> void:
+	var text_canvas := Canvas.new()
+	get_root().add_child(text_canvas)
+	text_canvas.size = Vector2(650, 400)
+	await process_frame
+	text_canvas.begin_text(Vector2(100, 100))
+	var prior_editor: TextEdit = text_canvas._text_editor
+	prior_editor.text = "第一段文字"
+	prior_editor.text_changed.emit()
+	prior_editor.focus_exited.emit()
+	text_canvas.finish_text()
+	# A layer rebuild can destroy this editor before its deferred focus event.
+	prior_editor.free()
+	text_canvas.begin_text(Vector2(250, 100))
+	var successor: TextEdit = text_canvas._text_editor
+	successor.text = "第二段文字"
+	successor.text_changed.emit()
+	await process_frame
+	await process_frame
+	check(is_instance_valid(successor) and text_canvas._text_editor == successor and text_canvas._text_edit_index >= 0, "freed editor's deferred focus event leaves its successor active")
+	text_canvas.finish_text()
+	check(text_canvas.stickers.size() == 2 and text_canvas.stickers[0].text == "第一段文字" and text_canvas.stickers[1].text == "第二段文字", "both native text layers survive rapid finish and reopen")
+	text_canvas.queue_free()
+	await process_frame
 	var canvas := Canvas.new()
 	get_root().add_child(canvas)
 	canvas.size = Vector2(650, 400)
