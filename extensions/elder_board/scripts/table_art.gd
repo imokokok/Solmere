@@ -10,6 +10,31 @@ const EXTENT := 608.0
 
 static func tabletop(canvas: CanvasItem) -> void:
 	canvas.draw_texture_rect(TABLE, Rect2(0, 0, 1579, 972), false)
+	# The bowls are part of the painted table. Fill only their inner wells so
+	# the original ink rims, wood grain, and paper remain untouched.
+	_bowl_stones(canvas, Vector2(92, 300), false)
+	_bowl_stones(canvas, Vector2(92, 463), true)
+
+static func _bowl_stones(canvas: CanvasItem, center: Vector2, dark: bool) -> void:
+	var positions := [
+		Vector2(-25, -22), Vector2(-11, -28), Vector2(6, -27), Vector2(23, -21),
+		Vector2(-33, -9), Vector2(-19, -14), Vector2(-3, -11), Vector2(13, -14), Vector2(29, -8),
+		Vector2(-29, 3), Vector2(-15, 0), Vector2(2, 3), Vector2(19, 0), Vector2(32, 5),
+		Vector2(-27, 16), Vector2(-10, 14), Vector2(6, 17), Vector2(22, 16),
+		Vector2(-15, 26), Vector2(1, 25), Vector2(16, 25),
+	]
+	var face := Color("40584e") if dark else Color("f5ead2")
+	var edge := Color("283b32") if dark else Color("806e54")
+	var gleam := Color("a9beaa", 0.68) if dark else Color("fffdf0", 0.75)
+	canvas.draw_circle(center + Vector2(0, 7), 40, Color(INK, 0.16))
+	for i in positions.size():
+		var at: Vector2 = center + positions[i] + (Vector2(1.5, -1) if dark and i % 4 == 0 else Vector2.ZERO)
+		var radius := 10.3 + float((i * 7) % 5) * 0.38
+		canvas.draw_circle(at + Vector2(1.0, 2.5), radius + 1.4, Color(INK, 0.3))
+		canvas.draw_circle(at, radius, face)
+		canvas.draw_circle(at + Vector2(-2.4, -2.2), radius * 0.56, Color(gleam, 0.28))
+		canvas.draw_arc(at, radius - 0.5, 0, TAU, 28, edge, 1.2, true)
+		canvas.draw_arc(at + Vector2(-1.5, -1.2), radius * 0.7, PI * 1.09, PI * 1.68, 12, gleam, 1.25, true)
 
 static func piece(canvas: CanvasItem, kind: int, side: int, rect: Rect2) -> void:
 	# Keep one full atlas cell so the relative heights of pawn and king survive.

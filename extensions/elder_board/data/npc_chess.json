@@ -1,0 +1,19 @@
+{
+  "board_size": 7,
+  "target_score": 4,
+  "max_turns": 30,
+  "characters": [
+    {"id":"mossner","name":"Mossner","move":"orthogonal","steps":3,"passive":"early_stop","rule":"直行三格；靠近别人时可提前停在第二格","mark":"M","portrait":""},
+    {"id":"xanni","name":"Xanni","move":"orthogonal_diagonal","steps":2,"passive":"encounter_tail","rule":"先直行一格，再斜行一格；新碰面后顺势多走一格","mark":"X","portrait":""},
+    {"id":"chenyuan","name":"尘缘","move":"eight","steps":2,"passive":"jump_one","rule":"八方向两格，可越过中间一枚棋子","mark":"尘","portrait":"res://art/user_scenes/chenyuan.png","crop":[260,80,400,420]},
+    {"id":"maya","name":"Maya","move":"turn","steps":3,"passive":"near_turn_extend","rule":"正交转弯走三格；转角有人可走四格","mark":"Ma","portrait":""},
+    {"id":"mingming","name":"冥冥","move":"eight","steps":1,"passive":"rest_charge","rule":"可休息一回合，下一次八方向最多走三格","mark":"冥","portrait":""},
+    {"id":"zhou_xiaoliu","name":"周晓六","move":"orthogonal","steps":1,"passive":"last_vacated","rule":"直行一格，也可走到附近刚被让出的空格","mark":"周","portrait":"res://art/user_scenes/zhou_xiaoliu.png","crop":[330,65,200,240]},
+    {"id":"beetman","name":"BEETMAN","move":"orthogonal_range","steps":2,"passive":"push","rule":"直行一至两格；碰面时把对方推开一格","mark":"B","portrait":""},
+    {"id":"xia_touming","name":"夏透明","move":"stance","steps":2,"passive":"flip","rule":"正位直行两格，逆位斜行两格；行动后翻面","mark":"夏","portrait":"res://art/user_scenes/xia_touming_colored.png","crop":[300,80,430,450]},
+    {"id":"yu_xingqing","name":"宇星晴","move":"knight","steps":1,"passive":"lonely_extra","rule":"跳日字；落点周围无人时可再斜走一步","mark":"宇","portrait":""},
+    {"id":"shi_yongqi","name":"石泳琪","move":"eight","steps":1,"passive":"crowd_extra","rule":"八方向一步；落点附近至少两人时可再走一步","mark":"石","portrait":""},
+    {"id":"naonao","name":"闹闹","move":"familiar","steps":1,"passive":"familiar","rule":"初时直行一步；首次新碰面后可八方向走一至两格","mark":"闹","portrait":"res://art/user_scenes/naonao_white.png","crop":[290,90,400,430]},
+    {"id":"cici","name":"巫巫 cici","move":"cici","steps":2,"passive":"familiar","rule":"初时直行一至两格；熟络后分两步直角转弯","mark":"c","portrait":"res://art/user_scenes/cici.png","crop":[0,0,500,500]}
+  ]
+}

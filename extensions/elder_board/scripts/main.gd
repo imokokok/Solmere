@@ -7,6 +7,7 @@ const GAMES := [
 	{"id": &"go", "title": "围棋"},
 	{"id": &"gomoku", "title": "五子棋"},
 	{"id": &"chess", "title": "国际象棋"},
+	{"id": &"encounter", "title": "相遇棋 · NPC 策略"},
 ]
 
 var selected_game: StringName = &""
@@ -72,7 +73,7 @@ func _build_dialogue() -> void:
 	column.name = "DialogueOverlay"
 	column.position = Vector2(1020, 172)
 	column.size = Vector2(430, 600)
-	column.add_theme_constant_override("separation", 16)
+	column.add_theme_constant_override("separation", 10)
 	stage.add_child(column)
 	var speaker := Label.new()
 	speaker.text = LocalizationSystem.text("老棋友")
@@ -98,7 +99,7 @@ func _build_dialogue() -> void:
 	column.add_child(choices)
 	for index in range(GAMES.size()):
 		var button := _button(str(GAMES[index]["title"]))
-		button.custom_minimum_size = Vector2(430, 58)
+		button.custom_minimum_size = Vector2(430, 51)
 		button.add_theme_font_size_override("font_size", 25)
 		button.pressed.connect(_select_game.bind(index))
 		choices.add_child(button)
@@ -121,6 +122,9 @@ func _select_game(index: int) -> void:
 	if index < 0 or index >= GAMES.size():
 		return
 	selected_game = GAMES[index]["id"]
+	if selected_game == &"encounter":
+		game_selected.emit(selected_game)
+		return
 	setup_view = preload("res://extensions/elder_board/scripts/rules_panel.gd").new()
 	setup_view.configure(selected_game, true, selected_go_size)
 	setup_view.closed.connect(_cancel_setup)
@@ -151,8 +155,11 @@ func _reset_selection() -> void:
 
 func _open_match(id: StringName) -> void:
 	stage.get_node("DialogueOverlay").hide()
-	match_view = preload("res://extensions/elder_board/scripts/match.gd").new()
-	match_view.setup(id, selected_go_size)
+	if id == &"encounter":
+		match_view = preload("res://extensions/elder_board/scripts/npc_match.gd").new()
+	else:
+		match_view = preload("res://extensions/elder_board/scripts/match.gd").new()
+		match_view.setup(id, selected_go_size)
 	match_view.return_requested.connect(_close_match)
 	match_view.match_finished.connect(_on_finished)
 	stage.add_child(match_view)
@@ -173,7 +180,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	if event.keycode == KEY_ESCAPE:
 		_reset_selection()
 		get_viewport().set_input_as_handled()
-	elif selected_game == &"" and event.keycode >= KEY_1 and event.keycode <= KEY_3:
+	elif selected_game == &"" and event.keycode >= KEY_1 and event.keycode <= KEY_4:
 		_select_game(event.keycode - KEY_1)
 		get_viewport().set_input_as_handled()
 
