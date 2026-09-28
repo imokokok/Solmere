@@ -731,12 +731,17 @@ func review_truth() -> void:
 	truth_reply.text = ""
 	# Scroll avoids long paragraphs hiding either unparsed clauses or contradictions.
 	for child in modal.get_children():
-		if child.name == "TruthReport": child.queue_free()
+		if child.name == "TruthReport":
+			modal.remove_child(child)
+			child.queue_free()
 	var holder := Control.new()
 	holder.name = "TruthReport"
 	modal.add_child(holder)
-	scroll_text(holder, report, Rect2(785, 239, 630, 475), 20)
+	scroll_text(holder, report, truth_report_rect(), 20)
 	truth_confirm.disabled = truth_review.rows.is_empty() or not truth_review.unknown.is_empty()
+
+func truth_report_rect() -> Rect2:
+	return Rect2(785, 239, 630, 475)
 
 func confirm_truth() -> void:
 	if truth_review.is_empty() or not Rules.evaluate(case_id, main_cards).complete: return
@@ -744,7 +749,9 @@ func confirm_truth() -> void:
 		show_truth()
 		return
 	for child in modal.get_children():
-		if child.name == "TruthReport": child.queue_free()
+		if child.name == "TruthReport":
+			modal.remove_child(child)
+			child.queue_free()
 	var report := "塔罗师：故事还没有闭合。你可以继续补充。\n"
 	if not truth_review.conflicts.is_empty():
 		report += "\n与案件设定冲突的陈述：\n「" + "」\n「".join(truth_review.conflicts) + "」\n"
@@ -754,7 +761,7 @@ func confirm_truth() -> void:
 	holder.name = "TruthReport"
 	modal.add_child(holder)
 	truth_reply.text = ""
-	scroll_text(holder, report, Rect2(785, 239, 630, 475), 21)
+	scroll_text(holder, report, truth_report_rect(), 21)
 	truth_confirm.disabled = true
 
 func show_question_help(id: String) -> void:

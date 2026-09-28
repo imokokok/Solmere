@@ -307,10 +307,22 @@ func show_truth_dialogue() -> void:
 	truth_reply=label(scroll,"我会先复述，再核对。无法识别的句子会列出来，不会当成正确，也不会忽略。",Rect2(0,0,440,460),21)
 	truth_reply.custom_minimum_size.x=440; truth_reply.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	truth_review={}
-	truth_input.text_changed.connect(func(): truth_draft=truth_input.text; truth_review={}; truth_confirm.disabled=true; save_session())
+	truth_input.text_changed.connect(func():
+		truth_draft=truth_input.text
+		truth_review={}
+		truth_confirm.disabled=true
+		var old_report:=modal.get_node_or_null("TruthReport")
+		if is_instance_valid(old_report):
+			modal.remove_child(old_report)
+			old_report.queue_free()
+		truth_reply.text="陈述已修改。请重新点击‘请理解我的陈述’，核对新的复述。"
+		save_session())
 	button(root,"请理解我的陈述",Rect2(58,759,416,46),review_truth,true)
 	truth_confirm=button(root,"复述正确 · 核对真相",Rect2(1074,759,464,46),confirm_truth); truth_confirm.disabled=true
 	button(root,"继续调查",Rect2(1330,161,207,40),close_modal)
+
+func truth_report_rect() -> Rect2:
+	return Rect2(1074,214,464,503)
 
 func show_myriorama_help(page: int=0) -> void:
 	tutorial_seen["intro"]=true; tutorial_seen["sort"]=true; tutorial_seen["choose"]=true
@@ -335,7 +347,7 @@ func show_truth() -> void:
 	var summary:=label(scroll,Rules.CASES[case_id].truth,Rect2(0,0,448,430),22)
 	summary.custom_minimum_size.x=448; summary.size_flags_horizontal=Control.SIZE_EXPAND_FILL
 	button(root,"回到万景桌",Rect2(1085,742,430,48),close_modal,true)
-	room.dialogue.position=Vector2(35,154)
+	room.dialogue.position=Vector2(170,620)
 	room.dialogue.say(["景色与真相终于接上了。你不仅排好了牌，也说清了这个故事。所有提问和牌都会留在桌上，可以再回看。"])
 	feedback("主线成立 · 故事闭合",GOLD)
 

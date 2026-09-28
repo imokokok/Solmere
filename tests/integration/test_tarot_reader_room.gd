@@ -42,10 +42,23 @@ func run() -> void:
 		game.truth_input.text="不知道"
 		game.review_truth()
 		check(not game.truth_review.complete,"Unknown narration never completes a case")
-		if case_id=="doors":
+		var report=game.modal.get_node_or_null("TruthReport")
+		check(is_instance_valid(report) and report.get_child(0).position.x>=1050 and report.get_child(0).position.x+report.get_child(0).size.x<=1565,"Truth feedback stays inside the reader room result panel")
+		game.truth_input.text_changed.emit()
+		check(game.modal.get_node_or_null("TruthReport")==null,"Editing narration clears stale truth feedback")
+		game.truth_input.text="女子三因无法接受分手而杀死死者。" if case_id=="murder" else "四组总人数是五十。"
+		game.review_truth(); game.confirm_truth()
+		check(not game.solmere_completed,"A partial truth does not complete the case")
+		report=game.modal.get_node_or_null("TruthReport")
+		check(is_instance_valid(report) and report.get_child(0).position.x>=1050,"Missing truth feedback remains inside the result panel")
+		if case_id=="murder":
+			game.truth_input.text="女子三与死者曾是恋人。女子三与死者已经分手。女子三因无法接受分手而杀死死者。女子三主动来到死者家中。门边的冲突与死亡有关。水果刀是凶器。报案人留在门外。侦探是案发后第一位进入现场的人。女子三附身侦探。女子三原本打算附身报案人。女子三附身侦探后误导调查。"
+		else:
 			game.truth_input.text="四组总人数是五十。最低<中间=中间<最高。换门不影响结果。"
-			game.review_truth(); game.confirm_truth()
-			check(game.solmere_completed,"Original complete-truth path remains valid")
+		game.review_truth(); game.confirm_truth()
+		check(game.solmere_completed,"Both cases require and accept a complete truth statement")
+		check(scene.dialogue.get_theme_stylebox("panel") is StyleBoxFlat and scene.dialogue.speaker.position.x>=24,"Reader dialogue uses a padded rectangular panel")
+		check(scene.dialogue.position.x>100 and scene.dialogue.position.y>500 and scene.dialogue.position.x+scene.dialogue.size.x<1040,"Completed-case dialogue sits below the reader without covering the truth panel")
 		game.close_modal()
 		game.save_session()
 		var before=game.owned.duplicate()
