@@ -1,0 +1,257 @@
+Run 36491714815, commit 8af7d30. Engine exit 134 after import; excerpts of confirmed errors, not a proven native abort stack.
+
+
+ERROR: Unable to open file: res://.godot/imported/paper-slider.svg-48d72bddb73fdeffcf9bf4d0e008ddbe.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+ERROR: Failed loading resource: res://.godot/imported/paper-slider.svg-48d72bddb73fdeffcf9bf4d0e008ddbe.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+ERROR: Failed loading resource: res://.godot/imported/paper-slider.svg-48d72bddb73fdeffcf9bf4d0e008ddbe.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Failed loading resource: res://art/ui/paper-slider.svg.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Failed loading resource: res://art/ui/paper-slider.svg.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Unable to open file: res://.godot/imported/check-on.svg-67d1b5640b6e2934f3bdd51db4e6b4a8.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Unable to open file: res://.godot/imported/check-on.svg-67d1b5640b6e2934f3bdd51db4e6b4a8.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+ERROR: Failed loading resource: res://.godot/imported/check-on.svg-67d1b5640b6e2934f3bdd51db4e6b4a8.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+ERROR: Failed loading resource: res://.godot/imported/check-on.svg-67d1b5640b6e2934f3bdd51db4e6b4a8.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Failed loading resource: res://art/ui/check-on.svg.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Failed loading resource: res://art/ui/check-on.svg.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Unable to open file: res://.godot/imported/check-off.svg-cf98aeb21451fbde79d95498d2f0e272.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Unable to open file: res://.godot/imported/check-off.svg-cf98aeb21451fbde79d95498d2f0e272.ctex.
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+ERROR: Failed loading resource: res://.godot/imported/check-off.svg-cf98aeb21451fbde79d95498d2f0e272.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _load_data (scene/resources/compressed_texture.cpp:45)
+ERROR: Failed loading resource: res://.godot/imported/check-off.svg-cf98aeb21451fbde79d95498d2f0e272.ctex.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Failed loading resource: res://art/ui/check-off.svg.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Failed loading resource: res://art/ui/check-off.svg.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: res://art/ui/solmere_ui.tres:72 - Parse Error: [ext_resource] referenced non-existent resource at: res://art/ui/paper-slider.svg.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: res://art/ui/solmere_ui.tres:72 - Parse Error: [ext_resource] referenced non-existent resource at: res://art/ui/paper-slider.svg.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+ERROR: res://art/ui/solmere_ui.tres:72 - Parse Error: [ext_resource] referenced non-existent resource at: res://art/ui/paper-slider.svg.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+ERROR: res://art/ui/solmere_ui.tres:72 - Parse Error: [ext_resource] referenced non-existent resource at: res://art/ui/paper-slider.svg.
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+ERROR: Failed loading resource: res://art/ui/solmere_ui.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+   at: _printerr (scene/resources/resource_format_text.cpp:41)
+ERROR: Failed loading resource: res://art/ui/solmere_ui.tres.
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Error loading custom project theme 'res://art/ui/solmere_ui.tres'
+   at: initialize_theme (scene/theme/theme_db.cpp:74)
+   at: _load (core/io/resource_loader.cpp:317)
+ERROR: Error loading custom project theme 'res://art/ui/solmere_ui.tres'
+   at: initialize_theme (scene/theme/theme_db.cpp:74)
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+SCRIPT ERROR: Parse Error: Preload file "res://art/ui/pocket_doodles/book-refined.png" has no resource loaders (unrecognized file extension).
+          at: GDScript::reload (res://scripts/ui/components/handmade_assets.gd:11)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/residency/residency_system.gd:0)
+          at: GDScript::reload (res://scripts/ui/components/handmade_assets.gd:11)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/residency/residency_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/economy_system.gd:0)
+          at: GDScript::reload (res://scripts/residency/residency_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/economy_system.gd:0)
+SCRIPT ERROR: Parse Error: Preload file "res://art/town_sound_cc0/card.png" has no resource loaders (unrecognized file extension).
+          at: GDScript::reload (res://scripts/town_sound/visual/PixelScore.gd:6)
+          at: GDScript::reload (res://scripts/core/economy_system.gd:0)
+SCRIPT ERROR: Parse Error: Preload file "res://art/town_sound_cc0/card.png" has no resource loaders (unrecognized file extension).
+          at: GDScript::reload (res://scripts/town_sound/visual/PixelScore.gd:6)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/components/live_sound_window.gd:0)
+          at: GDScript::reload (res://scripts/town_sound/visual/PixelScore.gd:6)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/components/live_sound_window.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/town_sound/GlobalRecorder.gd:0)
+          at: GDScript::reload (res://scripts/ui/components/live_sound_window.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/town_sound/GlobalRecorder.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/ui_state_system.gd:0)
+          at: GDScript::reload (res://scripts/town_sound/GlobalRecorder.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/ui_state_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/guidance_system.gd:0)
+          at: GDScript::reload (res://scripts/core/ui_state_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/guidance_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/core_loop_system.gd:0)
+          at: GDScript::reload (res://scripts/core/guidance_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/core_loop_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/travel_system.gd:0)
+          at: GDScript::reload (res://scripts/core/core_loop_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/travel_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/world_graph.gd:0)
+          at: GDScript::reload (res://scripts/core/travel_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/world_graph.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/dialogue_system.gd:0)
+          at: GDScript::reload (res://scripts/core/world_graph.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/dialogue_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/meta/meta_experience.gd:0)
+          at: GDScript::reload (res://scripts/core/dialogue_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/meta/meta_experience.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/echo_system.gd:0)
+          at: GDScript::reload (res://scripts/meta/meta_experience.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/echo_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/save_manager.gd:0)
+          at: GDScript::reload (res://scripts/core/echo_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/save_manager.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/character_system.gd:0)
+          at: GDScript::reload (res://scripts/core/save_manager.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/character_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/town_sound/audio/RecordingSession.gd:0)
+          at: GDScript::reload (res://scripts/core/character_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/town_sound/audio/RecordingSession.gd:0)
+SCRIPT ERROR: Parse Error: Preload file "res://art/ui/pocket_doodles/objects.png" has no resource loaders (unrecognized file extension).
+          at: GDScript::reload (res://scripts/residency/living_objects.gd:150)
+          at: GDScript::reload (res://scripts/town_sound/audio/RecordingSession.gd:0)
+SCRIPT ERROR: Parse Error: Preload file "res://art/ui/pocket_doodles/objects.png" has no resource loaders (unrecognized file extension).
+          at: GDScript::reload (res://scripts/residency/living_objects.gd:150)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/scene_router.gd:0)
+          at: GDScript::reload (res://scripts/residency/living_objects.gd:150)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/scene_router.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/chapter_system.gd:0)
+          at: GDScript::reload (res://scripts/core/scene_router.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/chapter_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/gameplay_module_system.gd:0)
+          at: GDScript::reload (res://scripts/core/chapter_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/gameplay_module_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/life_system.gd:0)
+          at: GDScript::reload (res://scripts/core/gameplay_module_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/life_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/game_state.gd:0)
+          at: GDScript::reload (res://scripts/core/life_system.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/core/game_state.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/world_atmosphere.gd:0)
+          at: GDScript::reload (res://scripts/core/game_state.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/world_atmosphere.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/town_sound/audio/WorldSound.gd:0)
+          at: GDScript::reload (res://scripts/ui/world_atmosphere.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/town_sound/audio/WorldSound.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/ui_sound_bindings.gd:0)
+          at: GDScript::reload (res://scripts/town_sound/audio/WorldSound.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/ui_sound_bindings.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/paper_language.gd:0)
+          at: GDScript::reload (res://scripts/ui/ui_sound_bindings.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://scripts/ui/paper_language.gd:0)
+ERROR: Failed to load script "res://scripts/ui/paper_language.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+          at: GDScript::reload (res://scripts/ui/paper_language.gd:0)
+ERROR: Failed to load script "res://scripts/ui/paper_language.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+ERROR: glTF: Can't import file 'crab', required extension 'KHR_draco_mesh_compression' is not supported. Are you missing a GLTFDocumentExtension plugin?
+   at: _parse_gltf_extensions (modules/gltf/gltf_document.cpp:7378)
+ERROR: Condition "err != OK" is true. Returning: ERR_PARSE_ERROR
+   at: _parse_gltf_state (modules/gltf/gltf_document.cpp:7123)
+   at: _parse_gltf_extensions (modules/gltf/gltf_document.cpp:7378)
+ERROR: Condition "err != OK" is true. Returning: ERR_PARSE_ERROR
+   at: _parse_gltf_state (modules/gltf/gltf_document.cpp:7123)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: _parse (modules/gltf/gltf_document.cpp:6717)
+   at: _parse_gltf_state (modules/gltf/gltf_document.cpp:7123)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: _parse (modules/gltf/gltf_document.cpp:6717)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: append_from_file (modules/gltf/gltf_document.cpp:7355)
+   at: _parse (modules/gltf/gltf_document.cpp:6717)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: append_from_file (modules/gltf/gltf_document.cpp:7355)
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[0m
+ERROR: Error importing 'res://extensions/observatory/assets/nebulae/crab.glb'.
+   at: _reimport_file (editor/file_system/editor_file_system.cpp:3093)
+[  98% ] [90m[1mreimport[22m | B7.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+ERROR: glTF: Can't import file 'cygnus_loop', required extension 'KHR_draco_mesh_compression' is not supported. Are you missing a GLTFDocumentExtension plugin?
+   at: _parse_gltf_extensions (modules/gltf/gltf_document.cpp:7378)
+ERROR: Condition "err != OK" is true. Returning: ERR_PARSE_ERROR
+   at: _parse_gltf_state (modules/gltf/gltf_document.cpp:7123)
+   at: _parse_gltf_extensions (modules/gltf/gltf_document.cpp:7378)
+ERROR: Condition "err != OK" is true. Returning: ERR_PARSE_ERROR
+   at: _parse_gltf_state (modules/gltf/gltf_document.cpp:7123)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: _parse (modules/gltf/gltf_document.cpp:6717)
+   at: _parse_gltf_state (modules/gltf/gltf_document.cpp:7123)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: _parse (modules/gltf/gltf_document.cpp:6717)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: append_from_file (modules/gltf/gltf_document.cpp:7355)
+   at: _parse (modules/gltf/gltf_document.cpp:6717)
+ERROR: Condition "err != OK" is true. Returning: err
+   at: append_from_file (modules/gltf/gltf_document.cpp:7355)
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[0m
+ERROR: Error importing 'res://extensions/observatory/assets/nebulae/cygnus_loop.glb'.
+   at: _reimport_file (editor/file_system/editor_file_system.cpp:3093)
+[  99% ] [90m[1mreimport[22m | A0.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m

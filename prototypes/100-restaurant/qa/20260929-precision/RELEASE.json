@@ -1,11 +1,14 @@
 {
   "date": "2026-09-29",
-  "git_base": "33f72a7d78bc458da57f0fba655c7ab12dcafbbb",
+  "git_base": "8af7d30dfd70794e704a50e71fe9ab20af6fb500",
   "source_identity": "The commit containing this manifest; final HEAD and remote-main proof are in the Windows bundle DELIVERY.json.",
   "sha256_text_normalization": "CRLF converted to LF for code/config/text extensions; binary assets hashed unchanged.",
   "source_files": {
-    ".github/workflows/100-restaurant-checks.yml": "85e78c0dc3070b4793515e9c09b284fd98c555afce2bbf93c8dc162696c07930",
+    ".github/workflows/100-restaurant-checks.yml": "6ea7d0fb496ddd2d8838bbf79f72db363b41c8fc6f2a78a7c15690f495b3073d",
     "data/gameplay/modules.json": "b5d5c3b75b6c2ffa6548348ef12224b6a36616b2b61c9b4f16f70d1f37a8b45f",
+    "extensions/observatory/assets/nebulae/crab.glb.import": "49133111f0236dcc83d73998364416c4d5b807861244f85a6513d8e5eaf81b66",
+    "extensions/observatory/assets/nebulae/cygnus_loop.glb.import": "49133111f0236dcc83d73998364416c4d5b807861244f85a6513d8e5eaf81b66",
+    "project.godot": "b2d7b86d0066c81915fcd7b1960508f4a710896637f856014f3ac53da9737df7",
     "prototypes/100-restaurant/demo_host.gd": "ae7d2fbaa2cc926312a6a48f8377ebb8665870b3c5e0becd10b0130a96dc54ee",
     "prototypes/100-restaurant/export_presets.cfg": "7c638d5bd3763586135888e12b47494013e42253533ededaf6b56353a0772641",
     "prototypes/100-restaurant/modules/restaurant/assets/audio/recorded/bell_01.wav": "fe2479c965c8a93a22963900001dbb540604da4588060efe2a9c1b9a627734be",
@@ -436,7 +439,9 @@
     "scripts/ui/components/public_trace_panel.gd": "ac9b573637b9e7cad1e42d9bc64a98e40abd2c8fc2ec30f7110fe1e739b36b62",
     "scripts/ui/paper_language.gd": "0e95e9774e69182a0752657a03ac4ba95f3a879bab40b0bc9186a1a2809c438e",
     "scripts/ui/restaurant_host.gd": "beb7d82ee85e674e4d7cc4555a2a03a3bdfc592d638af30e391a33e6881e5d9a",
-    "tools/sync_restaurant_module.py": "6415fe2c302d522a320d9ed22bafae99c9fa19fd918da15e1636e9cb45106263"
+    "tools/import_main_project.py": "48664c88833d87c16647a365aff40f9cd7b9ff16310fc903a2ac50a829796123",
+    "tools/sync_restaurant_module.py": "6415fe2c302d522a320d9ed22bafae99c9fa19fd918da15e1636e9cb45106263",
+    "tools/test_import_main_project.py": "f9bdb9c19620beae94e951a7eb60a924168f4db37eb29c0abe30a2cf58de9734"
   },
   "engine": "Godot 4.7.2 Compatibility / native 2D physics",
   "windows_exe": {
@@ -450,7 +455,8 @@
     "steps": 56,
     "bridge_headless": 25,
     "bridge_gpu": 26,
-    "runner_unit_tests": 11
+    "runner_unit_tests": 11,
+    "main_import_unit_tests": 6
   },
   "evidence": {
     "full_suite": "checks/summary.json",

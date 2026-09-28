@@ -50,3 +50,8 @@ Science text is traced to the linked official sources in nebula_catalog.gd: Orio
 - `casa_observed.zip` / `casa_observed.tscn`: Chandra's public ASCII VTK layers converted to native Godot geometry by `tools/vtk_to_obj.py` and `tools/import_obj_models.gd`. Source text credits NASA, Smithsonian Astrophysical Observatory/Chandra X-ray Center, MIT and T. Delaney et al. Layer colours are structural labels, not natural-light colours.
 
 These additions are displayed as observed-data or observation-constrained structures. The viewer no longer applies a photographic depth projection to the official models. Where a scientific model is a simulation, the UI identifies it as such; it is not presented as a scale-accurate physical simulation.
+
+The two original Draco-compressed GLBs are retained with Godot's `keep` importer.
+Runtime references use the native `*_observed.tscn` conversions above; importing
+the archival GLBs as scenes would require a Draco extension that is not bundled.
+This preserves their original bytes and provenance without a broken cold import.
