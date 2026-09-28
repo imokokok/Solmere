@@ -3,8 +3,30 @@ extends Control
 const STEPS := 16
 const BPM := 78.0
 const SAVE_PATH := "user://sample_records.json"
-const NOTE_TRACK_START := 3
+const NOTE_TRACK_START := 4
 const NOTE_LENGTHS := [0, 1, 2, 4, 8]
+
+const RHYTHM_NAMES := ["社区中心木门"]
+const MELODY_NAMES := ["社区中心玩具琴", "B 家旧掌机"]
+const MELODY_PREFIXES := ["toy_reed", "handheld_game"]
+const AMBIENCE_NAMES := ["眺望台风声", "磁带底噪声"]
+
+const RHYTHM_PATHS := [
+	"res://assets/audio/soulmere_rhythm_community_center_door_thud_short_rr01.wav"
+]
+const PERCUSSION_PATHS := [
+	"res://assets/audio/soulmere_perc_general_store_glass_bottle_click.wav",
+	"res://assets/audio/soulmere_perc_chess_piece_wood_tick_short_rr01.wav",
+	"res://assets/audio/soulmere_perc_bookshop_page_flick_short_rr01.wav"
+]
+const AMBIENCE_PATHS := [
+	"res://assets/audio/soulmere_texture_lookout_railing_wind_cg_loop.wav",
+	"res://assets/audio/soulmere_texture_record_shop_turntable_hum_c2g2_loop.wav"
+]
+const NOTE_KEYS := ["c3", "d3", "e3", "g3", "a3"]
+# 线性音量：玻璃瓶为上一版的 60%；两条背景声音均为最初基准音量的 15%。
+const TRACK_VOLUME_DB := [-5.0, 5.563, -11.0, -12.0, -13.0, -13.0, -13.0, -13.0, -13.0]
+const AMBIENCE_VOLUME_DB := [-12.479, -20.479]
 
 const BG := Color("e4c9a8")
 const PANEL := Color("ede4cf")
@@ -39,8 +61,9 @@ class PaperBackdrop extends Control:
 
 var patterns := [
 	[true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false],
+	[false, false, false, false, true, false, false, false, false, false, false, false, true, false, false, false],
 	[false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false],
-	[true, false, false, false, false, false, false, false, true, false, false, false, false, false, false, false],
+	[false, true, false, false, false, true, false, false, false, true, false, false, false, true, false, false],
 	[true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, true],
 	[false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false],
 	[false, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false],
@@ -48,8 +71,7 @@ var patterns := [
 	[false, false, false, false, false, false, false, false, false, false, false, false, true, false, false, false]
 ]
 
-# 五条音轨分别锁定 C3、D3、E3、G3、A3；每个起音可持续 1、2、4 或 8 格。
-var note_frequencies := [130.81, 146.83, 164.81, 196.00, 220.00]
+# 五条旋律轨固定为 C3、D3、E3、G3、A3；整组旋律音色只能二选一。
 var note_lengths := [
 	[4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
 	[0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -59,22 +81,32 @@ var note_lengths := [
 ]
 var track_names := [
 	"社区中心木门",
-	"书店书页",
-	"瞭望台风声",
-	"A家陶瓷花盆",
-	"果蔬摊老式秤盘",
 	"杂货店玻璃瓶",
-	"公交站金属杆",
-	"塔罗店饰品"
+	"木制棋子",
+	"书店翻页",
+	"Do",
+	"Re",
+	"Mi",
+	"Sol",
+	"La"
 ]
-var track_colors := [CORAL, BLUE, VIOLET, ACCENT, TEAL, GOLD, PINK, Color("8fb4ff")]
+var track_colors := [CORAL, GOLD, TEAL, BLUE, ACCENT, TEAL, GOLD, PINK, Color("8fb4ff")]
 # 节奏轨保持原有密度限制；固定音高轨允许更自由地实验。
-var track_limits := [6, 8, 3, 8, 8, 8, 8, 8]
+var track_limits := [6, 8, 8, 8, 8, 8, 8, 8, 8]
+
+var rhythm_choice := 0
+var melody_choice := 0
+var ambience_choice := 0
+var ambience_enabled := false
 
 var step_buttons: Array = []
 var header_labels: Array = []
+var track_name_labels: Array = []
 var audio_voices: Array = []
-var streams: Array = []
+var rhythm_streams: Array = []
+var percussion_streams: Array = []
+var ambience_streams: Array = []
+var melody_streams: Array = []
 var records: Array = []
 
 var is_playing := false
@@ -88,6 +120,10 @@ var record_name: LineEdit
 var records_list: VBoxContainer
 var empty_collection_label: Label
 var density_label: Label
+var melody_buttons: Array = []
+var ambience_buttons: Array = []
+var ambience_toggle_button: Button
+var ambience_player: AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -170,21 +206,26 @@ func _build_ui() -> void:
 	margin.add_child(page)
 
 	var title := Label.new()
-	title.text = "把今天，做成一张唱片"
-	title.add_theme_font_size_override("font_size", 38)
+	title.text = "let's make some noise"
+	var title_font := SystemFont.new()
+	title_font.font_names = PackedStringArray(["Times New Roman", "Georgia", "Songti SC"])
+	title.add_theme_font_override("font", title_font)
+	title.add_theme_font_size_override("font_size", 42)
 	page.add_child(title)
 
 	var subtitle := Label.new()
-	subtitle.text = "声音手作桌  /  采样 → 排列 → 听一遍 → 收藏"
-	subtitle.add_theme_color_override("font_color", MUTED)
-	subtitle.add_theme_font_size_override("font_size", 18)
+	subtitle.text = "做一张属于你自己的唱片吧！"
+	subtitle.add_theme_color_override("font_color", TEXT)
+	subtitle.add_theme_font_size_override("font_size", 20)
 	page.add_child(subtitle)
 	var title_rule := ColorRect.new()
 	title_rule.color = CORAL
-	title_rule.custom_minimum_size = Vector2(430, 4)
+	title_rule.custom_minimum_size = Vector2(520, 4)
 	title_rule.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	page.add_child(title_rule)
 
+	page.add_child(_spacer(4))
+	page.add_child(_build_steps_guide())
 	page.add_child(_spacer(4))
 
 	var body := HBoxContainer.new()
@@ -207,10 +248,13 @@ func _build_ui() -> void:
 	var studio := VBoxContainer.new()
 	studio_margin.add_child(studio)
 
+	studio.add_child(_build_sound_selector())
+	studio.add_child(_spacer(2))
+
 	var transport := HBoxContainer.new()
 	studio.add_child(transport)
 
-	play_button = _make_button("播放", 108)
+	play_button = _make_button("聆听", 108)
 	play_button.pressed.connect(_toggle_playback)
 	transport.add_child(play_button)
 
@@ -218,12 +262,12 @@ func _build_ui() -> void:
 	stop_button.pressed.connect(_stop_playback)
 	transport.add_child(stop_button)
 
-	var clear_button := _make_button("清空", 72)
+	var clear_button := _make_button("全部清空", 96)
 	clear_button.pressed.connect(_clear_pattern)
 	transport.add_child(clear_button)
 
 	var tempo := Label.new()
-	tempo.text = "78 BPM  ·  4/4  ·  16 格"
+	tempo.text = "一圈有 16 格 · 会自动重复"
 	tempo.add_theme_color_override("font_color", MUTED)
 	tempo.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	tempo.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -245,11 +289,11 @@ func _build_ui() -> void:
 	grid.columns = STEPS + 1
 	grid.add_theme_constant_override("h_separation", 6)
 	grid.add_theme_constant_override("v_separation", 7)
-	grid.custom_minimum_size = Vector2(1035, 430)
+	grid.custom_minimum_size = Vector2(1035, 500)
 	scroll.add_child(grid)
 
 	var corner := Label.new()
-	corner.text = "声音来源"
+	corner.text = "点格子让声音出现"
 	corner.custom_minimum_size = Vector2(195, 30)
 	corner.add_theme_color_override("font_color", MUTED)
 	grid.add_child(corner)
@@ -273,6 +317,7 @@ func _build_ui() -> void:
 		name_label.tooltip_text = track_names[track]
 		name_label.add_theme_color_override("font_color", track_colors[track])
 		name_label.add_theme_font_size_override("font_size", 16)
+		track_name_labels.append(name_label)
 		grid.add_child(name_label)
 
 		var row: Array = []
@@ -288,7 +333,7 @@ func _build_ui() -> void:
 		step_buttons.append(row)
 
 	var note := Label.new()
-	note.text = "固定音高：C3 · D3 · E3 · G3 · A3　｜　每格依次切换：关闭 → 1 → 2 → 4 → 8 格"
+	note.text = "上面四行每点一次就是开或关。下面五行从低到高排列；重复点击同一格，可切换：不响 → 短 → 稍长 → 长 → 很长。背景声音只用上方开关控制。"
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	note.add_theme_color_override("font_color", MUTED)
 	note.add_theme_font_size_override("font_size", 14)
@@ -312,12 +357,12 @@ func _build_ui() -> void:
 	collection_margin.add_child(collection)
 
 	var collection_title := Label.new()
-	collection_title.text = "唱片收藏夹"
+	collection_title.text = "4  保存你的唱片"
 	collection_title.add_theme_font_size_override("font_size", 24)
 	collection.add_child(collection_title)
 
 	var collection_hint := Label.new()
-	collection_hint.text = "为这段排列记下名字，之后可以载入继续修改。"
+	collection_hint.text = "满意以后取个名字。保存过的唱片可以随时打开继续修改。"
 	collection_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	collection_hint.add_theme_color_override("font_color", MUTED)
 	collection_hint.add_theme_font_size_override("font_size", 14)
@@ -328,7 +373,7 @@ func _build_ui() -> void:
 	record_name.max_length = 24
 	collection.add_child(record_name)
 
-	var save_button := _make_button("保存为唱片", 0)
+	var save_button := _make_button("保存这张唱片", 0)
 	save_button.pressed.connect(_save_record)
 	collection.add_child(save_button)
 
@@ -344,100 +389,282 @@ func _build_ui() -> void:
 	list_scroll.add_child(records_list)
 
 	empty_collection_label = Label.new()
-	empty_collection_label.text = "还没有唱片。\n调整格子后保存第一张作品。"
+	empty_collection_label.text = "这里还没有唱片。\n点一些格子，听听看，再保存第一张。"
 	empty_collection_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	empty_collection_label.add_theme_color_override("font_color", MUTED)
 	records_list.add_child(empty_collection_label)
 
 	status_label = Label.new()
-	status_label.text = "已铺好一段起始排列。点击格子调整，播放后再保存。"
+	status_label.text = "先选声音，再点格子。准备好后按“聆听”。"
 	status_label.add_theme_color_override("font_color", MUTED)
 	status_label.add_theme_font_size_override("font_size", 14)
 	page.add_child(status_label)
 
 	_add_tape(Vector2(438, 133), Vector2(104, 24), -3.0, Color("c9bd8599"))
 	_add_tape(Vector2(1310, 132), Vector2(112, 25), 2.0, Color("d1b96f99"))
+	_refresh_sound_selector()
+
+
+func _build_steps_guide() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _style(Color("e8e0c0"), 3, Color("b5aa91"), 1))
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_top", 7)
+	margin.add_theme_constant_override("margin_bottom", 7)
+	panel.add_child(margin)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 18)
+	margin.add_child(row)
+	var labels := ["1  选声音", "2  点格子", "3  聆听", "4  保存"]
+	var colors := [CORAL, TEAL, GOLD, BLUE]
+	for index in labels.size():
+		var item := Label.new()
+		item.text = labels[index]
+		item.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		item.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		item.add_theme_color_override("font_color", colors[index].darkened(0.25))
+		item.add_theme_font_size_override("font_size", 15)
+		row.add_child(item)
+	return panel
+
+
+func _build_sound_selector() -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", _style(Color("e7dec5"), 5, Color("b8af98"), 1))
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
+	panel.add_child(margin)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 18)
+	margin.add_child(row)
+
+	var melody_group := _make_selector_group("选择主声音", MELODY_NAMES, _on_melody_choice)
+	melody_group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(melody_group)
+	melody_buttons = melody_group.get_meta("choice_buttons")
+	for index in melody_buttons.size():
+		if not _melody_timbre_ready(index):
+			melody_buttons[index].disabled = true
+			melody_buttons[index].text += " · 待音频"
+			melody_buttons[index].tooltip_text = "五个从低到高的声音文件全部到位后，这个选项会自动开放。"
+
+	var ambience_group := _make_selector_group("选择背景声音", AMBIENCE_NAMES, _on_ambience_choice)
+	ambience_group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(ambience_group)
+	ambience_buttons = ambience_group.get_meta("choice_buttons")
+	ambience_toggle_button = _make_button("背景：开", 92)
+	ambience_toggle_button.toggle_mode = true
+	ambience_toggle_button.pressed.connect(_toggle_ambience)
+	var ambience_row: HBoxContainer = ambience_group.get_meta("button_row")
+	ambience_row.add_child(ambience_toggle_button)
+	return panel
+
+
+func _make_selector_group(title_text: String, choices: Array, handler: Callable) -> VBoxContainer:
+	var group := VBoxContainer.new()
+	group.add_theme_constant_override("separation", 5)
+	var title_label := Label.new()
+	title_label.text = title_text
+	title_label.add_theme_color_override("font_color", MUTED)
+	title_label.add_theme_font_size_override("font_size", 13)
+	group.add_child(title_label)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 6)
+	group.add_child(row)
+	var buttons: Array = []
+	for index in choices.size():
+		var button := _make_button(choices[index], 0)
+		button.toggle_mode = true
+		button.add_theme_font_size_override("font_size", 14)
+		button.pressed.connect(handler.bind(index))
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		buttons.append(button)
+		row.add_child(button)
+	group.set_meta("choice_buttons", buttons)
+	group.set_meta("button_row", row)
+	return group
 
 
 func _build_audio() -> void:
-	streams = [
-		[_make_kick_stream()],
-		[_make_click_stream()],
-		[_make_texture_stream()],
-		[], [], [], [], []
-	]
-	var step_duration := 60.0 / BPM / 4.0
-	for note_index in note_frequencies.size():
-		for length_value in NOTE_LENGTHS.slice(1):
-			var length: int = int(length_value)
-			streams[NOTE_TRACK_START + note_index].append(
-				_make_note_stream(float(note_frequencies[note_index]), step_duration * length, note_index)
-			)
+	for path in RHYTHM_PATHS:
+		rhythm_streams.append(_load_audio(path))
+	for path in PERCUSSION_PATHS:
+		percussion_streams.append(_load_audio(path))
+	for path in AMBIENCE_PATHS:
+		var ambience_stream := _load_audio(path)
+		if ambience_stream is AudioStreamWAV:
+			var loop_stream := ambience_stream.duplicate() as AudioStreamWAV
+			loop_stream.loop_mode = AudioStreamWAV.LOOP_FORWARD
+			loop_stream.loop_begin = 0
+			loop_stream.loop_end = int(round(loop_stream.get_length() * loop_stream.mix_rate))
+			ambience_stream = loop_stream
+		ambience_streams.append(ambience_stream)
+
+	for timbre_name in MELODY_PREFIXES:
+		var timbre_streams: Array = []
+		for note_key in NOTE_KEYS:
+			timbre_streams.append(_load_optional_audio("res://assets/audio/soulmere_tone_%s_%s.wav" % [timbre_name, note_key]))
+		melody_streams.append(timbre_streams)
 
 	for track in track_names.size():
 		var pool: Array = []
 		for voice_index in 5:
 			var player := AudioStreamPlayer.new()
 			player.name = "Voice_%d_%d" % [track, voice_index]
-			player.volume_db = [-5.0, -11.0, -15.0, -14.0, -14.0, -14.0, -14.0, -15.0][track]
+			player.volume_db = TRACK_VOLUME_DB[track]
 			add_child(player)
 			pool.append(player)
 		audio_voices.append({"pool": pool, "cursor": 0})
+
+	ambience_player = AudioStreamPlayer.new()
+	ambience_player.name = "ContinuousAmbience"
+	ambience_player.volume_db = AMBIENCE_VOLUME_DB[ambience_choice]
+	add_child(ambience_player)
+
+
+func _load_audio(path: String) -> AudioStream:
+	var stream := load(path) as AudioStream
+	if stream == null:
+		push_error("无法载入音频：%s" % path)
+	return stream
+
+
+func _load_optional_audio(path: String) -> AudioStream:
+	if not ResourceLoader.exists(path):
+		return null
+	return load(path) as AudioStream
+
+
+func _melody_timbre_ready(index: int) -> bool:
+	if index < 0 or index >= melody_streams.size():
+		return false
+	for stream in melody_streams[index]:
+		if stream == null:
+			return false
+	return true
 
 
 func _trigger_step(step: int) -> void:
 	for track in patterns.size():
 		if not patterns[track][step]:
 			continue
-		var stream: AudioStream = streams[track][0]
-		if track >= NOTE_TRACK_START:
-			var duration: int = int(note_lengths[track - NOTE_TRACK_START][step])
-			stream = _note_stream_for_length(track, duration)
-		_play_voice(track, stream)
+		if track == 0:
+			_play_voice(track, rhythm_streams[rhythm_choice])
+		elif track < NOTE_TRACK_START:
+			_play_voice(track, percussion_streams[track - 1], 0.36 if track == 1 else -1.0)
+		else:
+			var note_index := track - NOTE_TRACK_START
+			var length := int(note_lengths[note_index][step])
+			var gate_seconds := 60.0 / BPM / 4.0 * length
+			_play_voice(track, melody_streams[melody_choice][note_index], gate_seconds)
 
 
-func _note_stream_for_length(track: int, length: int) -> AudioStream:
-	var stream_index: int = NOTE_LENGTHS.find(length) - 1
-	if stream_index < 0:
-		stream_index = 0
-	return streams[track][stream_index]
-
-
-func _play_voice(track: int, stream: AudioStream) -> void:
+func _play_voice(track: int, stream: AudioStream, gate_seconds: float = -1.0) -> void:
+	if stream == null:
+		return
 	var voice_data: Dictionary = audio_voices[track]
 	var pool: Array = voice_data["pool"]
 	var cursor: int = voice_data["cursor"]
 	var player: AudioStreamPlayer = pool[cursor]
+	if player.has_meta("gate_tween"):
+		var previous_tween: Tween = player.get_meta("gate_tween")
+		if previous_tween and previous_tween.is_valid():
+			previous_tween.kill()
+	player.volume_db = TRACK_VOLUME_DB[track]
 	player.stream = stream
 	player.play()
+	if gate_seconds > 0.0:
+		var fade_time := minf(0.08, gate_seconds * 0.35)
+		var tween := create_tween()
+		tween.tween_interval(maxf(0.01, gate_seconds - fade_time))
+		tween.tween_property(player, "volume_db", -50.0, fade_time)
+		tween.tween_callback(player.stop)
+		player.set_meta("gate_tween", tween)
 	voice_data["cursor"] = (cursor + 1) % pool.size()
 	audio_voices[track] = voice_data
+
+
+func _on_melody_choice(index: int) -> void:
+	if not _melody_timbre_ready(index):
+		status_label.text = "B 家旧掌机还缺少五个从低到高的声音文件，暂时不能选择。"
+		_refresh_sound_selector()
+		return
+	melody_choice = index
+	_refresh_sound_selector()
+	_play_voice(NOTE_TRACK_START, melody_streams[melody_choice][0], 0.75)
+	status_label.text = "主声音已换成：%s。下面五行会一起使用它。" % MELODY_NAMES[melody_choice]
+
+
+func _on_ambience_choice(index: int) -> void:
+	ambience_choice = index
+	_refresh_sound_selector()
+	_sync_ambience_playback(true)
+	status_label.text = "背景声音已换成：%s。打开右侧开关即可听到。" % AMBIENCE_NAMES[ambience_choice]
+
+
+func _toggle_ambience() -> void:
+	ambience_enabled = not ambience_enabled
+	_refresh_sound_selector()
+	_sync_ambience_playback(true)
+	status_label.text = "背景声音已%s。" % ("打开" if ambience_enabled else "关闭")
+
+
+func _refresh_sound_selector() -> void:
+	for index in melody_buttons.size():
+		melody_buttons[index].set_pressed_no_signal(index == melody_choice)
+	for index in ambience_buttons.size():
+		ambience_buttons[index].set_pressed_no_signal(index == ambience_choice)
+	if ambience_toggle_button:
+		ambience_toggle_button.text = "背景：开" if ambience_enabled else "背景：关"
+		ambience_toggle_button.set_pressed_no_signal(ambience_enabled)
+func _sync_ambience_playback(restart: bool = false) -> void:
+	if not ambience_player:
+		return
+	if not ambience_enabled:
+		ambience_player.stop()
+		return
+	ambience_player.volume_db = AMBIENCE_VOLUME_DB[ambience_choice]
+	if restart or ambience_player.stream != ambience_streams[ambience_choice] or not ambience_player.playing:
+		ambience_player.stream = ambience_streams[ambience_choice]
+		ambience_player.play()
 
 
 func _toggle_playback() -> void:
 	if is_playing:
 		is_playing = false
-		play_button.text = "继续"
-		status_label.text = "已暂停。"
+		_sync_ambience_playback()
+		play_button.text = "继续听"
+		status_label.text = "已经暂停。点“继续听”会从开头再来一圈。"
 		return
 	play_started_usec = Time.get_ticks_usec()
 	last_absolute_step = -1
 	current_step = -1
 	is_playing = true
+	_sync_ambience_playback(true)
 	play_button.text = "暂停"
-	status_label.text = "正在循环播放。修改格子会在下一次经过时生效。"
+	status_label.text = "正在重复播放。现在点格子，下一圈就会听到变化。"
 
 
 func _stop_playback() -> void:
 	is_playing = false
 	current_step = -1
 	last_absolute_step = -1
-	play_button.text = "播放"
+	play_button.text = "聆听"
+	_sync_ambience_playback()
 	for track_data in audio_voices:
 		for player in track_data["pool"]:
 			player.stop()
 	_refresh_grid()
-	status_label.text = "已停止并回到开头。"
+	status_label.text = "已经停止并回到开头。"
 
 
 func _on_step_pressed(track: int, step: int) -> void:
@@ -450,8 +677,9 @@ func _on_step_pressed(track: int, step: int) -> void:
 		patterns[track][step] = next_length > 0
 		_refresh_grid()
 		if next_length > 0:
-			_play_voice(track, _note_stream_for_length(track, next_length))
-			status_label.text = "%s · 第 %d 格 · 持续 %d 格" % [track_names[track], step + 1, next_length]
+			var gate_seconds := 60.0 / BPM / 4.0 * next_length
+			_play_voice(track, melody_streams[melody_choice][note_index], gate_seconds)
+			status_label.text = "%s · 第 %d 格 · %s" % [track_names[track], step + 1, _length_label(next_length)]
 		else:
 			status_label.text = "%s · 第 %d 格已关闭" % [track_names[track], step + 1]
 		return
@@ -459,13 +687,30 @@ func _on_step_pressed(track: int, step: int) -> void:
 	var will_enable: bool = not patterns[track][step]
 	if will_enable and _active_steps_in_track(track) >= track_limits[track]:
 		_refresh_grid()
-		status_label.text = "%s最多使用 %d 格，留一点空间会更清楚。" % [track_names[track], track_limits[track]]
+		status_label.text = "%s最多放入 %d 次。留一点空白，听起来会更清楚。" % [track_names[track], track_limits[track]]
 		return
 	patterns[track][step] = will_enable
 	_refresh_grid()
 	if patterns[track][step]:
-		_play_voice(track, streams[track][0])
-	status_label.text = "%s · 第 %d 格%s" % [track_names[track], step + 1, "已点亮" if patterns[track][step] else "已关闭"]
+		if track == 0:
+			_play_voice(track, rhythm_streams[rhythm_choice])
+		else:
+			_play_voice(track, percussion_streams[track - 1], 0.36 if track == 1 else -1.0)
+	status_label.text = "%s · 第 %d 格%s" % [track_names[track], step + 1, "会响" if patterns[track][step] else "不响"]
+
+
+func _length_label(length: int, compact: bool = false) -> String:
+	match length:
+		1:
+			return "短"
+		2:
+			return "中" if compact else "稍长"
+		4:
+			return "长"
+		8:
+			return "很长"
+		_:
+			return "不响"
 
 
 func _active_steps_in_track(track: int) -> int:
@@ -483,8 +728,11 @@ func _clear_pattern() -> void:
 	for note_index in note_lengths.size():
 		for step in STEPS:
 			note_lengths[note_index][step] = 0
+	ambience_enabled = false
+	_refresh_sound_selector()
+	_sync_ambience_playback()
 	_refresh_grid()
-	status_label.text = "编排已清空。"
+	status_label.text = "所有格子和背景声音都已清空。"
 
 
 func _refresh_grid() -> void:
@@ -501,8 +749,8 @@ func _refresh_grid() -> void:
 			var cell: Button = step_buttons[track][step]
 			cell.set_pressed_no_signal(active)
 			if track >= NOTE_TRACK_START and active:
-				cell.text = str(note_lengths[track - NOTE_TRACK_START][step])
-				cell.tooltip_text = "%s · 第 %d 格 · 持续 %d 格" % [track_names[track], step + 1, note_lengths[track - NOTE_TRACK_START][step]]
+				cell.text = _length_label(note_lengths[track - NOTE_TRACK_START][step], true)
+				cell.tooltip_text = "%s · 第 %d 格 · %s" % [track_names[track], step + 1, _length_label(note_lengths[track - NOTE_TRACK_START][step])]
 			else:
 				cell.text = "●" if active else ""
 				cell.tooltip_text = "%s · 第 %d 格" % [track_names[track], step + 1]
@@ -515,7 +763,7 @@ func _refresh_grid() -> void:
 			cell.add_theme_stylebox_override("hover", _style(base.lightened(0.08), 3, color.darkened(0.25), 2))
 			cell.add_theme_stylebox_override("pressed", _style(color.lightened(0.08), 3, CORAL, 2))
 	if density_label:
-		density_label.text = "%d 个触发点" % active_count
+		density_label.text = "已放入 %d 个声音%s" % [active_count, " · 背景已开" if ambience_enabled else ""]
 
 
 func _save_record() -> void:
@@ -523,8 +771,8 @@ func _save_record() -> void:
 	for row in patterns:
 		for active in row:
 			active_count += 1 if active else 0
-	if active_count == 0:
-		status_label.text = "空白编排不会生成唱片，请先点亮至少一个格子。"
+	if active_count == 0 and not ambience_enabled:
+		status_label.text = "还没有放入声音。请先点亮至少一个格子，或打开背景声音。"
 		return
 
 	var title := record_name.text.strip_edges()
@@ -539,36 +787,74 @@ func _save_record() -> void:
 		saved_note_lengths.append(row.duplicate())
 
 	records.push_front({
-		"schema_version": 2,
+		"schema_version": 4,
 		"title": title,
 		"created_at": Time.get_datetime_string_from_system(false, true),
 		"bpm": int(BPM),
 		"patterns": saved_patterns,
-		"note_lengths": saved_note_lengths
+		"note_lengths": saved_note_lengths,
+		"rhythm_choice": rhythm_choice,
+		"melody_choice": melody_choice,
+		"ambience_choice": ambience_choice,
+		"ambience_enabled": ambience_enabled
 	})
 	_write_records()
 	record_name.clear()
 	_refresh_collection()
-	status_label.text = "《%s》已压制成唱片并放入收藏。" % title
+	status_label.text = "《%s》已经保存到右侧。" % title
 
 
 func _load_record(index: int) -> void:
 	if index < 0 or index >= records.size():
 		return
 	_stop_playback()
-	var source_patterns: Array = records[index].get("patterns", [])
-	var source_note_lengths: Array = records[index].get("note_lengths", [])
-	if source_patterns.size() != patterns.size() or source_note_lengths.size() != note_lengths.size():
+	var record: Dictionary = records[index]
+	var source_patterns: Array = record.get("patterns", [])
+	var source_note_lengths: Array = record.get("note_lengths", [])
+	if source_note_lengths.size() != note_lengths.size():
 		status_label.text = "这张唱片的数据版本不兼容。"
 		return
+
+	var loaded_patterns: Array = []
+	var old_ambience_enabled := false
+	if source_patterns.size() == patterns.size():
+		for row in source_patterns:
+			loaded_patterns.append(row.duplicate())
+	elif source_patterns.size() == 8:
+		# 兼容旧版：木门、翻书、风声、五条旋律。
+		for _track in patterns.size():
+			loaded_patterns.append([false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false])
+		loaded_patterns[0] = source_patterns[0].duplicate()
+		loaded_patterns[3] = source_patterns[1].duplicate()
+		for step in STEPS:
+			if bool(source_patterns[2][step]):
+				old_ambience_enabled = true
+		for note_index in 5:
+			loaded_patterns[NOTE_TRACK_START + note_index] = source_patterns[3 + note_index].duplicate()
+	else:
+		status_label.text = "这张唱片的数据版本不兼容。"
+		return
+
 	for track in patterns.size():
 		for step in STEPS:
-			patterns[track][step] = bool(source_patterns[track][step])
+			patterns[track][step] = bool(loaded_patterns[track][step])
 	for note_index in note_lengths.size():
 		for step in STEPS:
 			note_lengths[note_index][step] = int(source_note_lengths[note_index][step])
+	rhythm_choice = clampi(int(record.get("rhythm_choice", 0)), 0, RHYTHM_NAMES.size() - 1)
+	if int(record.get("schema_version", 2)) < 4:
+		# 旧版的 0 / 1 代表玻璃瓶 / 玩具簧片琴；玻璃瓶退出旋律组后统一迁移到玩具簧片琴。
+		melody_choice = 0
+	else:
+		melody_choice = clampi(int(record.get("melody_choice", 0)), 0, MELODY_NAMES.size() - 1)
+		if not _melody_timbre_ready(melody_choice):
+			melody_choice = 0
+	ambience_choice = clampi(int(record.get("ambience_choice", 0)), 0, AMBIENCE_NAMES.size() - 1)
+	ambience_enabled = bool(record.get("ambience_enabled", old_ambience_enabled))
+	_refresh_sound_selector()
+	_sync_ambience_playback(true)
 	_refresh_grid()
-	status_label.text = "已载入《%s》，可以播放或继续修改。" % records[index].get("title", "未命名")
+	status_label.text = "已打开《%s》，可以聆听或继续修改。" % records[index].get("title", "未命名")
 
 
 func _delete_record(index: int) -> void:
@@ -589,7 +875,7 @@ func _refresh_collection() -> void:
 
 	if records.is_empty():
 		empty_collection_label = Label.new()
-		empty_collection_label.text = "还没有唱片。\n调整格子后保存第一张作品。"
+		empty_collection_label.text = "这里还没有唱片。\n点一些格子，听听看，再保存第一张。"
 		empty_collection_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		empty_collection_label.add_theme_color_override("font_color", MUTED)
 		records_list.add_child(empty_collection_label)
@@ -628,12 +914,12 @@ func _refresh_collection() -> void:
 		info.add_child(title)
 
 		var meta := Label.new()
-		meta.text = "%s · %s BPM" % [record.get("created_at", ""), record.get("bpm", int(BPM))]
+		meta.text = "保存于 %s" % record.get("created_at", "")
 		meta.add_theme_color_override("font_color", MUTED)
 		meta.add_theme_font_size_override("font_size", 10)
 		info.add_child(meta)
 
-		var load_button := _make_button("载入", 48)
+		var load_button := _make_button("打开", 48)
 		load_button.pressed.connect(_load_record.bind(index))
 		row.add_child(load_button)
 
@@ -658,86 +944,6 @@ func _write_records() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(records, "  "))
-
-
-func _make_kick_stream() -> AudioStreamWAV:
-	return _synthesize("kick", 0.46)
-
-
-func _make_click_stream() -> AudioStreamWAV:
-	return _synthesize("click", 0.18)
-
-
-func _make_note_stream(frequency: float, gate_duration: float, timbre: int) -> AudioStreamWAV:
-	return _synthesize("note", gate_duration + 0.32, frequency, timbre, gate_duration)
-
-
-func _make_texture_stream() -> AudioStreamWAV:
-	return _synthesize("texture", 1.65)
-
-
-func _synthesize(kind: String, duration: float, frequency: float = 0.0, timbre: int = 0, gate_duration: float = 0.0) -> AudioStreamWAV:
-	var sample_rate := 44100
-	var sample_count := int(duration * sample_rate)
-	var bytes := PackedByteArray()
-	bytes.resize(sample_count * 2)
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 27031996
-
-	for index in sample_count:
-		var t := float(index) / sample_rate
-		var value := 0.0
-		match kind:
-			"kick":
-				var envelope := exp(-8.0 * t)
-				var phase := TAU * (65.41 * t - 15.0 * t * t)
-				var click := sin(TAU * 420.0 * t) * exp(-70.0 * t) * 0.10
-				value = sin(phase) * envelope * 0.82 + click
-			"click":
-				var noise := rng.randf_range(-1.0, 1.0)
-				var metallic := sin(TAU * 920.0 * t) + sin(TAU * 1380.0 * t) * 0.35
-				value = (noise * 0.32 + metallic * 0.42) * exp(-22.0 * t) * 0.52
-			"note":
-				var body := sin(TAU * frequency * t)
-				match timbre:
-					0: # C：圆润，接近柔和正弦音。
-						body += sin(TAU * frequency * 2.0 * t) * 0.08
-					1: # D：略空心的木质感。
-						body += sin(TAU * frequency * 2.0 * t) * 0.20
-					2: # E：带一点柔和颗粒。
-						body += sin(TAU * frequency * 2.01 * t) * 0.14
-						body += rng.randf_range(-1.0, 1.0) * 0.018
-					3: # G：很轻的钟感。
-						body += sin(TAU * frequency * 2.01 * t) * 0.16
-						body += sin(TAU * frequency * 3.98 * t) * 0.045
-					4: # A：更薄、更有空气感。
-						body = body * 0.84 + sin(TAU * frequency * 2.0 * t) * 0.07
-						body += rng.randf_range(-1.0, 1.0) * 0.012
-				var attack: float = minf(1.0, t / (0.022 + timbre * 0.004))
-				var release := 1.0
-				if t > gate_duration:
-					release = exp(-9.0 * (t - gate_duration))
-				var gentle_decay := 0.84 + 0.16 * exp(-1.4 * t)
-				value = body * attack * release * gentle_decay * 0.44
-			"texture":
-				# 开放五度 C2 + G2，与 C 大调五声音阶保持一致。
-				var shimmer := sin(TAU * 65.41 * t) * 0.28 + sin(TAU * 98.0 * t) * 0.18
-				var dust := rng.randf_range(-1.0, 1.0) * 0.025
-				var texture_envelope: float = minf(1.0, t / 0.08) * exp(-1.55 * t)
-				value = (shimmer + dust) * texture_envelope
-		value = clampf(value, -1.0, 1.0)
-		var encoded := int(value * 32767.0)
-		if encoded < 0:
-			encoded += 65536
-		bytes[index * 2] = encoded & 0xff
-		bytes[index * 2 + 1] = (encoded >> 8) & 0xff
-
-	var wav := AudioStreamWAV.new()
-	wav.format = AudioStreamWAV.FORMAT_16_BITS
-	wav.mix_rate = sample_rate
-	wav.stereo = false
-	wav.data = bytes
-	return wav
 
 
 func _make_button(label: String, width: float) -> Button:
