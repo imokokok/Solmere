@@ -469,12 +469,15 @@ func _unhandled_input(event: InputEvent) -> void :
 					_dragging = false
 					get_viewport().set_input_as_handled()
 					return
-				elif _stations.chop.has_point(held_pointer):
-					drop_held(false)
-				elif _focus == "trash":
+				elif _stations.trash.has_point(held_pointer):
 					discard_held()
 				else:
-					drop_held(false)
+					# Click-carried bottles need the same retained release destination
+					# as dragged food. The OS pointer can arrive before the rigid body.
+					held_grip.target = to_global(held_pointer)
+					_food_drag_from_storage = false
+					_food_drag_moved = true
+					_finish_food_drag()
 			else:
 				var pointer: Vector2 = get_global_transform_with_canvas().affine_inverse() * event.position
 				var food: = _food_at(pointer)

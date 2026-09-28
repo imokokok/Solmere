@@ -1,0 +1,7 @@
+Initial published commit: 33f72a7d78bc458da57f0fba655c7ab12dcafbbb
+Run: https://github.com/imokokok/Solmere/actions/runs/36488636910
+All 51 Godot scripts passed on Linux. Final prepared-food source audit failed.
+FAIL prepared-food-audit: exit 1
+{"status":"FAIL","textures":103,"errors":["source changed: res://modules/restaurant/assets/supplementary_manifest.json"]}
+Cause: cache recorded raw CRLF JSON bytes on Windows; Git checked out LF JSON on Linux.
+Fix: hash JSON manifests with CRLF normalized to LF in bake and audit. Original image bytes remain exact. Added tests for equivalent text, changed JSON content and changed binary bytes.

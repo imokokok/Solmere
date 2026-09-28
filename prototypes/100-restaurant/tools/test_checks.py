@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from run_checks import SUCCESS, load_suite, run_step, run_suite
+from audit_prepared_food import source_digest
 
 
 class CheckRunnerTest(unittest.TestCase):
@@ -55,6 +56,27 @@ class CheckRunnerTest(unittest.TestCase):
     def test_manifest_has_existing_unique_scripts(self):
         suite = load_suite()
         self.assertIn("tests/test_reference_layout.gd", suite["scripts"])
+
+    def test_json_source_hash_survives_git_line_endings(self):
+        with tempfile.TemporaryDirectory() as folder:
+            a, b = Path(folder) / 'a.json', Path(folder) / 'b.json'
+            a.write_bytes(b'{\r\n  "id": "salt"\r\n}\r\n')
+            b.write_bytes(b'{\n  "id": "salt"\n}\n')
+            self.assertEqual(source_digest(a), source_digest(b))
+
+    def test_json_content_change_is_still_detected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            a, b = Path(folder) / 'a.json', Path(folder) / 'b.json'
+            a.write_bytes(b'{"id":"salt"}\n')
+            b.write_bytes(b'{"id":"soap"}\n')
+            self.assertNotEqual(source_digest(a), source_digest(b))
+
+    def test_image_bytes_are_never_normalized(self):
+        with tempfile.TemporaryDirectory() as folder:
+            a, b = Path(folder) / 'a.png', Path(folder) / 'b.png'
+            a.write_bytes(b'\x89PNG\r\n\x1a\n')
+            b.write_bytes(b'\x89PNG\n\x1a\n')
+            self.assertNotEqual(source_digest(a), source_digest(b))
 
 
 if __name__ == "__main__":

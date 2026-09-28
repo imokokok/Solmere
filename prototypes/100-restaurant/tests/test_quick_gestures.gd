@@ -117,6 +117,27 @@ func run() -> void:
 	expect(w._drag_group.is_empty() and not w.held_grip.enabled and w._foods.get_child_count()==1,"discarding a held portion frees every carried body and grip")
 	w.clear_workspace()
 	expect(w._drag_group.is_empty() and not w._dragging,"cleanup leaves no orphaned batch drag")
+	# A bottle remains in the hand after seasoning. A fast click back on its
+	# empty slot must retain that destination while the physical bottle catches up.
+	var salt_slot: Button = game.storage_display.find_child("Ingredient_salt",true,false)
+	mouse(salt_slot.get_global_rect().get_center(),"down")
+	mouse(salt_slot.get_global_rect().get_center(),"up")
+	await process_frame
+	var bottle: RigidBody2D = w._held
+	expect(is_instance_valid(bottle),"left counter salt can be picked up through its visible slot")
+	if is_instance_valid(bottle):
+		var uid: String = bottle.get_meta("instance_uid")
+		var amount: float = bottle.get_meta("remaining_ml")
+		bottle.position = w.pan.point(Vector2(810,430))
+		w.held_grip.target = bottle.global_position
+		await process_frame
+		w._focus = "trash" # Previous hover must not override this click's target.
+		mouse(salt_slot.get_global_rect().get_center(),"down")
+		mouse(salt_slot.get_global_rect().get_center(),"up")
+		await create_timer(2.6).timeout
+		expect(w._held==null and bool(game._stock.get("salt",false)),"quick click back to the salt slot waits for physical return")
+		expect(game._stock_bodies.get("salt")==bottle and bottle.get_meta("instance_uid")==uid,"return retains the same bottle without duplicating stock")
+		expect(is_equal_approx(float(bottle.get_meta("remaining_ml")),amount),"return preserves remaining salt")
 	game.queue_free()
 	await process_frame
 	await process_frame

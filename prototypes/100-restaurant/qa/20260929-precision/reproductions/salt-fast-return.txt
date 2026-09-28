@@ -1,0 +1,11 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: quick click back to the salt slot waits for physical return
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:143)
+ERROR: return retains the same bottle without duplicating stock
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:143)
+FAIL: small-window quick gestures, 37 checks

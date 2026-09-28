@@ -1,6 +1,6 @@
 {
   "date": "2026-09-29",
-  "git_base": "e6bb000c7e80fc2b3ddfe4a00948609f78a96774",
+  "git_base": "33f72a7d78bc458da57f0fba655c7ab12dcafbbb",
   "source_identity": "The commit containing this manifest; final HEAD and remote-main proof are in the Windows bundle DELIVERY.json.",
   "sha256_text_normalization": "CRLF converted to LF for code/config/text extensions; binary assets hashed unchanged.",
   "source_files": {
@@ -235,7 +235,7 @@
     "prototypes/100-restaurant/modules/restaurant/assets/prepared_food/yarn_ball.png": "8ba0ac93c1114c4c6559f0ff234f319d581a03f8cd05211064130361443f7818",
     "prototypes/100-restaurant/modules/restaurant/assets/prepared_food/yogurt.png": "8baa5c1bf6e6a6e0d0b280edfef30b56cf8e0397097c6e6d16219b0ef6f02079",
     "prototypes/100-restaurant/modules/restaurant/assets/prepared_food/zucchini.png": "87ce04c0bb2a051d99d5a917dbd86f627d0fbe4da8315d50d0337effd52d5756",
-    "prototypes/100-restaurant/modules/restaurant/assets/prepared_food_manifest.json": "1dce9e641e80fabe884f0ccbeca5920e16aba274c2c9304d35988a575a66b6b1",
+    "prototypes/100-restaurant/modules/restaurant/assets/prepared_food_manifest.json": "dcf5b6dca0a484f8044c1d20cb81f1803916128bfdacf9302513e14b946a5107",
     "prototypes/100-restaurant/modules/restaurant/assets/procurement/herbs.png": "284cd4c46d5467b3cbea60a8b01fc2fa20135b05fe9abdd0c8f938ef3426f3db",
     "prototypes/100-restaurant/modules/restaurant/assets/procurement/sea_beans.png": "e0726898cae61d07747caea95ffcc00dd4a8a411a17e41f91bb9e11b81ab6981",
     "prototypes/100-restaurant/modules/restaurant/assets/procurement/star_salt.png": "a0b213a5bb537ee0bf8140ce2c27836618ab2d4c94b664de3bb9a41a665aec15",
@@ -385,7 +385,7 @@
     "prototypes/100-restaurant/modules/restaurant/world/kitchen_flood.gd.uid": "97a325c8b06313dfbfa40d0c61ab9f564e6b6bb260559e5a629e1dda2cc71680",
     "prototypes/100-restaurant/modules/restaurant/world/kitchen_foreground.gd": "a4305a70df98942b6fe8227f288552bff0e4b54995380ca4ca3cd5399f093235",
     "prototypes/100-restaurant/modules/restaurant/world/kitchen_foreground.gd.uid": "04251071e50043f4e1ebc539e5b26285dde827b1855059d281167e87a92b308d",
-    "prototypes/100-restaurant/modules/restaurant/world/kitchen_world.gd": "8b42d42298f6397742ff5c6ddcbdee7270f11753642ffe19445209bd609c4488",
+    "prototypes/100-restaurant/modules/restaurant/world/kitchen_world.gd": "11d5de4c52ac87099c2c44b86848a9fb5e9aaa2c167866669e116aaaf7b74eb6",
     "prototypes/100-restaurant/modules/restaurant/world/kitchen_world.gd.uid": "b1c565488e451c2c966e0dee3720918b6209d92eef2e933550497b6a6cc00861",
     "prototypes/100-restaurant/modules/restaurant/world/knife_tool.gd": "d7a1f10aa73d53aa791d81d347c78180ff2144fe89b1d6c8df73012f40451a69",
     "prototypes/100-restaurant/modules/restaurant/world/knife_tool.gd.uid": "68752460e3e7378b1795d20bd1561ce46e6dc4c24653c0f4a092e82f03ca7bb9",
@@ -441,8 +441,8 @@
   "engine": "Godot 4.7.2 Compatibility / native 2D physics",
   "windows_exe": {
     "filename": "AfterHoursKitchen.exe",
-    "bytes": 193197064,
-    "sha256": "80f50e76d4a701864749e0cdc2cba6ac342fb5541699e3890cc5077306f2380c"
+    "bytes": 193197112,
+    "sha256": "eb9f0fec6bc1603359746829afc58bfe33174a0a84023e552bbafba0533eb8d8"
   },
   "checks": {
     "status": "PASS",
@@ -450,7 +450,7 @@
     "steps": 56,
     "bridge_headless": 25,
     "bridge_gpu": 26,
-    "runner_unit_tests": 8
+    "runner_unit_tests": 11
   },
   "evidence": {
     "full_suite": "checks/summary.json",

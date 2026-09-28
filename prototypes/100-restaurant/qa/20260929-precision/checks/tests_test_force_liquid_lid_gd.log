@@ -1,6 +1,6 @@
 Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
 
 LIFT_METRICS food=(635.7305, 501.8662) start=(733.31, 680.635) pan=(-114.8843, -68.62061) angle=-0.00434434227645
-COLD lid=(785.2992, 687.3808) angle=-0.00000001058054 pan=(784.0026, 708.8121) seat=(785.2996, 688.4119) contact=2
-LID_METRICS pressure=179.04946408145 lift=5.4696044921875 covered=true
+COLD lid=(785.2992, 687.3808) angle=-0.00000000294564 pan=(784.0026, 708.8121) seat=(785.2996, 688.4118) contact=2
+LID_METRICS pressure=178.984315817783 lift=5.46343994140625 covered=true
 PASS: force liquid lid, 19 checks

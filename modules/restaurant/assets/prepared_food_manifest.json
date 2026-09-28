@@ -1057,7 +1057,7 @@
     "res://modules/restaurant/assets/supplementary/flat_foods_b.png": "459459ea2bd69199474c397cba2cc7b72ec2e71bb5d1b33017f6be74e98db66e",
     "res://modules/restaurant/assets/supplementary/flat_foods_c.png": "a4e76a8eb17faf9fe2410d96285bc5d3e7fa24f1f3a747855b55ef04b847edae",
     "res://modules/restaurant/assets/supplementary/flat_foods_d.png": "05dfccb8fa435f1050500adb2980af8535fa15442e3fcb81024d160e19b25d41",
-    "res://modules/restaurant/assets/supplementary_manifest.json": "b5533d135aed88896a21cf9fafae6f4ea632f74697fadcdf04be8c5a6b792c09",
+    "res://modules/restaurant/assets/supplementary_manifest.json": "3c7e3ba55c5fb0878bdccf5057c1af83bd4a26b66095e3c7572b1beb4c3b36f5",
     "res://modules/restaurant/assets/team_jpeg_manifest.json": "4d7740734c7a3cf26938f020d134163974582ea5eadd616d16c5c7f87e38b235",
     "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_brown.jpg": "80ace13e648158fe5c367daaf12dc5fbdb194a6d81eee30ca0fa207c18b458bd",
     "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_gold.jpg": "8252e4e90dbb7285f170c0d88b422a0f82fe8edaf9f3dae5418167ecf1cbe05f",
@@ -1073,5 +1073,6 @@
     "res://modules/restaurant/assets/team_jpeg_originals/potato.jpg": "575b47ea0bb843a6daec99c251a2b5b826dbca8eda11690f1fc805fdd85452dc",
     "res://modules/restaurant/assets/team_jpeg_originals/zucchini.jpg": "1a8ea75b74c55efd2363d1372e35e3199204f81f7e0f661fd19f6726b41f20ca"
   },
-  "method": "Shared SpriteLibrary display copy: original team silhouettes and interior paint retained, matte fringe RGB repaired; unrelated tiny gutter components removed only from generated supplemental atlases. All source files unchanged."
+  "method": "Shared SpriteLibrary display copy: original team silhouettes and interior paint retained, matte fringe RGB repaired; unrelated tiny gutter components removed only from generated supplemental atlases. All source files unchanged.",
+  "input_text_normalization": "JSON CRLF to LF; binary images unchanged"
 }
