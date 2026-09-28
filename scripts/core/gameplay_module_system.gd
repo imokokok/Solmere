@@ -327,6 +327,18 @@ func complete_external(module_id: String, outcome: Dictionary, results: Dictiona
 	if not complete(module_id, outcome):
 		return false
 	var granted := results.duplicate(true)
+	if module_id == "cooking" and int(outcome.get("restaurant", {}).get("served", 0)) > 0:
+		# Record the outcome before procurement indexes it, and retain the source
+		# until payment checks whether this service belongs to a scheduled shift.
+		var order := EconomySystem.active_order()
+		if not order.is_empty() and bool(order.get("delivered", false)) and not bool(order.get("paid", false)):
+			var used: Array[String] = []
+			for meal in outcome.restaurant.get("meals", []):
+				for ingredient in meal.get("dish", {}).get("ingredients", []):
+					var id := str(ingredient.get("id", ""))
+					if not used.has(id): used.append(id)
+			if order.get("items", []).all(func(id): return used.has(str(id))):
+				EconomySystem.finish_cooking(outcome, order.get("items", []))
 	if module_id == "cooking": granted.erase("confirmations")
 	# This extension contains one authored client commission. Reopening its
 	# finished letter is a keepsake, not a new payable delivery.

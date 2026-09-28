@@ -1,0 +1,145 @@
+{
+  "potato": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/potato.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/potato.jpg",
+    "source_name": "91d364d0f608ed8395b4b3442d0eda2c.jpg",
+    "sha256": "575b47ea0bb843a6daec99c251a2b5b826dbca8eda11690f1fc805fdd85452dc",
+    "source_size": [
+      1018,
+      1440
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "carrot": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/carrot.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/carrot.jpg",
+    "source_name": "517d22c449b965e2ab8b95e405109da5.jpg",
+    "sha256": "4647450f0b9a85fd9c9e85f04a6e24fc3bf85bcc7e466adf929a8b8824bd0ab6",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "onion": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/onion.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/onion.jpg",
+    "source_name": "1583d72fcf85545c5d9d8d2193fc7870.jpg",
+    "sha256": "d0a78e0ac920489d403f0dcfc6c024e24454f5394245ce822506b0dd29c57bca",
+    "source_size": [
+      1018,
+      1440
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "eggplant": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/eggplant.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/eggplant.jpg",
+    "source_name": "0e8a79c62882d101e4329126059da9df.jpg",
+    "sha256": "c6166b345133ed361dd5556f82517108a1faec874ca7973013ef2dd1cdaa1aa3",
+    "source_size": [
+      1018,
+      1440
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_yellow": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_yellow.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_yellow.jpg",
+    "source_name": "0df6ca590ec9fbf111df8d854920650d.jpg",
+    "sha256": "956f1e819bb203cf073518170585684b9edab68580f68a5cd0cee670a6cf5dab",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "zucchini": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/zucchini.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/zucchini.jpg",
+    "source_name": "a019773f86b7956d47e95fdd59d605e4.jpg",
+    "sha256": "1a8ea75b74c55efd2363d1372e35e3199204f81f7e0f661fd19f6726b41f20ca",
+    "source_size": [
+      1018,
+      1440
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_lavender": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_lavender.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_lavender.jpg",
+    "source_name": "133e04a6662b78e18b3b308c1504fdff.jpg",
+    "sha256": "d44fe67de03b78e691560267516a29f594d1f48e65b16a07824285bdf2a169ca",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_gold": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_gold.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_gold.jpg",
+    "source_name": "5087f23898c4ce716462c4499c8c3a8a.jpg",
+    "sha256": "8252e4e90dbb7285f170c0d88b422a0f82fe8edaf9f3dae5418167ecf1cbe05f",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_purple": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_purple.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_purple.jpg",
+    "source_name": "589880d239ef4f4f3089cc09201db3d2.jpg",
+    "sha256": "44781921b434b4a33ba3340f41ea430cac3d070431f842d1a943f6aa5db03c6e",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_brown": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_brown.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_brown.jpg",
+    "source_name": "abdda8fb325d4b8770c28842f83dcdd6.jpg",
+    "sha256": "80ace13e648158fe5c367daaf12dc5fbdb194a6d81eee30ca0fa207c18b458bd",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_white": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_white.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_white.jpg",
+    "source_name": "bc7177b9ccc76ac607930f0cc310f488.jpg",
+    "sha256": "23922e1af380d341f8076740dc888dff3720465d5b1e8de0c468c6faea9e3df1",
+    "source_size": [
+      1357,
+      1920
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_orange": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_orange.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_orange.jpg",
+    "source_name": "23604bd8aa04f76135ec924f7a809e64.jpg",
+    "sha256": "f296b9eda2725e889189b83a44798b29244ec7826bc340215386d7ea4f15b809",
+    "source_size": [
+      1018,
+      1440
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  },
+  "bell_pepper_green": {
+    "path": "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_green.jpg",
+    "source_path": "docs/supplied_assets/20260925-batch2/bell_pepper_green.jpg",
+    "source_name": "00868698d7c860bab60e844ec9150786.jpg",
+    "sha256": "73e10163ab3569adcb912b40c7b3ffb27dcc21c8ba641bb0ce3c5b757ff06dbd",
+    "source_size": [
+      1018,
+      1440
+    ],
+    "processing": "source bytes preserved; runtime downsample, crop and black-matte alpha"
+  }
+}

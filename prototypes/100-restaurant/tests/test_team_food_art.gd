@@ -43,6 +43,7 @@ func run() -> void:
 		expect(body != null and body.get_meta("id") == id, id + " pickup carries same ingredient identity")
 		if body != null:
 			body.position = slot.get_global_rect().get_center()
+			game.world.held_grip.target = body.global_position
 			expect(game._return_to_storage(body), id + " returns to original stock slot")
 		await process_frame
 	for id in source_ids:

@@ -46,6 +46,19 @@ func _read(id: String) -> void:
 		var translated:=LocalizationSystem.text(str(label))
 		if not descriptions.has(translated): descriptions.append(translated)
 	if not descriptions.is_empty(): detail.text+="\n"+" · ".join(descriptions)
+	var service: Dictionary = payload.get("restaurant", {})
+	if not service.is_empty():
+		# The public record uses the meals actually served in the physical kitchen.
+		var names: Dictionary = {}
+		for ingredient in JSON.parse_string(FileAccess.get_file_as_string("res://modules/restaurant/data/ingredients.json")):
+			names[str(ingredient.id)] = str(ingredient.name)
+		for meal in service.get("meals", []).slice(0, 3):
+			var foods: Array[String] = []
+			for ingredient in meal.get("dish", {}).get("ingredients", []):
+				var food := str(names.get(str(ingredient.get("id", "")), ""))
+				if not food.is_empty() and not foods.has(food): foods.append(food)
+			detail.text += "\n%s：%s" % [str(meal.get("customer", "客人")), "、".join(foods)]
+			if not str(meal.get("feedback", "")).is_empty(): detail.text += " · " + str(meal.feedback)
 	for card in actions.get_children():
 		if card is Button: card.selected=card.name=="Trace_"+id
 	for receipt in payload.get("receipts",[]):

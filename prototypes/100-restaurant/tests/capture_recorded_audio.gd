@@ -20,6 +20,10 @@ func _run() -> void:
 	await process_frame
 	var world = game.world
 	var sound = world.audio
+	# A separate QA window must not mute this capture halfway through when
+	# the desktop tester switches apps. Ordinary focus/mute behaviour remains
+	# covered by test_recorded_audio; only this controlled recorder is isolated.
+	preload("res://tests/recording_focus_isolation.gd").attach(sound)
 	sound.stop_all()
 	var bus := AudioServer.bus_count
 	AudioServer.add_bus()
@@ -59,7 +63,7 @@ func _run() -> void:
 		sound.ui_pressure = 0.8
 		await _stage("出料：" + str(game._definition(id).get("name")), 2.5)
 		sound.ui_dispense_mode = ""
-	for id in ["stir_wood", "stir_metal", "stir_water", "stir_pasta", "chop", "bell"]:
+	for id in ["egg_crack", "stir_wood", "stir_metal", "stir_water", "stir_pasta", "chop", "bell"]:
 		sound.play_effect(id)
 		await _stage("实际播放器：" + id, 1.6)
 	sound.muted = true

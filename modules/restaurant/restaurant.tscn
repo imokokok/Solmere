@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://colnshawdoeqg" path="res://modules/restaurant/restaurant.gd" id="1"]
+
+[node name="RestaurantMinigame" type="Node2D" unique_id=1922837322]
+script = ExtResource("1")

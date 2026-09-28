@@ -1,0 +1,6 @@
+{
+  "status": "PASS",
+  "staged_source_hashes": 433,
+  "staged_runtime_mirror_files": 421,
+  "whitespace": "No code whitespace errors. Original LXGW_OFL.txt is byte-preserved in source and mirror, including its publisher trailing space on line 22."
+}

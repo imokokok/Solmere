@@ -1,0 +1,23 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+AFTER_REST (1216.0, 554.0) rigid=(1216.0, 554.0) parked=true
+AFTER_EGG (1292.22, 733.9492) rigid=(1292.22, 733.9492) parked=true
+BEFORE_KNIFE (1292.22, 733.9492) rigid=(1292.22, 733.9492) parked=true
+KNIFE_INPUT (1302.5, 764.5) lid=(1292.22, 733.9492) parked=false active=true held=<null> hand=true knife=false
+ERROR: small-window knife handle actually picks the knife
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:126)
+ERROR: release position completes the missing final knife stroke
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:126)
+ERROR: ordinary pickup includes sibling, excludes unrelated tomato
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:126)
+ERROR: discarding a held portion frees every carried body and grip
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:126)
+FAIL: small-window quick gestures, 32 checks

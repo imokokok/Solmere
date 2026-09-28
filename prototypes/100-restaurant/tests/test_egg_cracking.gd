@@ -27,14 +27,11 @@ func _run() -> void:
 	_mouse(rim, true)
 	await process_frame
 	_mouse(rim, false)
-	await process_frame
-	_check(world._held == egg and int(egg.get_meta("egg_taps", 0)) == 1, "first rim strike leaves egg held with a fissure")
-	_check(world._egg_shells.get_child_count() == 0, "first strike does not fabricate shell waste")
-	_mouse(rim, true)
-	await process_frame
-	_mouse(rim, false)
-	await process_frame
-	_check(world._held == null and bool(egg.get_meta("thermal", {}).get("egg_opened", false)), "second rim strike opens the same egg")
+	await create_timer(0.12).timeout
+	_check(int(egg.get_meta("egg_taps", 0)) == 1, "one rim strike visibly cracks the shell")
+	await create_timer(0.85).timeout
+	_check(world._held == null and bool(egg.get_meta("thermal", {}).get("egg_opened", false)), "one strike automatically pours white and yolk")
+	_check(egg.get_meta("thermal").egg_white_set == 0, "cold raw egg stays translucent")
 	_check(world._egg_shells.get_child_count() == 2, "two shell pieces launch from the struck egg")
 	var shell_mass := 0.0
 	for shell in world._egg_shells.get_children():
@@ -46,8 +43,27 @@ func _run() -> void:
 	_check(world._egg_shells.get_child_count() == 2, "shell pieces persist after their fall")
 	for shell in world._egg_shells.get_children():
 		_check(shell.position.x < 600.0 and not world.pan.contains(shell.position), "shell lands on the spare counter, outside the pan")
+	var t: Dictionary = egg.get_meta("thermal").duplicate(true)
+	var egg_def: Dictionary = game._definition("egg")
+	for i in 2400: preload("res://modules/restaurant/domain/food_thermal.gd").advance(t, egg_def, 1.0/120.0, 155, 22, false, egg.mass)
+	_check(t.egg_white_set > 0.9 and t.egg_yolk_set > 0.3, "contact heating gradually sets white and yolk")
+	var set_before: float = t.egg_white_set
+	for i in 600: preload("res://modules/restaurant/domain/food_thermal.gd").advance(t, egg_def, 1.0/120.0, 22, 22, false, egg.mass)
+	_check(t.egg_white_set >= set_before, "cooling does not turn set white raw again")
 	world.clear_workspace()
 	_check(absf(world.shell_waste_kg - shell_mass) < 0.00001, "cleaning records shell mass as waste")
+	world.pan.offset += Vector2(180,0)
+	var counter_rim: Vector2 = world.pan.point(Vector2(809,546))
+	_check(not world.pan.on_stove() and world._egg_tap_target(counter_rim), "an upright cold pan accepts egg cracking away from the burner")
+	world.pan.active = true
+	_check(not world._egg_tap_target(counter_rim), "a pan already in the hand cannot receive an egg gesture")
+	world.pan.active = false
+	world.pan.angle = PI
+	_check(not world._egg_tap_target(world.pan.point(Vector2(809,546))), "an upside-down pan cannot receive egg contents")
+	game.queue_free()
+	await process_frame
+	# Let the mixer thread release active playback streams before this test quits.
+	await create_timer(0.15).timeout
 	if failures.is_empty():
 		print("PASS: egg cracking (%s checks)" % checks)
 		quit(0)

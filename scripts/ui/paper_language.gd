@@ -16,6 +16,8 @@ func _ready() -> void:
 	get_tree().node_added.connect(_added)
 
 func _added(node: Node) -> void:
+	# The physical kitchen owns its paper controls, input and recorded audio.
+	if _context(node,["restaurant_host.gd"]): return
 	if node is BaseButton: Motion.attach_id.call_deferred(node.get_instance_id())
 	if node is Control: preload("res://scripts/ui/ui_sound_bindings.gd").attach_id.call_deferred(node.get_instance_id())
 	if node is Control and not _context(node,["workshop.gd"]):
@@ -60,6 +62,7 @@ func button_style(button: Button, in_scene := false) -> void:
 
 func _style(node: Control) -> void:
 	if not is_instance_valid(node) or not node.is_inside_tree() or node.is_queued_for_deletion(): return
+	if _context(node,["restaurant_host.gd"]): return
 	# These components provide opaque, readable surfaces and their own states.
 	if _context(node,["elder_board/scripts/main.gd","elder_board/scripts/match.gd","elder_board/scripts/rules_panel.gd","elder_board/scripts/teaching_room.gd","elder_board/scripts/learned_match.gd","elder_board/scripts/elder_story.gd"]): return
 	if _context(node,["map_paper.gd","fish_journal.gd","transport_panel.gd"]): return

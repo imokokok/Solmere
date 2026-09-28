@@ -4,11 +4,27 @@ on:
   pull_request:
     paths:
       - "prototypes/100-restaurant/**"
+      - "modules/restaurant/**"
+      - "scripts/core/restaurant_bridge.gd"
+      - "scripts/core/gameplay_module_system.gd"
+      - "scripts/ui/restaurant_host.gd"
+      - "scenes/restaurant_host.tscn"
+      - "data/gameplay/modules.json"
+      - "tools/sync_restaurant_module.py"
+      - "tests/integration/test_restaurant_bridge.gd"
       - ".github/workflows/100-restaurant-checks.yml"
   push:
     branches: [main]
     paths:
       - "prototypes/100-restaurant/**"
+      - "modules/restaurant/**"
+      - "scripts/core/restaurant_bridge.gd"
+      - "scripts/core/gameplay_module_system.gd"
+      - "scripts/ui/restaurant_host.gd"
+      - "scenes/restaurant_host.tscn"
+      - "data/gameplay/modules.json"
+      - "tools/sync_restaurant_module.py"
+      - "tests/integration/test_restaurant_bridge.gd"
       - ".github/workflows/100-restaurant-checks.yml"
 
 permissions:
@@ -28,6 +44,8 @@ jobs:
           curl -L --fail -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
           unzip -q godot.zip -d /tmp/godot
           chmod +x /tmp/godot/Godot_v4.7.2-stable_linux.x86_64
+      - name: Check standalone and main kitchen copies agree
+        run: python3 ../../tools/sync_restaurant_module.py --check
       - name: Verify check runner failure handling
         run: python3 -m unittest discover -s tools -p test_checks.py
       - name: Run full shared checks (import, startup, regression and audio)
@@ -40,3 +58,23 @@ jobs:
           path: prototypes/100-restaurant/.runtime/checks/
           include-hidden-files: true
           if-no-files-found: warn
+      - name: Import main Solmere project
+        working-directory: .
+        run: |
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --editor --path . --import > main-import.log 2>&1
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' main-import.log; then exit 1; fi
+      - name: Verify restaurant entrance and settlement transaction
+        working-directory: .
+        run: |
+          /tmp/godot/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --script tests/integration/test_restaurant_bridge.gd -- --isolated-save > restaurant-bridge.log 2>&1
+          cat restaurant-bridge.log
+          if grep -E '^(SCRIPT ERROR:|ERROR:)' restaurant-bridge.log; then exit 1; fi
+          grep -E 'Restaurant bridge: [0-9]+ checks, 0 failures' restaurant-bridge.log
+      - name: Upload main integration logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: restaurant-main-integration
+          path: |
+            main-import.log
+            restaurant-bridge.log

@@ -94,9 +94,9 @@ func _test_visible_storage() -> void:
 	var visible_count: int = 0
 	for button in buttons:
 		unique[str(button.get_meta("ingredient_id", ""))] = true
-		if button.is_visible_in_tree():
+		if button.is_visible_in_tree() and storage.slot_at(str(button.get_meta("ingredient_id")), button.get_global_rect().get_center()):
 			visible_count += 1
-	_expect(unique.size() == 37 and visible_count == 37, "reference layout exposes 15 visible fridge, 5 prep tray, 5 condiment rack and 12 special shelf items")
+	_expect(unique.size() == storage._cold_catalog.size() + 22 and visible_count == 37, "continuous cabinet exposes 15 foods through its opening, with 10 condiments and 12 odd items outside")
 	_expect(storage.definitions.size()==game.session.active_ingredients().size(),"storage exposes every allowed ingredient definition")
 	var tomato_button = storage.find_child("Ingredient_tomato", true, false)
 	if tomato_button == null:

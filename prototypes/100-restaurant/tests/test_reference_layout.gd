@@ -26,26 +26,38 @@ func run() -> void:
 		if item != null:
 			var art: Node2D = item.get_node("FoodArt")
 			var image: Texture2D = preload("res://modules/restaurant/assets/sprite_library.gd").food(id)
-			var fitted: Rect2 = preload("res://modules/restaurant/assets/sprite_library.gd").fit(image, Vector2.ZERO, Vector2(78, 78))
+			var fitted: Rect2 = preload("res://modules/restaurant/assets/sprite_library.gd").support_rect(id)
 			var height := fitted.size.y * art.scale.y
 			expect(height >= 68.0 and height <= 77.0, id + " fills most of its rack cubby without losing relative bottle shape")
-			expect(absf(item.position.y + art.position.y + fitted.end.y * art.scale.y - 586.0) < 0.5, id + " rests on the same rack floor")
+			expect(absf(item.position.y + art.position.y + fitted.end.y * art.scale.y - 604.0) < 0.5, id + " rests on the inner rack floor behind the 14 pixel front wall")
+			expect(absf(item.position.y + art.position.y + art.storage_clip.end.y * art.scale.y - 590.0) < 0.5, id + " front wall occludes its lower body without covering foreground cookware")
 			expect(item.position.y + (item.get_node("IngredientName") as Label).position.y >= 590.0, id + " name sits on the rack front below the bottle")
 	for child in game.storage_display._content.get_children():
 		if child is TextureRect:
 			expect(not child.get_rect().intersects(Rect2(635, 590, 425, 39)), "rear rack front is not redrawn over the pan")
 	var art_library = preload("res://modules/restaurant/assets/sprite_library.gd")
-	var atlas_bounds: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://modules/restaurant/assets/food_bounds.json"))
-	for specimen in [["mayonnaise", "3:6"], ["chili_sauce", "3:0"], ["vinegar", "3:2"]]:
-		var key: String = specimen[1]
-		var bounds: Array = atlas_bounds[key]
-		var expected: Texture2D = art_library.prepared_region("res://modules/restaurant/assets/food_atlas_3.png", Rect2i(bounds[0], bounds[1], bounds[2], bounds[3]))
-		expect(art_library.food(specimen[0]) == expected, specimen[0] + " displays its authored bottle rather than a shifted catalog sprite")
+	var atlas: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://modules/restaurant/assets/supplementary_manifest.json"))
+	for id in ["mayonnaise", "chili_sauce", "vinegar"]:
+		var bounds: Array = atlas[id].region
+		var source: Image = (load(atlas[id].path) as Texture2D).get_image()
+		if source.is_compressed(): source.decompress()
+		var expected := source.get_region(Rect2i(bounds[0], bounds[1], bounds[2], bounds[3]))
+		var displayed: Image = art_library.food(id).get_image()
+		var matches := displayed.get_size() == expected.get_size()
+		for y in expected.get_height():
+			for x in expected.get_width():
+				var pixel := expected.get_pixel(x,y)
+				if pixel.a < 0.98: continue
+				var edge := false
+				for d in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+					if expected.get_pixel(clampi(x+d.x,0,expected.get_width()-1), clampi(y+d.y,0,expected.get_height()-1)).a < 0.02: edge = true
+				if not edge and not pixel.is_equal_approx(displayed.get_pixel(x,y)): matches = false
+		expect(matches, id + " keeps the hand-painted bottle interior while cleaning its matte fringe")
 	expect(art_library.physical_art_scale("mayonnaise") > art_library.physical_art_scale("chili_sauce"), "larger mayonnaise bottle keeps a larger physical scale than narrow chili sauce")
 	var faucet_stream := Rect2(194, 560, 12, 175)
-	for id in ["FridgePreviousPage", "FridgeNextPage"]:
-		var tab := game.storage_display.find_child(id, true, false) as Button
-		expect(tab != null and not tab.get_rect().intersects(faucet_stream), "fridge page tab stays on the cabinet, clear of running water: " + id)
+	var pull := game.storage_display.find_child("FridgePull", true, false) as Control
+	expect(pull != null and not pull.get_global_rect().intersects(faucet_stream), "cabinet pull stays clear of running water")
+	expect(game.storage_display.find_child("FridgeNextPage", true, false) == null, "fridge uses spatial browsing without page buttons")
 	expect(game._order_paper.position.y <= 140 and game._order_paper.position.y + game._order_paper.size.y >= 440, "order note covers the original blank sheet rather than leaving a top strip")
 	expect(game.world.pan.point(Vector2(809, 541)).y > 639.0, "pan opening starts below the rear rack front")
 	expect(game.world.cutting_board.rect().encloses(Rect2(game.world._knife_rest_position + Vector2(-93, -24), Vector2(188, 52))), "knife art rests entirely on the cutting board")
@@ -56,11 +68,11 @@ func run() -> void:
 		var art := item.get_node("FoodArt") as Node2D
 		var library = preload("res://modules/restaurant/assets/sprite_library.gd")
 		var tex: Texture2D = library.food(id)
-		var visible_rect: Rect2 = library.fit(tex, Vector2.ZERO, Vector2(78, 78))
+		var visible_rect: Rect2 = library.support_rect(id)
 		var row := roundi((item.position.y + item.size.y - 300.0) / 105.0)
 		var shelf_front := 300.0 + row * 105.0
 		var art_bottom := item.position.y + art.position.y + visible_rect.end.y * art.scale.y
-		expect(absf(art_bottom - (shelf_front - 4.0)) < 1.0, "odd ingredient rests on its shelf floor: " + id)
+		expect(absf(art_bottom - (shelf_front + 5.0)) < 1.0, "odd ingredient rests inside the five pixel shelf lip: " + id)
 		var name: Label = item.get_node("IngredientName")
 		var name_center := item.position.y + name.position.y + name.size.y * 0.5
 		expect(name_center >= shelf_front and name_center <= shelf_front + 14.0, "readable odd name remains centered on the shelf front: " + id)

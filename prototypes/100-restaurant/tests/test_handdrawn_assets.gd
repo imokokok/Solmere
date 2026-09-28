@@ -32,7 +32,22 @@ func run() -> void:
 		var source: Texture2D = load(entry.path)
 		var pixels := source.get_image()
 		if pixels.is_compressed(): pixels.decompress()
-		expect(texture.get_image().get_data() == pixels.get_region(Rect2i(b[0], b[1], b[2], b[3])).get_data(), id + " runtime keeps authored colour and alpha edges")
+		var authored := pixels.get_region(Rect2i(b[0], b[1], b[2], b[3]))
+		var display := texture.get_image()
+		var kept_alpha := true
+		var kept_interior := true
+		for y in authored.get_height():
+			for x in authored.get_width():
+				var before := authored.get_pixel(x,y)
+				var after := display.get_pixel(x,y)
+				kept_alpha = kept_alpha and is_equal_approx(before.a, after.a)
+				if before.a < 0.98 or before.is_equal_approx(after): continue
+				var boundary := false
+				for dy in range(-1,2):
+					for dx in range(-1,2):
+						if authored.get_pixel(clampi(x+dx,0,authored.get_width()-1),clampi(y+dy,0,authored.get_height()-1)).a < 0.02: boundary = true
+				if not boundary: kept_interior = false
+		expect(kept_alpha and kept_interior, id + " cleanup retains silhouette alpha and interior painting, only outer matte RGB may change")
 		game.storage_display.reveal_ingredient(id)
 		var slot := game.storage_display.find_child("Ingredient_" + id, true, false) as Button
 		expect(slot != null and slot.is_visible_in_tree(), id + " available on its kitchen shelf page")
@@ -46,6 +61,8 @@ func run() -> void:
 		expect(is_instance_valid(body) and body.get_meta("id") == id, id + " visible slot picks up real body")
 		if not is_instance_valid(body): continue
 		expect(slot.disabled and not slot.get_node("FoodArt").visible, id + " taking the only object empties its slot")
+		# The bottle first clears its shelf lip before the player aims its mouth.
+		await create_timer(0.26).timeout
 		expect(body.get_node("FoodArt").definition.id == id and body.get_meta("fragment_polygon") == Art.body_outline(id), id + " physical shape and visual share authored coordinates")
 		var uid: String = body.get_meta("instance_uid")
 		if entry.has("nozzle_uv"):

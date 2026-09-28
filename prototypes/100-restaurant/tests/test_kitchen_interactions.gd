@@ -59,6 +59,8 @@ func _run() -> void:
 		await create_timer(0.9).timeout
 		_mouse(Vector2(1350, 250), "up")
 		await process_frame
+		_expect(not game.world._dragging, "release above GUI immediately ends pointer tracking")
+		await create_timer(1.8).timeout
 		_expect(game.world._held == null and not game.world._dragging, "release above GUI ends food drag")
 		_mouse(origin, "down")
 		_mouse(origin, "up")
@@ -119,7 +121,9 @@ func _run() -> void:
 	await process_frame
 	var water: float = game.world.pan.water_ml
 	await create_timer(0.1).timeout
-	_expect(is_equal_approx(water, game.world.pan.water_ml) and not game.world.audio.loops.water.playing, "turning the handle back stops both filling and water sound")
+	_expect(is_equal_approx(water, game.world.pan.water_ml), "turning the handle back stops filling immediately")
+	await create_timer(0.4).timeout
+	_expect(not game.world.audio.loops.water.playing, "turning the handle back fades the water recording within 400 milliseconds")
 	_mouse(handle_sink, "down")
 	await _pan_motion(handle_home)
 	_mouse(handle_home, "up")

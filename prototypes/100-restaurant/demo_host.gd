@@ -21,13 +21,21 @@ func _capture_live_preview(path: String) -> void:
 
 func _enter_restaurant() -> void :
 	module = Restaurant.instantiate()
-	module.configure({"player_id": "local_demo", "display_name": "100饭店主厨", "shift_seconds": 720.0})
+	var entry := {"player_id": "local_demo", "display_name": "100饭店主厨", "shift_seconds": 720.0}
+	if "--qa-preview" in OS.get_cmdline_user_args():
+		var folder := "user://preview/%s/" % Crypto.new().generate_random_bytes(12).hex_encode()
+		entry.repository_path = folder + "cookbook.json"
+		entry.letters_path = folder + "letters.json"
+		DisplayServer.window_set_title("街角厨房 · 2D 验收")
+	module.configure(entry)
 	module.shift_completed.connect(_on_settlement)
 	module.exit_requested.connect(_on_exit)
 	add_child(module)
+	if "--practice-preview" in OS.get_cmdline_user_args():
+		module.call_deferred("_close_modal")
 	if "--live-preview" in OS.get_cmdline_user_args():
 		module.call_deferred("_start_shift")
-		module.call_deferred("_notify", "第一位客人已经来了！右侧查看要求，点击客人聊聊口味。")
+		module.call_deferred("_notify", "客人来了。先看看右边的点菜单。")
 		if "--recipe-preview" in OS.get_cmdline_user_args():
 			module.call_deferred("_show_cookbook")
 
@@ -54,33 +62,31 @@ func _on_exit() -> void :
 	box.size = Vector2(640, 340)
 	box.add_theme_constant_override("separation", 24)
 	layer.add_child(box)
-	var font: = FontVariation.new()
-	font.base_font = load("res://modules/restaurant/assets/fonts/noto_serif_sc.ttf")
-	font.variation_opentype = {2003265652: 400.0}
+	var font = preload("res://modules/restaurant/ui/paper_ink.gd").font()
 	var title: = Label.new()
-	title.text = "100饭店  /  收好今天的回忆"
+	title.text = "街角厨房"
 	title.add_theme_font_override("font", font)
 	title.add_theme_font_size_override("font_size", 34)
-	title.add_theme_color_override("font_color", Color("284b47"))
+	title.add_theme_color_override("font_color", Color("4b4033"))
 	box.add_child(title)
 	var info: = Label.new()
-	info.text = "主厨的钱包  ¥ %.2f\n围裙挂好了，菜谱也留在原处。" % demo_wallet
+	info.text = "主厨的钱包  ¥ %.2f\n今天先到这里。" % demo_wallet
 	info.add_theme_font_override("font", font)
 	info.add_theme_font_size_override("font_size", 20)
-	info.add_theme_color_override("font_color", Color("64756a"))
+	info.add_theme_color_override("font_color", Color("7b7060"))
 	box.add_child(info)
 	var again = preload("res://modules/restaurant/ui/paper_action.gd").new()
 	again.text = "再做一顿饭"
 	again.symbol = "book"
-	again.add_theme_color_override("font_color", Color("284b47"))
+	again.add_theme_color_override("font_color", Color("4b4033"))
 	again.custom_minimum_size.y = 54
 	again.add_theme_font_override("font", font)
 	again.pressed.connect( func(): layer.queue_free();_enter_restaurant())
 	box.add_child(again)
 	var close = preload("res://modules/restaurant/ui/paper_action.gd").new()
-	close.text = "合上今天"
+	close.text = "离开"
 	close.symbol = "arrow"
-	close.add_theme_color_override("font_color", Color("284b47"))
+	close.add_theme_color_override("font_color", Color("4b4033"))
 	close.custom_minimum_size.y = 48
 	close.add_theme_font_override("font", font)
 	close.pressed.connect( func(): get_tree().quit())

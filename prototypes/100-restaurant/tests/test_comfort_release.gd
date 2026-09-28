@@ -53,6 +53,10 @@ func run() -> void:
 	mouse(Vector2(1200,735),false)
 	await physics_frame
 	await process_frame
+	expect(not w._dragging,"mouse release ends active pointer tracking")
+	# A queued release may arrive before the force-driven hand reaches the board.
+	# Wait for its bounded completion, then verify the actual support and knife flow.
+	await create_timer(1.8).timeout
 	expect(w._held==null,"food drag releases")
 	expect(w._foods.get_child_count()==1,"one stock drag creates one body")
 	if w._foods.get_child_count() == 0:
@@ -94,7 +98,7 @@ func run() -> void:
 	await create_timer(1.0).timeout
 	mouse(w.pan.point(Vector2(810,520)),false)
 	await create_timer(1.0).timeout
-	expect(s.dish.size()==1,"one drag moves exactly one cut piece")
+	expect(s.dish.size()==pieces.size(),"one drag moves the complete freshly cut portion")
 	expect(first.position.distance_to(w.pan.point(Vector2(810,579)))<100,"food stays near the cooking surface")
 	var pan=w.pan
 	var pan_grip: Vector2=pan.point(Vector2(1000,566))
@@ -124,9 +128,13 @@ func run() -> void:
 		mouse(tool.to_global(Vector2(-24,0)),true)
 		await process_frame
 		expect(tool.active,"visible utensil can be picked up: "+tool.title)
+		motion(Vector2(700,400))
+		await create_timer(0.65).timeout
 		mouse(Vector2(1510,35),false)
 		await process_frame
 		expect(not tool.active,"utensil release over HUD ends drag: "+tool.title)
+		await create_timer(2.0).timeout
+		expect(not tool.storing, "smooth storage completes before the next pickup: " + tool.title)
 	# The sink drawing has matching physical support; dropped food stays in-basin.
 	w.spawn_ingredient(s._catalog["potato"])
 	var sink_food: RigidBody2D = w._held

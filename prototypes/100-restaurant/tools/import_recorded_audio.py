@@ -24,6 +24,7 @@ DEST = PROJECT / "modules/restaurant/assets/audio/recorded"
 LICENSE = "https://creativecommons.org/publicdomain/zero/1.0/"
 # author, sound id, short recording description, clips: bank, start, seconds, loop
 SOURCES = [
+    ("Anthousai", 336613, "Raw egg cracked into a glass bowl", [("egg_crack", 0, 0, False)]),
     ("ciccarelli", 170416, "Eggs frying in oil", [("fry_egg", 12, 9, True), ("fry_egg", 30, 9, True)]),
     ("neilraouf", 464301, "Vegetables cooking in butter", [("fry_vegetable", 2, 6, True), ("fry_vegetable", 10, 6, True)]),
     ("colorsCrimsonTears", 547519, "Sausage frying in an oil-filled skillet", [("fry_meat", 1, 7, True)]),

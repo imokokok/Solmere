@@ -1,0 +1,401 @@
+{
+  "status": "PASS",
+  "godot_version": "4.7.2",
+  "scripts_expected": 51,
+  "scripts_run": 51,
+  "failed": [],
+  "results": [
+    {
+      "name": "engine-version",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "engine-version.log"
+    },
+    {
+      "name": "project-import",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "project-import.log"
+    },
+    {
+      "name": "startup-120-frames",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "startup-120-frames.log"
+    },
+    {
+      "name": "tests/test_quick_gestures.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_quick_gestures_gd.log"
+    },
+    {
+      "name": "tests/test_egg_cracking.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_egg_cracking_gd.log"
+    },
+    {
+      "name": "tests/test_heat_feedback.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_heat_feedback_gd.log"
+    },
+    {
+      "name": "tests/test_playability_materials.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_playability_materials_gd.log"
+    },
+    {
+      "name": "tests/test_storage_support.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_storage_support_gd.log"
+    },
+    {
+      "name": "tests/test_force_liquid_lid.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_force_liquid_lid_gd.log"
+    },
+    {
+      "name": "tests/test_pan_lid.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_pan_lid_gd.log"
+    },
+    {
+      "name": "tests/test_thermal_reactions.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_thermal_reactions_gd.log"
+    },
+    {
+      "name": "tests/test_reaction_kitchen.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_reaction_kitchen_gd.log"
+    },
+    {
+      "name": "tests/test_visual_spatial_consistency.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_visual_spatial_consistency_gd.log"
+    },
+    {
+      "name": "tests/test_kitchen_flood.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_kitchen_flood_gd.log"
+    },
+    {
+      "name": "tests/test_craft_workbench.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_craft_workbench_gd.log"
+    },
+    {
+      "name": "tests/test_material_physics.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_material_physics_gd.log"
+    },
+    {
+      "name": "tests/test_board_release.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_board_release_gd.log"
+    },
+    {
+      "name": "tests/test_cut_clean_share.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_cut_clean_share_gd.log"
+    },
+    {
+      "name": "tests/test_handdrawn_assets.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_handdrawn_assets_gd.log"
+    },
+    {
+      "name": "tests/test_team_food_art.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_team_food_art_gd.log"
+    },
+    {
+      "name": "tests/test_tomato_art.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_tomato_art_gd.log"
+    },
+    {
+      "name": "tests/test_shelf_pages.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_shelf_pages_gd.log"
+    },
+    {
+      "name": "tests/test_removed_counter_items_cast.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_removed_counter_items_cast_gd.log"
+    },
+    {
+      "name": "tests/test_recipe_guide.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_recipe_guide_gd.log"
+    },
+    {
+      "name": "tests/test_serving_continuity.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_serving_continuity_gd.log"
+    },
+    {
+      "name": "tests/test_recorded_audio.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_recorded_audio_gd.log"
+    },
+    {
+      "name": "modules/restaurant/domain/test_domain.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "modules_restaurant_domain_test_domain_gd.log"
+    },
+    {
+      "name": "modules/restaurant/storage/smoke_test.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "modules_restaurant_storage_smoke_test_gd.log"
+    },
+    {
+      "name": "tests/test_integration.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_integration_gd.log"
+    },
+    {
+      "name": "tests/test_high_fidelity_state.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_high_fidelity_state_gd.log"
+    },
+    {
+      "name": "tests/test_knife_physics.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_knife_physics_gd.log"
+    },
+    {
+      "name": "tests/test_knife_drag.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_knife_drag_gd.log"
+    },
+    {
+      "name": "tests/test_tool_foreground.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_tool_foreground_gd.log"
+    },
+    {
+      "name": "tests/test_cut_batch_stability.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_cut_batch_stability_gd.log"
+    },
+    {
+      "name": "tests/test_slice_cooking_continuity.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_slice_cooking_continuity_gd.log"
+    },
+    {
+      "name": "tests/test_reference_layout.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_reference_layout_gd.log"
+    },
+    {
+      "name": "tests/test_stock_volume_recipe.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_stock_volume_recipe_gd.log"
+    },
+    {
+      "name": "modules/restaurant/ui/poster_store_test.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "modules_restaurant_ui_poster_store_test_gd.log"
+    },
+    {
+      "name": "modules/restaurant/ui/collage_test.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "modules_restaurant_ui_collage_test_gd.log"
+    },
+    {
+      "name": "tests/test_collage_input.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_collage_input_gd.log"
+    },
+    {
+      "name": "modules/restaurant/storage/paper_recipe_test.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "modules_restaurant_storage_paper_recipe_test_gd.log"
+    },
+    {
+      "name": "tests/test_recipe_diy.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_recipe_diy_gd.log"
+    },
+    {
+      "name": "tests/test_recipe_drawing.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_recipe_drawing_gd.log"
+    },
+    {
+      "name": "tests/test_tape_editing.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_tape_editing_gd.log"
+    },
+    {
+      "name": "tests/test_tape_tools.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_tape_tools_gd.log"
+    },
+    {
+      "name": "tests/test_seasoning.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_seasoning_gd.log"
+    },
+    {
+      "name": "tests/test_spatula.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_spatula_gd.log"
+    },
+    {
+      "name": "tests/test_heat_control.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_heat_control_gd.log"
+    },
+    {
+      "name": "tests/test_kitchen_interactions.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_kitchen_interactions_gd.log"
+    },
+    {
+      "name": "tests/test_customer_reviews.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_customer_reviews_gd.log"
+    },
+    {
+      "name": "tests/test_free_pan.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_free_pan_gd.log"
+    },
+    {
+      "name": "tests/test_workstations.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_workstations_gd.log"
+    },
+    {
+      "name": "tests/test_comfort_release.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_test_comfort_release_gd.log"
+    },
+    {
+      "name": "tests/capture_asset_gallery.gd",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "tests_capture_asset_gallery_gd.log"
+    },
+    {
+      "name": "recorded-audio-audit",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "recorded-audio-audit.log"
+    },
+    {
+      "name": "prepared-food-audit",
+      "passed": true,
+      "exit_code": 0,
+      "reason": "",
+      "log": "prepared-food-audit.log"
+    }
+  ]
+}

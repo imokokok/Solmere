@@ -10,7 +10,7 @@ var previous_pointer := Vector2.ZERO
 var original_mouse_mode: int
 
 func _initialize() -> void:
-	root.size = Vector2i(1600, 900)
+	root.size = Vector2i(960, 568)
 	Engine.max_fps = 120
 	call_deferred("_run")
 
@@ -107,6 +107,14 @@ func _test_editor(kind: String) -> void:
 	_motion(canvas.global_position + canvas.size * Vector2(0.52, 0.54), false)
 	await process_frame
 	_expect(canvas.stickers[0].position == placed, "%s returning from outside with no mouse button cannot move the layer" % kind)
+	await _move_layer_to_center(canvas)
+	# A short OS drag can coalesce its last motion into the release event.
+	var quick_start := _layer_center(canvas)
+	_press(quick_start)
+	await process_frame
+	_release(quick_start+Vector2(90,-45))
+	await process_frame
+	_expect(_layer_center(canvas).distance_to(quick_start+Vector2(90,-45))<0.1,"%s release commits the final position without a motion event"%kind)
 	await _move_layer_to_center(canvas)
 
 	# Release over a real sibling tool button, where GUI interception used to be

@@ -4,11 +4,15 @@ func _initialize() -> void:
 	call_deferred("run")
 func run() -> void:
 	var panel:=Control.new()
-	root.add_child(panel)
 	var rows=JSON.parse_string(FileAccess.get_file_as_string("res://modules/restaurant/data/ingredients.json"))
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(1600,ceili(rows.size()/10.0)*105)
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	root.add_child(viewport)
+	viewport.add_child(panel)
 	var art=preload("res://modules/restaurant/assets/sprite_library.gd")
 	var errors:=0
-	root.size.y = maxi(946, ceili(rows.size() / 10.0) * 105)
+	var supplementary: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://modules/restaurant/assets/supplementary_manifest.json"))
 	for i in rows.size():
 		var bg:=ColorRect.new()
 		bg.color=Color("4c4439") if i%2 else Color("c9b48f")
@@ -24,7 +28,7 @@ func run() -> void:
 		# New team JPEGs and the supplied tomato have an alpha matte;
 		# supplementary paintings retain their soft alpha brush edges. The legacy
 		# atlas matte audit below applies only to older generated atlas sprites.
-		var has_source_alpha := art.handdrawn_manifest().has(str(rows[i].id)) or art.team_jpeg_manifest().has(str(rows[i].id)) or str(rows[i].id) in ["egg", "noodles", "bread", "tomato"]
+		var has_source_alpha := art.handdrawn_manifest().has(str(rows[i].id)) or art.team_jpeg_manifest().has(str(rows[i].id)) or supplementary.has(str(rows[i].id)) or str(rows[i].id) in ["tomato", "herbs", "sea_beans", "star_salt"]
 		for y in image.get_height():
 			for x in image.get_width():
 				var c:=image.get_pixel(x,y)
@@ -54,8 +58,9 @@ func run() -> void:
 	if DisplayServer.get_name()!="headless":
 		await process_frame
 		await RenderingServer.frame_post_draw
-		root.get_texture().get_image().save_png("res://../100饭店_食材检查.png")
+		var destination := OS.get_cmdline_user_args()[0] if not OS.get_cmdline_user_args().is_empty() else "res://.runtime/food-gallery.png"
+		viewport.get_texture().get_image().save_png(destination)
 	print("Asset alpha audit: %d sprites, %d errors"%[rows.size(),errors])
-	panel.queue_free()
+	viewport.queue_free()
 	await process_frame
 	quit(0 if errors==0 else 1)

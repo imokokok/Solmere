@@ -1,0 +1,18 @@
+{
+	"body_count": 48,
+	"frame_ms_max": 58.972,
+	"frame_ms_p50": 27.376,
+	"frame_ms_p95": 35.633,
+	"frames": 600,
+	"heated": {
+		"frame_ms_max": 91.228,
+		"frame_ms_p50": 36.078,
+		"frame_ms_p95": 55.204,
+		"frames": 300,
+		"initial_pan_c": 160.0,
+		"physics_ms_p95": 13.122
+	},
+	"physics_ms_p95": 6.971,
+	"renderer": "NVIDIA GeForce RTX 4050 Laptop GPU",
+	"scope": "GPU 48 cut bodies; 24 on board, 24 native contacts in pan; other desktop apps remain open"
+}

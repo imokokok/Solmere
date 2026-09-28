@@ -16,41 +16,41 @@ func run() -> void:
 	game._close_modal()
 	game.world.audio.muted = true
 	var shelf = game.storage_display
-	for id in shelf.FEATURED_FOODS_FIRST:
-		var first_index := -1
-		for index in shelf._cold_catalog.size():
-			if str(shelf._cold_catalog[index].id) == id: first_index = index
-		expect(first_index >= 0 and first_index < shelf.FEATURED_FOODS_FIRST.size(), id + " supplied food art is on the first fridge page")
-		if first_index < shelf.FRIDGE_PAGE_SIZE:
-			expect(shelf.find_child("Ingredient_" + id, true, false) != null, id + " is visible on opening the fridge")
-	expect(shelf.find_child("MysteryStock", true, false) == null, "strange box button is absent")
-	for section in ["fridge", "odd"]:
-		var found: Array[String] = []
-		var pages: int = shelf._fridge_page_count() if section == "fridge" else ceili(shelf._odd_catalog.size() / 12.0)
-		for page in pages:
-			for slot in shelf.find_children("Ingredient_*", "Button", true, false):
-				var def: Dictionary = slot.get_meta("definition")
-				var relevant: bool = def.category == "odd" if section == "odd" else def.category in ["basic", "sweet"]
-				if not relevant: continue
-				expect(not found.has(str(def.id)), str(def.id) + " occurs once across shelf pages")
-				found.append(str(def.id))
-				if section == "odd": expect(slot.position.x > 1300, str(def.id) + " stays on the odd shelf")
-				else: expect(slot.position.x < 340, str(def.id) + " stays in ordinary storage")
-			if section == "fridge" and page == 0:
-				var scroll := shelf.find_child("FridgeScrollDown", true, false) as Button
-				expect(scroll != null and not scroll.disabled, "first fridge page scrolls within the supplied artwork")
-				if scroll != null: scroll.pressed.emit()
-				for id in shelf.FEATURED_FOODS_FIRST:
-					if not found.has(id) and shelf.find_child("Ingredient_" + id, true, false) != null: found.append(id)
-				expect(shelf.fridge_page == 0 and found.has("bread"), "last supplied artwork stays on page one after scrolling")
-				shelf.find_child("FridgeScrollUp", true, false).pressed.emit()
-			var next := shelf.find_child(section.capitalize() + "NextPage", true, false) as Button
-			expect(next != null, section + " has working page control")
-			if next != null: next.pressed.emit()
-		for def in game.session.active_ingredients():
-			if (def.category == "odd" if section == "odd" else def.category in ["basic", "sweet"]):
-				expect(found.has(str(def.id)), str(def.id) + " reachable by real page buttons")
-		expect((shelf.fridge_page if section == "fridge" else shelf.odd_page) == 0, section + " pages wrap back to first shelf")
+	expect(shelf.find_child("FridgeNextPage", true, false) == null and shelf.find_child("FridgeScrollDown", true, false) == null, "fridge has no page or stacked arrow buttons")
+	var tomato := shelf.find_child("Ingredient_tomato", true, false) as Button
+	expect(shelf.slot_at("tomato", tomato.get_global_rect().get_center()), "tomato is visible at the near side")
+	var pull := shelf.find_child("FridgePull", true, false) as Control
+	var first_point := pull.get_global_rect().get_center()
+	mouse(first_point, "down")
+	await process_frame
+	mouse(first_point - Vector2(110, 0), "move")
+	await create_timer(0.5).timeout
+	mouse(first_point - Vector2(110, 0), "up")
+	await process_frame
+	expect(shelf.fridge_offset > 200, "dragging the cabinet pull continuously reveals the next interior section")
+	expect(not shelf.slot_at("tomato", tomato.get_global_rect().get_center()), "clipped stock cannot accept off-cabinet returns")
+	var found: Array[String] = []
+	for def in shelf._cold_catalog:
+		shelf.reveal_ingredient(str(def.id))
+		var slot := shelf.find_child("Ingredient_" + str(def.id), true, false) as Button
+		expect(slot != null and shelf.slot_at(str(def.id), slot.get_global_rect().get_center()), str(def.id) + " has a reachable physical slot")
+		expect(not found.has(str(def.id)), str(def.id) + " occurs once")
+		found.append(str(def.id))
+	shelf.reveal_ingredient("tomato")
+	game._take_ingredient(game._definition("tomato"))
+	var original = game.world._held
+	game.world._dragging = false
+	shelf.reveal_ingredient("bell_pepper_orange")
+	shelf.reveal_ingredient("tomato")
+	expect(tomato.disabled and not tomato.get_node("FoodArt").visible, "sliding cabinet does not refill stock")
+	original.position = tomato.get_global_rect().get_center()
+	game.world.held_grip.target = original.global_position
+	expect(game._return_to_storage(original), "same tomato returns to the exposed slot")
+	for page in ceili(shelf._odd_catalog.size() / 12.0):
+		var next := shelf.find_child("OddNextPage", true, false) as Button
+		expect(next != null, "odd shelf has accessible layers")
+		next.pressed.emit()
+	expect(shelf.odd_page == 0, "odd shelf layers return to first")
 
 	game._take_ingredient(game._definition("sock"))
 	var body: RigidBody2D = game.world._held
@@ -64,6 +64,7 @@ func run() -> void:
 	game._take_ingredient(game._definition("sock"))
 	expect(game.world._held == body and game.world._foods.get_child_count() == 1, "repeated take cannot create a second sock")
 	body.position = slot.get_global_rect().get_center()
+	game.world.held_grip.target = body.global_position
 	expect(game._return_to_storage(body), "original sock can return after page navigation")
 	game._pantry_category = "odd"
 	game._show_pantry()
@@ -100,3 +101,19 @@ func capture(label: String) -> void:
 	await process_frame
 	await RenderingServer.frame_post_draw
 	expect(root.get_texture().get_image().save_png(OS.get_cmdline_user_args()[0] + "-" + label + ".png") == OK, "GPU " + label)
+
+func mouse(point: Vector2, kind: String) -> void:
+	point = root.get_final_transform() * point
+	if kind == "move":
+		var event := InputEventMouseMotion.new()
+		event.position = point
+		event.global_position = point
+		event.button_mask = MOUSE_BUTTON_MASK_LEFT
+		Input.parse_input_event(event)
+	else:
+		var event := InputEventMouseButton.new()
+		event.position = point
+		event.global_position = point
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.pressed = kind == "down"
+		Input.parse_input_event(event)

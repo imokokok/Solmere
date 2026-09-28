@@ -28,7 +28,7 @@ func _run() -> void:
 	await process_frame
 	_expect(tool.active and world.get_held_name() == "锅铲", "pressing the exposed spatula above its cup grabs the correct tool")
 	await create_timer(0.8).timeout
-	_expect(absf(tool.rotation + PI/3)<0.1, "wrist torque settles the spatula diagonally without teleporting")
+	_expect(absf(angle_difference(tool.rotation, tool.cooking_angle()))<0.15, "pickup settles into a comfortable cooking angle")
 	_expect(not world.spawn_ingredient(game._definition("egg")) and not world.pickup_knife(), "spatula occupies the hand exclusively")
 	# Contact fixture: put the real tool below real food, then lift its hand target.
 	tool.grip.target_angle=0
@@ -59,18 +59,24 @@ func _run() -> void:
 	_expect(not game.session.heating, "held spatula E never toggles stove")
 	_mouse(Vector2(1400, 300), "up")
 	await process_frame
-	_expect(not tool.active and tool.position.is_equal_approx(home), "release over customer GUI puts spatula back")
+	_expect(not tool.active and not tool.docked and not tool.rigid.freeze, "release outside cup leaves the spatula as a free physical object")
 	_mouse(Vector2(900, 580), "idle")
 	await process_frame
-	_expect(tool.position.is_equal_approx(home), "released spatula never follows mouse")
+	var released_target: Vector2 = tool.grip.target
+	_mouse(Vector2(1400, 230), "idle")
+	await create_timer(1.7).timeout
+	_expect(not tool.grip.enabled and not tool.docked and tool.grip.target == released_target, "quick release finishes at the release target; later hover never moves the tool")
 	_expect(tool.stir_sweep(Vector2(740, 600), Vector2(870, 600)) == 0, "idle tool cannot apply impulses")
 	_expect(world.audio.stir_profile(game._definition("beef"))=="meat", "meat has a heavier contact profile")
 	_expect(world.audio.stir_profile(game._definition("bread"))=="dry", "grain has a dry brushing profile")
 	_expect(world.audio.stir_profile(game._definition("rock"))=="hard", "strange hard objects have a restrained knock profile")
 	await create_timer(0.8).timeout
 	_expect(is_instance_valid(tomato), "independent ingredient survives release")
+	# Begin the independent modal/focus checks from a settled exposed head.
+	tool.dock()
 	_mouse(tool.to_global(Vector2(-24, 0)), "down")
 	await process_frame
+	_expect(tool.active, "modal fixture picks the exposed tool")
 	var poster_key := InputEventKey.new()
 	poster_key.pressed = true
 	poster_key.physical_keycode = KEY_P
@@ -83,12 +89,15 @@ func _run() -> void:
 	_expect(not tool.active, "modal prevents tool pickup through UI")
 	_mouse(home, "up")
 	game._close_modal()
+	tool.dock()
 	await process_frame
 	_mouse(tool.to_global(Vector2(-24, 0)), "down")
 	await process_frame
 	tool.notification(Node.NOTIFICATION_WM_WINDOW_FOCUS_OUT)
 	_expect(not tool.active, "window focus loss releases tool")
 	_mouse(home, "up")
+	tool.dock()
+	await process_frame
 	# The wooden spoon has an actual open U collision instead of a visual-only
 	# overlap. A small ingredient can sit between its two sides and bottom.
 	var spoon=world.utensils[2]
@@ -99,7 +108,7 @@ func _run() -> void:
 	_expect(spoon.active and spoon._bowl_shapes.size()==3,"wooden spoon enables three physical bowl edges")
 	var enabled:=true
 	for shape in spoon._bowl_shapes: enabled=enabled and not shape.disabled
-	_expect(enabled,"spoon bowl collisions are active only while held")
+	_expect(enabled,"spoon bowl collisions are active outside the cup")
 	# A quarter, rather than an oversized whole tomato, fits in the spoon bowl.
 	tomato.position=Vector2(1210,730)
 	tomato.freeze=true
@@ -130,14 +139,51 @@ func _run() -> void:
 	_expect(morsel.position.x>spoon_food_start.x+25 and spoon.bowl_contains(morsel),"bowl collisions carry food without magnetic attraction")
 	for i in range(14): _wheel(MOUSE_BUTTON_WHEEL_DOWN)
 	await create_timer(1.3).timeout
-	print("SPOON_TILT angle=",spoon.rotation," foodlocal=",spoon.to_local(morsel.global_position)," active=",spoon.active," target=",spoon.grip.target_angle)
 	_expect(spoon.rotation>2.0 and not spoon.bowl_contains(morsel),"wrist tilt releases the morsel over the real rim")
 	world.spawn_ingredient(game._definition("shrimp"))
 	_expect(world._held==null,"held spoon prevents creating an unrelated hand-held item")
 	spoon.release_tool()
 	await physics_frame
 	await process_frame
-	_expect(spoon._bowl_body.collision_mask==0,"putting the spoon down immediately removes hidden collision response")
+	_expect(spoon._bowl_body.collision_mask!=0 and not spoon.docked,"spoon left outside retains real bowl contact")
+	# Release over the actual cup, rather than invoking the storage helper.
+	spoon.active = true
+	spoon.rigid.position = Vector2(590,560)
+	spoon.grip.target = Vector2(590,560)
+	spoon.rigid.linear_velocity = Vector2.ZERO
+	spoon.rigid.angular_velocity = 0.0
+	var return_start: Vector2 = spoon.rigid.position
+	spoon.release_tool()
+	_expect(spoon.storing and spoon.rigid.position == return_start and not spoon.docked, "return starts continuously at the released pose")
+	await create_timer(2.0).timeout
+	_expect(spoon.rigid.collision_layer==0 and spoon.position.is_equal_approx(spoon_home),"stored spoon sits behind the cup with no hidden collision")
+	spoon.active = true
+	spoon.docked = false
+	spoon.grip.target = Vector2(1000,560)
+	spoon.release_tool()
+	_expect(not spoon.docked, "fast outward pull never docks because its body still lags at the cup")
+	spoon.active = true
+	spoon.rigid.position = Vector2(590,458)
+	spoon.grip.target = Vector2(590,510)
+	spoon.release_tool()
+	await create_timer(2.0).timeout
+	_expect(spoon.docked, "head or handle approaching the cup mouth can be put back without pixel hunting")
+	# Isolate the front-object selection fixture from the earlier contact run.
+	var overlap_tool = world._spatula
+	overlap_tool.dock()
+	overlap_tool.docked = false
+	overlap_tool.position = world.pan.point(Vector2(1005,578))
+	overlap_tool.rigid.position = overlap_tool.position
+	overlap_tool.rotation = 0.0
+	overlap_tool.rigid.rotation = 0.0
+	await physics_frame
+	await process_frame
+	var overlap_point: Vector2 = overlap_tool.to_global(Vector2(-15,0))
+	_expect(overlap_tool.can_pick(overlap_point) and not world.pan.can_grab(overlap_point), "front spatula owns its opaque pixels over the pan handle")
+	_mouse(overlap_point, "down")
+	await process_frame
+	_expect(overlap_tool.active and not world.pan.active, "native pointer routing grabs the visible utensil instead of the pan behind it")
+	_mouse(overlap_point, "up")
 	game.world.audio.muted = true
 	await create_timer(0.14).timeout
 	game.queue_free()

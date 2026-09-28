@@ -92,6 +92,9 @@ def main(argv=None):
             results.append(run_step("recorded-audio-audit", [sys.executable,
                                       str(PROJECT / "tools/audit_recorded_audio.py")],
                                     output_dir, success=re.compile(r'"status":\s*"PASS"')))
+            results.append(run_step("prepared-food-audit", [sys.executable,
+                                      str(PROJECT / "tools/audit_prepared_food.py")],
+                                    output_dir, success=re.compile(r'"status":\s*"PASS"')))
     ran = sum(result["name"] in suite["scripts"] for result in results)
     failed = [result["name"] for result in results if not result["passed"]]
     passed = not failed and ran == len(suite["scripts"])

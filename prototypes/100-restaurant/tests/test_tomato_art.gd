@@ -26,10 +26,14 @@ func run() -> void:
 		for x in current.get_width():
 			var a := original.get_pixel(x, y)
 			var b := current.get_pixel(x, y)
-			if Vector3(a.r, a.g, a.b).distance_to(Vector3(b.r, b.g, b.b)) > 0.008:
-				preserved = false
+			if b.a >= 0.98 and Vector3(a.r, a.g, a.b).distance_to(Vector3(b.r, b.g, b.b)) > 0.008:
+				var boundary := false
+				for dy in range(-1,2):
+					for dx in range(-1,2):
+						if current.get_pixel(clampi(x+dx,0,current.get_width()-1),clampi(y+dy,0,current.get_height()-1)).a < 0.02: boundary = true
+				if not boundary: preserved = false
 			if b.a > 0.01 and b.a < 0.99: partly_transparent += 1
-	check(preserved, "all original tomato RGB pixels are preserved; only alpha changes")
+	check(preserved, "interior original brushwork stays intact while only the outer matte fringe is decontaminated")
 	check(current.get_pixel(0, 0).a == 0.0 and current.get_pixel(90, 80).a > 0.99 and partly_transparent > 10, "white matte is transparent with a soft antialias edge")
 	check(Art.body_outline("tomato").size() >= 3 and Art.alpha_at("tomato", Vector2.ZERO) > 0.9, "collision and hit testing use the new tomato silhouette")
 	check(CutArt.texture("tomato", "slice") != null and CutArt.texture("tomato", "dice") != null, "tomato cut faces remain available")
@@ -46,7 +50,7 @@ func run() -> void:
 	game._take_ingredient(game._definition("tomato"))
 	var body: RigidBody2D = game.world._held
 	check(is_instance_valid(body) and body.get_meta("fragment_polygon") == Art.body_outline("tomato"), "taken tomato is the same physical food as its artwork")
-	body.position = game.world.cutting_board.rect().get_center()
+	body.position = game.world.cutting_board.rect().get_center() + Vector2(-105, 9)
 	game.world.drop_held(false)
 	await capture("board")
 	var parts: Array = game.world.split_food(body, Vector2.RIGHT, Vector2.INF, 4)

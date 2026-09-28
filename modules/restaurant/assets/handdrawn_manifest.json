@@ -1,0 +1,343 @@
+{
+  "mustard": {
+    "path": "res://modules/restaurant/assets/handdrawn/mustard.png",
+    "source_name": "芥末.png",
+    "source_container": "individual PNG",
+    "sha256": "57cdc80864b630f395827929c94418202142be82e28786a8e17aaee3b0a5ef74",
+    "original_size": [
+      2480,
+      3508
+    ],
+    "bounds": [
+      1160,
+      1493,
+      161,
+      522
+    ],
+    "nozzle_uv": [
+      0.5,
+      1.0
+    ]
+  },
+  "ketchup": {
+    "path": "res://modules/restaurant/assets/handdrawn/ketchup.png",
+    "source_name": "番茄酱.png",
+    "source_container": "individual PNG",
+    "sha256": "d82f38f79103937bf64aa67550b0043e89894f24fae7e80f75e61ce466aec454",
+    "original_size": [
+      2480,
+      3508
+    ],
+    "bounds": [
+      1147,
+      1519,
+      186,
+      471
+    ],
+    "nozzle_uv": [
+      0.5,
+      0.0
+    ]
+  },
+  "oil": {
+    "path": "res://modules/restaurant/assets/handdrawn/oil.png",
+    "source_name": "橄榄油.png",
+    "source_container": "individual PNG",
+    "sha256": "c8bbdea853be77b98115c355d72a037278b2241a1b3679d6f82c81ef13b16bf7",
+    "original_size": [
+      2480,
+      3508
+    ],
+    "bounds": [
+      1179,
+      1560,
+      123,
+      389
+    ],
+    "nozzle_uv": [
+      0.5,
+      0.0
+    ]
+  },
+  "salt": {
+    "path": "res://modules/restaurant/assets/handdrawn/salt.png",
+    "source_name": "盐.png",
+    "source_container": "individual PNG",
+    "sha256": "07a97711c4a9f3e1a308988b344141493cfc0772146317c9baa37d01dcf3ae41",
+    "original_size": [
+      2480,
+      3508
+    ],
+    "bounds": [
+      1170,
+      1653,
+      140,
+      208
+    ],
+    "nozzle_uv": [
+      0.5,
+      0.0
+    ]
+  },
+  "pepper": {
+    "path": "res://modules/restaurant/assets/handdrawn/pepper.png",
+    "source_name": "黑胡椒.png",
+    "source_container": "individual PNG",
+    "sha256": "31923c1da7c9ba8ed6165096e2bf42ac40148fbeb7e5c315237294be27b75c4c",
+    "original_size": [
+      2480,
+      3508
+    ],
+    "bounds": [
+      1160,
+      1593,
+      161,
+      323
+    ],
+    "nozzle_uv": [
+      0.5,
+      0.0
+    ]
+  },
+  "mushroom": {
+    "path": "res://modules/restaurant/assets/handdrawn/mushroom.png",
+    "source_name": "蘑菇.png",
+    "source_container": "individual PNG",
+    "sha256": "ebb4bfac6474c93c07c499ab2d26f94cf47ef69e973d61d5b869d028929fa430",
+    "original_size": [
+      2480,
+      3508
+    ],
+    "bounds": [
+      1063,
+      1627,
+      354,
+      253
+    ]
+  },
+  "resignation_letter": {
+    "path": "res://modules/restaurant/assets/handdrawn/resignation_letter.png",
+    "source_name": "辞职信.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "d3f5474c09aafeca825e405e553235628a1bca7264c49095f29b3455bdbc9727",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      323,
+      232,
+      617,
+      731
+    ]
+  },
+  "alarm_clock": {
+    "path": "res://modules/restaurant/assets/handdrawn/alarm_clock.png",
+    "source_name": "闹钟.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "72e4d08e41c3bd7d881ae022a980418179377540744db36b230c6e338bfe4a77",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      296,
+      1297,
+      633,
+      867
+    ]
+  },
+  "yarn_ball": {
+    "path": "res://modules/restaurant/assets/handdrawn/yarn_ball.png",
+    "source_name": "毛线团.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "41a6585b66ab4c268ba251e9bdc5a3e209a0fd7d75dae319223d1493d38782fa",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      1468,
+      269,
+      685,
+      687
+    ]
+  },
+  "tennis_ball": {
+    "path": "res://modules/restaurant/assets/handdrawn/tennis_ball.png",
+    "source_name": "网球.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "f7ff54dd303bffcd550620a0dc958432349b02443a7bf0918c4acaab16125247",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      2290,
+      343,
+      924,
+      584
+    ]
+  },
+  "dentures": {
+    "path": "res://modules/restaurant/assets/handdrawn/dentures.png",
+    "source_name": "假牙.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "bf6fe7e725fbffd432923ac658f95ffe9c0eff3b5f56a61062b8ad1106141b58",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      1433,
+      1442,
+      765,
+      637
+    ]
+  },
+  "eraser": {
+    "path": "res://modules/restaurant/assets/handdrawn/eraser.png",
+    "source_name": "橡皮.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "893ab1ef31bf204a4113c60dab3fbe276e33f74c32836567817799364f8baa61",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      2636,
+      1104,
+      643,
+      547
+    ]
+  },
+  "sponge": {
+    "path": "res://modules/restaurant/assets/handdrawn/sponge.png",
+    "source_name": "海绵.png",
+    "source_container": "奇怪食材6、10、11、12、16、18、19(3).rar",
+    "sha256": "131d595c29ab5a0cd41e5ba76db2086ce435e73c87b3e0edeeabf3385e4d5899",
+    "original_size": [
+      3508,
+      2480
+    ],
+    "bounds": [
+      2716,
+      1813,
+      588,
+      480
+    ]
+  },
+  "sock": {
+    "path": "res://modules/restaurant/assets/handdrawn/sock.png",
+    "source_name": "3eac7237d9eaee28656885abb22dd4c1.png",
+    "display_name": "袜子",
+    "source_container": "20260925 batch 2 individual PNG",
+    "sha256": "5210fa67fa8d739fe0975004b462d237cb621817c45d6ddaae6cda6d9489aff2",
+    "original_size": [
+      2048,
+      2732
+    ],
+    "bounds": [
+      746,
+      675,
+      357,
+      575
+    ],
+    "batch": "20260925-2"
+  },
+  "confetti": {
+    "path": "res://modules/restaurant/assets/handdrawn/confetti.png",
+    "source_name": "ff6f102131cd824dbdd42c9d03d1206d.png",
+    "display_name": "彩带纸屑",
+    "source_container": "20260925 batch 2 individual PNG",
+    "sha256": "d5ce6d3e16d7159a51042738f537c748b87d525533f47ab21a3fc9caead303e0",
+    "original_size": [
+      2048,
+      2732
+    ],
+    "bounds": [
+      760,
+      729,
+      554,
+      558
+    ],
+    "batch": "20260925-2"
+  },
+  "toilet_paper": {
+    "path": "res://modules/restaurant/assets/handdrawn/toilet_paper.png",
+    "source_name": "defbb8cf556099af11407e001e284e23.png",
+    "display_name": "卷纸",
+    "source_container": "20260925 batch 2 individual PNG",
+    "sha256": "46485ebd0ef7dd8793b57a11453243f0ce196032b23942245f6d5399da0b835d",
+    "original_size": [
+      2048,
+      2732
+    ],
+    "bounds": [
+      483,
+      754,
+      987,
+      705
+    ],
+    "batch": "20260925-2"
+  },
+  "soap": {
+    "path": "res://modules/restaurant/assets/handdrawn/soap.png",
+    "source_name": "bfcdae32ad7c2d06b7c0b4b731f92fac.png",
+    "display_name": "肥皂",
+    "source_container": "20260925 batch 2 individual PNG",
+    "sha256": "6363c9857a5cd45c4772ec6fe7e0be948463d1f59f3fd9a38effc66b91738615",
+    "original_size": [
+      2048,
+      2732
+    ],
+    "bounds": [
+      548,
+      921,
+      972,
+      461
+    ],
+    "batch": "20260925-2"
+  },
+  "soap_smooth": {
+    "path": "res://modules/restaurant/assets/handdrawn/soap_smooth.png",
+    "source_name": "29f81934e4aa5169601bc96eb80f599d.png",
+    "display_name": "肥皂（光滑款）",
+    "source_container": "20260925 batch 2 individual PNG",
+    "sha256": "14a05a6e03f58d376225d204b72517c1e51b561c41be9213bd1671537f90bfc5",
+    "original_size": [
+      2048,
+      2732
+    ],
+    "bounds": [
+      548,
+      921,
+      972,
+      461
+    ],
+    "batch": "20260925-2"
+  },
+  "toothpaste": {
+    "path": "res://modules/restaurant/assets/handdrawn/toothpaste.png",
+    "source_name": "6597a9a3b4fc1f9415ff77f23ed60f38.png",
+    "display_name": "牙膏",
+    "source_container": "20260925 batch 2 individual PNG",
+    "sha256": "dae3211ee18a3158b9ab50d4fc9c44a6ac84e9f9857c23511c4a637421de8b1e",
+    "original_size": [
+      2048,
+      2732
+    ],
+    "bounds": [
+      655,
+      892,
+      785,
+      422
+    ],
+    "batch": "20260925-2",
+    "nozzle_uv": [
+      0.025,
+      0.89
+    ],
+    "dispense_rotation_degrees": -61.0
+  }
+}

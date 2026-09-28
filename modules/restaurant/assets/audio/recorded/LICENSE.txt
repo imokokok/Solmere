@@ -1,0 +1,8 @@
+All audio files in this directory are edited excerpts of CC0-1.0 recordings.
+Copyright waiver: https://creativecommons.org/publicdomain/zero/1.0/
+Legal code: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Commercial use and redistribution are allowed; attribution is not required.
+Authors do not endorse this project. manifest.json records each author, source
+page, source/download hash, retrieved license, edit range and output hash.
+The public Ogg previews were used; these are lossy, not original lossless files.
+Edits: trim, mono mix, DC removal, gain adjustment, fades/crossfades; no synthesis.

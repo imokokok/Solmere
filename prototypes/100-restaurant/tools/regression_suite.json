@@ -1,6 +1,11 @@
 {
   "godot_version": "4.7.2",
   "scripts": [
+    "tests/test_quick_gestures.gd",
+    "tests/test_egg_cracking.gd",
+    "tests/test_heat_feedback.gd",
+    "tests/test_playability_materials.gd",
+    "tests/test_storage_support.gd",
     "tests/test_force_liquid_lid.gd",
     "tests/test_pan_lid.gd",
     "tests/test_thermal_reactions.gd",
@@ -9,6 +14,7 @@
     "tests/test_kitchen_flood.gd",
     "tests/test_craft_workbench.gd",
     "tests/test_material_physics.gd",
+    "tests/test_board_release.gd",
     "tests/test_cut_clean_share.gd",
     "tests/test_handdrawn_assets.gd",
     "tests/test_team_food_art.gd",

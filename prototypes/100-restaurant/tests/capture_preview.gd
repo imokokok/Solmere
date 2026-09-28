@@ -74,7 +74,7 @@ func _run() -> void:
 		game.world.begin_food_drag(generation[0].position)
 		game.world._move_dragged_food(game.world.pan.point(Vector2(810, 560)))
 		game.world._finish_food_drag()
-		game._notify("一拖整批：同一颗番茄的八个真实切块都稳定进入锅内")
+		game._notify("每片单独取放，剩下的切块留在菜板上。")
 		for frame in range(80): await physics_frame
 	elif mode == "panlift":
 		game.world.pan.grab(Vector2(610,570))
@@ -126,7 +126,8 @@ func _run() -> void:
 		game.world.pan.faucet_amount = 1.0
 		await create_timer(0.3).timeout
 	elif mode == "shelf_last":
-		game.storage_display.fridge_page = ceili(game.storage_display._cold_catalog.size() / 15.0) - 1
+		game.storage_display.fridge_offset = game.storage_display._fridge_max_offset()
+		game.storage_display.fridge_target = game.storage_display.fridge_offset
 		game.storage_display._build_items()
 	elif mode in ["seasoning", "seasoning_powder", "seasoning_pour", "overflow"]:
 		await _stage_seasoning_scene(mode)

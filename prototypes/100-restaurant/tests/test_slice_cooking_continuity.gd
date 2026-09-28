@@ -93,13 +93,15 @@ func run() -> void:
 	preload("res://tests/thermal_fixture.gd").cook(game,80.0)
 	world.set_dish(game.session.dish, game.session.ingredients)
 	expect(game.session.plate().burnt, "unattended dry heat produces evaluated burnt food")
+	var surface_heat: Dictionary = {}
+	for piece in pieces: surface_heat[piece.get_instance_id()] = piece.get_node("FoodArt").heat
 	game._show_plating()
 	await process_frame
 	for piece in pieces: game._plating_canvas.add_to_plate(piece)
 	await process_frame
 	for piece in pieces:
 		expect(piece.get_meta("plated", false) and piece.get_meta("fragment_polygon") == geometry[piece.get_instance_id()], "plating retains the actual slice rather than replacing it")
-		expect(game._plating_canvas._visuals[piece.get_instance_id()].art.heat > 14, "plating keeps the burnt surface state")
+		expect(is_equal_approx(game._plating_canvas._visuals[piece.get_instance_id()].art.heat, surface_heat[piece.get_instance_id()]), "plating preserves each slice's actual heat, including uneven pan contact")
 	game.queue_free()
 	await process_frame
 	for failure in failures: push_error(failure)

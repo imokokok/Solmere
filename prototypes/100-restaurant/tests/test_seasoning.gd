@@ -219,7 +219,8 @@ func _test_hand_foreground() -> void:
 	await process_frame
 	await _key(KEY_Q)
 	await process_frame
-	_expect(game.world._held == null and source.visible, "dropping the container immediately restores its world visual")
+	var loose_proxy: bool = game.world.get_node("FloatingTools").copies.has(source.get_instance_id())
+	_expect(game.world._held == null and (source.visible or loose_proxy), "dropping transfers the visual to the world or the loose foreground above cupboards")
 	_expect(not is_instance_valid(game.world._held_proxy) and game.world._held_foreground.get_child_count() == 0, "dropping removes the foreground clone instead of leaving an overlapping copy")
 	game.world._pickup(body)
 	await process_frame

@@ -80,8 +80,11 @@ func _run() -> void:
 	sound.update_kitchen(world)
 	_expect(sound.loops.pour.playing and sound.loop_banks.pour == "pour_oil", "pouring oil uses an oil recording")
 	bottle.set_meta("remaining_ml", 0.0)
+	var before_empty_db: float = sound.loops.pour.volume_db
 	sound.update_kitchen(world)
-	_expect(not sound.loops.pour.playing, "empty bottle makes no flowing sound")
+	_expect(sound.loops.pour.volume_db < before_empty_db, "empty bottle immediately fades its recorded tail")
+	await create_timer(0.4).timeout
+	_expect(not sound.loops.pour.playing, "empty bottle's short tail stops within 400 milliseconds")
 	world._stop_squeezing()
 	world.discard_held()
 	sound.stop_all()
@@ -96,7 +99,10 @@ func _run() -> void:
 	_expect(sound._last_effect.get("stir_contact", 0) == stamp, "batch contacts aggregate instead of restarting 48 sounds")
 	sound.stop_all()
 	sound._last_effect.clear()
-	sound.play_food_stir(tomato, "black", 20.0)
+	sound.play_food_stir(tomato, "black", 0.6)
+	_expect(sound.effects.stir_metal.playing and sound.effects.stir_metal.volume_db > -20.0, "ordinary subpixel physics steps still produce an audible contact layer")
+	sound.play_effect("egg_crack")
+	_expect(sound.effects.egg_crack.playing and sound.banks.egg_crack.size() == 1, "shell opening has its own verified raw egg recording")
 	_expect(sound.effects.stir_metal.playing and not sound.effects.stir_wood.playing, "metal tool uses a separate contact recording")
 	world.pan.water_ml = 400.0
 	sound.stop_all()

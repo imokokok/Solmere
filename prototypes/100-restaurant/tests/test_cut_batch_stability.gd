@@ -52,12 +52,18 @@ func _run() -> void:
 		_expect(str(piece.get_meta("batch_uid", "")) == batch_uid and piece.freeze, "every cut piece keeps lineage and stays stable on the board")
 
 	if not generation.is_empty():
-		for fragment in generation:
-			world._pickup(fragment)
-			world.drop_into_pan()
-			await create_timer(0.4).timeout
-	await create_timer(1.4).timeout
-	_expect(game.session.dish.size() == generation.size(), "eight independently dropped fragments enroll")
+		var pan_before: Vector2 = world.pan.offset
+		var start: Vector2 = generation[0].position
+		_mouse(start, "down")
+		await process_frame
+		_expect(world._drag_group.size() == 7, "one real pointer press lifts the seven sibling slices")
+		_mouse(world.pan.point(Vector2(810,580)), "move")
+		_mouse(world.pan.point(Vector2(810,580)), "up")
+		await create_timer(1.7).timeout
+		await create_timer(1.6).timeout
+		_expect(world.pan.offset.distance_to(pan_before)<35.0,"dropping at the near half of the bowl does not shove the pan off the burner")
+	_expect(game.session.dish.size() == generation.size(), "one quick drag drops the complete eight-piece portion")
+	_expect(world._held==null and world._drag_group.is_empty() and not world._pending_drop,"the near-rim release frees the hand and every sibling grip")
 	var occupied: Dictionary = {}
 	for piece in generation:
 		_expect(is_instance_valid(piece) and piece.get_meta("enrolled", false), "every batch fragment is accepted by the pan")

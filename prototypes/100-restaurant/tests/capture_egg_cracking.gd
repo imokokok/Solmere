@@ -32,12 +32,8 @@ func _run() -> void:
 		await process_frame
 	_mouse(rim, "up")
 	await _frames(25)
-	if int(egg.get_meta("egg_taps", 0)) != 1: return _fail("first strike did not make a fissure")
-	_mouse(rim, "down")
-	await _frames(3)
-	_mouse(rim, "up")
-	await _frames(28)
-	if not bool(egg.get_meta("thermal", {}).get("egg_opened", false)): return _fail("second strike did not pour the egg")
+	await _frames(24)
+	if not bool(egg.get_meta("thermal", {}).get("egg_opened", false)): return _fail("single rim gesture did not pour the egg")
 	if game.world._egg_shells.get_child_count() != 2: return _fail("shell fragments missing")
 	var shell_mass := 0.0
 	for shell in game.world._egg_shells.get_children(): shell_mass += shell.mass
@@ -46,7 +42,7 @@ func _run() -> void:
 	for shell in game.world._egg_shells.get_children():
 		if game.world.pan.contains(shell.position): return _fail("shell landed in pan")
 	if not bool(egg.get_meta("enrolled", false)): return _fail("edible egg did not enter pan")
-	print("PASS: filmed two manual rim strikes, liquid egg and two counter shell pieces")
+	print("PASS: filmed one scripted shelf-to-rim gesture, liquid egg and two counter shell pieces")
 	game.world.audio.muted = true
 	game.queue_free()
 	await process_frame

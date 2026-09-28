@@ -1,0 +1,1077 @@
+{
+  "foods": {
+    "alarm_clock": {
+      "path": "res://modules/restaurant/assets/prepared_food/alarm_clock.png",
+      "sha256": "3261bdd3f5cce3fb865a6c58d94f0dbc57e77b41017e231cfd344f932e6ce1f8",
+      "support": [
+        -28.474048614502,
+        -39.0,
+        56.9480972290039,
+        78.0
+      ]
+    },
+    "apple": {
+      "path": "res://modules/restaurant/assets/prepared_food/apple.png",
+      "sha256": "049b8b2480795a0d020ba0820116c8755fa499c37d1e0dab3f5a573591845377",
+      "support": [
+        -35.8977241516113,
+        -38.1136360168457,
+        71.7954483032227,
+        76.2272720336914
+      ]
+    },
+    "banana": {
+      "path": "res://modules/restaurant/assets/prepared_food/banana.png",
+      "sha256": "b510166545f014b10d92a2170b273e4619e3d072822e8c71fa81cf33b1c2fb47",
+      "support": [
+        -38.1459846496582,
+        -35.0145988464355,
+        76.5766448974609,
+        70.3138732910156
+      ]
+    },
+    "baseball_bat": {
+      "path": "res://modules/restaurant/assets/prepared_food/baseball_bat.png",
+      "sha256": "1fa4b793da938e02977b56dd733bff2dd4c410bffd4823efc0157753e5261be5",
+      "support": [
+        -38.7857131958008,
+        -37.8214263916016,
+        77.3571472167969,
+        75.6428527832031
+      ]
+    },
+    "bean_sprout": {
+      "path": "res://modules/restaurant/assets/prepared_food/bean_sprout.png",
+      "sha256": "18823c96f90679d723aa9ee9ece01ccda5b2aaa2fd32c806e3c24badf1c53e5a",
+      "support": [
+        -36.5529403686523,
+        -37.7764701843262,
+        73.1058883666992,
+        75.8588256835938
+      ]
+    },
+    "beef": {
+      "path": "res://modules/restaurant/assets/prepared_food/beef.png",
+      "sha256": "637ceb5ee775cb7065f5bb001e0aa42d1666116d897b5517571a8d001e6d4d74",
+      "support": [
+        -38.1102676391602,
+        -32.0304222106934,
+        76.2205352783203,
+        64.0608367919922
+      ]
+    },
+    "bell_pepper_brown": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_brown.png",
+      "sha256": "966ba55ee2015927ce01feada9860e1a60fa0ade4b1f3896e785f6192582850b",
+      "support": [
+        -28.8888893127441,
+        -36.1111106872559,
+        57.7777786254883,
+        71.2592620849609
+      ]
+    },
+    "bell_pepper_gold": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_gold.png",
+      "sha256": "32ad8cf1033277284f796d3b4fd3fe4b50746445f991775184e0b62a4b2f7263",
+      "support": [
+        -29.5,
+        -35.0,
+        60.0,
+        72.0
+      ]
+    },
+    "bell_pepper_green": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_green.png",
+      "sha256": "f20490214e7af085dc713e255e40e288f64169a0d5b3bb653c703ce3b3653ae9",
+      "support": [
+        -24.2666664123535,
+        -39.0,
+        51.1333351135254,
+        73.6666641235352
+      ]
+    },
+    "bell_pepper_lavender": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_lavender.png",
+      "sha256": "bd5b9506f395c0defb7d7930edab2b347b24eb8c45e734d418801c92fc56ba3b",
+      "support": [
+        -18.0252094268799,
+        -37.6890754699707,
+        36.050422668457,
+        74.0672302246094
+      ]
+    },
+    "bell_pepper_orange": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_orange.png",
+      "sha256": "204902827e1d990369e53f327819c47df6f851cd0f738abba20b97447b528dd3",
+      "support": [
+        -27.7228889465332,
+        -39.0,
+        56.3855361938477,
+        74.2409591674805
+      ]
+    },
+    "bell_pepper_purple": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_purple.png",
+      "sha256": "81ad41efb36d02a223f8ed4630b07bc6f2702144ab7a01db51f2f21702d1fa5f",
+      "support": [
+        -25.7234039306641,
+        -36.5106391906738,
+        51.4468078613281,
+        72.1914901733398
+      ]
+    },
+    "bell_pepper_white": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_white.png",
+      "sha256": "7dd35ca7e92037726e66c197d15287189573803279ddeb749ffcae55b4467126",
+      "support": [
+        -25.5666656494141,
+        -35.533332824707,
+        52.0,
+        70.1999969482422
+      ]
+    },
+    "bell_pepper_yellow": {
+      "path": "res://modules/restaurant/assets/prepared_food/bell_pepper_yellow.png",
+      "sha256": "da991816a4727e102b31a152ae463faae8d664e38d035cd8e48de1ffdfc20b0b",
+      "support": [
+        -29.5,
+        -35.0,
+        60.0,
+        70.0
+      ]
+    },
+    "bitter_melon": {
+      "path": "res://modules/restaurant/assets/prepared_food/bitter_melon.png",
+      "sha256": "3597ade205923e8ab75d62986c5e178baeebf2c886a0a9503c7c730454aa100a",
+      "support": [
+        -35.6872596740723,
+        -38.0965232849121,
+        71.3745269775391,
+        76.1930541992188
+      ]
+    },
+    "blue_cheese": {
+      "path": "res://modules/restaurant/assets/prepared_food/blue_cheese.png",
+      "sha256": "1bf182e7dbd9cdd25acae7fe99ccf185566465b6ada3203d459c02c9329adc9c",
+      "support": [
+        -35.068546295166,
+        -38.0564498901367,
+        70.137092590332,
+        76.1128997802734
+      ]
+    },
+    "bread": {
+      "path": "res://modules/restaurant/assets/prepared_food/bread.png",
+      "sha256": "a5593e4f2de123d041eb89ed633bc2f7229600efb78c515424a692babbf2061b",
+      "support": [
+        -38.0999984741211,
+        -36.4500007629395,
+        76.2000045776367,
+        72.9000015258789
+      ]
+    },
+    "broccoli": {
+      "path": "res://modules/restaurant/assets/prepared_food/broccoli.png",
+      "sha256": "5c88c329c6d3884bc140e93bb053093d0b2e6e6ede12e261021397987c20ca90",
+      "support": [
+        -38.139705657959,
+        -37.422794342041,
+        76.279411315918,
+        74.845588684082
+      ]
+    },
+    "butter": {
+      "path": "res://modules/restaurant/assets/prepared_food/butter.png",
+      "sha256": "cfeb36750b05a7d3e35d20db052355d48ea4869430189b0855a56abb5a1e0494",
+      "support": [
+        -38.0677299499512,
+        -27.0358581542969,
+        76.1354598999023,
+        54.0717163085938
+      ]
+    },
+    "button": {
+      "path": "res://modules/restaurant/assets/prepared_food/button.png",
+      "sha256": "3f2a4b86aa798f296bb230a5f0821f671697dc0a3a32f628c9b2b8274eda4450",
+      "support": [
+        -38.0168075561523,
+        -35.8865547180176,
+        76.0336151123047,
+        71.7731018066406
+      ]
+    },
+    "cabbage": {
+      "path": "res://modules/restaurant/assets/prepared_food/cabbage.png",
+      "sha256": "b85c87358820efea36a5c22e624baca411cdd84f6b18913d4618115b21465bef",
+      "support": [
+        -38.1301116943359,
+        -35.5204467773438,
+        76.2602233886719,
+        71.0408935546875
+      ]
+    },
+    "candle": {
+      "path": "res://modules/restaurant/assets/prepared_food/candle.png",
+      "sha256": "702f1ebab6bd3b4f929b74607381e0d36b4075059cbbeef7826cb3d656422251",
+      "support": [
+        -22.6852607727051,
+        -38.0677299499512,
+        45.3705177307129,
+        76.1354598999023
+      ]
+    },
+    "carrot": {
+      "path": "res://modules/restaurant/assets/prepared_food/carrot.png",
+      "sha256": "d500debf146d93bb4933ba7522fe1755b9c44ffd509d7afb4b4b022132fd070f",
+      "support": [
+        -36.607364654541,
+        -38.0429458618164,
+        73.214729309082,
+        75.6073608398438
+      ]
+    },
+    "century_egg": {
+      "path": "res://modules/restaurant/assets/prepared_food/century_egg.png",
+      "sha256": "dd01dd91e5b542cf3b870e31cc51db849130b086ef2823ddc1f2b2bb33ed73c0",
+      "support": [
+        -38.0787391662598,
+        -32.3976364135742,
+        76.1574783325195,
+        64.7952728271484
+      ]
+    },
+    "cheese": {
+      "path": "res://modules/restaurant/assets/prepared_food/cheese.png",
+      "sha256": "10d7a4dc0340fbe82898f37aa13ac0391ffa70b245aea47b71c233085ffe8221",
+      "support": [
+        -38.2594947814941,
+        -28.2626571655273,
+        63.9303779602051,
+        56.5253143310547
+      ]
+    },
+    "chicken": {
+      "path": "res://modules/restaurant/assets/prepared_food/chicken.png",
+      "sha256": "3d02a1bff96e553dd0798031b6216994fed30b910997a7804c90199fdf2acfd5",
+      "support": [
+        -39.0,
+        -24.2432422637939,
+        77.2094573974609,
+        48.75
+      ]
+    },
+    "chili": {
+      "path": "res://modules/restaurant/assets/prepared_food/chili.png",
+      "sha256": "0a21de6a5f0013f1f1f418b9ff96a50e20ccd5b4b42fce469c6d4551bb25863f",
+      "support": [
+        -38.1102676391602,
+        -34.9962005615234,
+        76.2205352783203,
+        69.6958236694336
+      ]
+    },
+    "chili_sauce": {
+      "path": "res://modules/restaurant/assets/prepared_food/chili_sauce.png",
+      "sha256": "0981689aade50f921df3716e594ab8047b9dec1caedf6ff91ae3b2eae52da545",
+      "support": [
+        -18.31418800354,
+        -37.9459457397461,
+        36.6283760070801,
+        76.155403137207
+      ]
+    },
+    "chocolate": {
+      "path": "res://modules/restaurant/assets/prepared_food/chocolate.png",
+      "sha256": "8d24be47a8e4f75ce904b42d5c88e7ed96065ddd42682f6f524ae6d6661b3a1e",
+      "support": [
+        -38.1612892150879,
+        -28.3763446807861,
+        77.1612930297852,
+        56.7526893615723
+      ]
+    },
+    "computer_mouse": {
+      "path": "res://modules/restaurant/assets/prepared_food/computer_mouse.png",
+      "sha256": "5ec0554460211c832a0467773d01fd52130d6179ddb74b03aad28bdd20b5b349",
+      "support": [
+        -35.2910652160645,
+        -38.7752151489258,
+        70.3573532104492,
+        77.3256530761719
+      ]
+    },
+    "confetti": {
+      "path": "res://modules/restaurant/assets/prepared_food/confetti.png",
+      "sha256": "3df5bfa33da4ddd8b03451fb4a40721829822d4a727dddc05a6f304efbed1878",
+      "support": [
+        -38.4408569335938,
+        -36.9032249450684,
+        76.881721496582,
+        75.7634429931641
+      ]
+    },
+    "corn": {
+      "path": "res://modules/restaurant/assets/prepared_food/corn.png",
+      "sha256": "bd11570304b3b8669e88b3b8f4dc3094d0c340d82dc85785e17fe80c9906902a",
+      "support": [
+        -38.195873260498,
+        -34.979377746582,
+        76.6597900390625,
+        69.6907196044922
+      ]
+    },
+    "cucumber": {
+      "path": "res://modules/restaurant/assets/prepared_food/cucumber.png",
+      "sha256": "d17811617e68658fa913a1ff39a3fd3571f322f4a6716719a564447c05d1928f",
+      "support": [
+        -38.1986312866211,
+        -27.2465744018555,
+        76.3972549438477,
+        54.4931488037109
+      ]
+    },
+    "cumin": {
+      "path": "res://modules/restaurant/assets/prepared_food/cumin.png",
+      "sha256": "3dc499007ab58265aa9e7516da366a32bba62156e799a1f3454bf4afb68c8afd",
+      "support": [
+        -33.3361015319824,
+        -38.0290451049805,
+        66.6722030639648,
+        76.0580902099609
+      ]
+    },
+    "curry": {
+      "path": "res://modules/restaurant/assets/prepared_food/curry.png",
+      "sha256": "1b01b7f01632946210abe5a29bf52c0ea8c64b519b8faa635cecef6853e5b175",
+      "support": [
+        -32.4177207946777,
+        -38.0126571655273,
+        64.8354415893555,
+        76.0253143310547
+      ]
+    },
+    "dentures": {
+      "path": "res://modules/restaurant/assets/prepared_food/dentures.png",
+      "sha256": "0c6a7c07d4534b88fe29acaae4cafc1756654ce6c550baab06d5f62a6ca7d80e",
+      "support": [
+        -39.0,
+        -32.4745101928711,
+        78.0,
+        64.9490203857422
+      ]
+    },
+    "doll": {
+      "path": "res://modules/restaurant/assets/prepared_food/doll.png",
+      "sha256": "ecaca1748477a0b2d59db375e541765c79ae92605d1b0ce51a2189bc3a76b2fd",
+      "support": [
+        -34.3746604919434,
+        -38.5795135498047,
+        68.5390777587891,
+        77.1590270996094
+      ]
+    },
+    "durian": {
+      "path": "res://modules/restaurant/assets/prepared_food/durian.png",
+      "sha256": "82e91e7d8168ff1c9d5a68b768b60bb2d3a44bf4e4769e8be506d6eae7f661a0",
+      "support": [
+        -36.5540084838867,
+        -39.0,
+        72.8362350463867,
+        77.4564437866211
+      ]
+    },
+    "egg": {
+      "path": "res://modules/restaurant/assets/prepared_food/egg.png",
+      "sha256": "aaabf2ff447c50a31716e1ee0b59629fc61383941dd3c648894b0958852882bb",
+      "support": [
+        -33.4541282653809,
+        -37.9266052246094,
+        66.9082565307617,
+        75.8532104492188
+      ]
+    },
+    "eggplant": {
+      "path": "res://modules/restaurant/assets/prepared_food/eggplant.png",
+      "sha256": "57223f51b1a4cfe70b0e37553400cc815b44175f8e10c98d1f44a6c26f30a427",
+      "support": [
+        -16.3428573608398,
+        -39.0,
+        31.9428558349609,
+        74.2857131958008
+      ]
+    },
+    "eraser": {
+      "path": "res://modules/restaurant/assets/prepared_food/eraser.png",
+      "sha256": "a86e4843b4336101bc7bb785903e9563130395662a35c844c026b777e1cd9d08",
+      "support": [
+        -39.0,
+        -33.1772918701172,
+        78.0,
+        66.3545837402344
+      ]
+    },
+    "garlic": {
+      "path": "res://modules/restaurant/assets/prepared_food/garlic.png",
+      "sha256": "ec9d1edc995cbc3a9cea4dbc62a04579192cc6172109098044910b730b254d32",
+      "support": [
+        -38.0859375,
+        -38.0859375,
+        76.171875,
+        76.171875
+      ]
+    },
+    "ginger": {
+      "path": "res://modules/restaurant/assets/prepared_food/ginger.png",
+      "sha256": "a8b4d08b4e736101d9c5c6e981e23dab842dd7268135d420ab32aed8db3cb52c",
+      "support": [
+        -38.0930252075195,
+        -38.0930252075195,
+        76.1860427856445,
+        76.1860427856445
+      ]
+    },
+    "grapes": {
+      "path": "res://modules/restaurant/assets/prepared_food/grapes.png",
+      "sha256": "76256e6d1ff25c4930d9d52e4134a3d3e6712e71211445342f1e43deb612e82a",
+      "support": [
+        -34.3705024719238,
+        -38.1582717895508,
+        68.7410049438477,
+        76.3165512084961
+      ]
+    },
+    "honey": {
+      "path": "res://modules/restaurant/assets/prepared_food/honey.png",
+      "sha256": "53539190c25acac88716179663dc70661a97cc5137e7f83f1ff918855ed44fc2",
+      "support": [
+        -33.5696182250977,
+        -38.0126571655273,
+        67.4683532714844,
+        76.0253143310547
+      ]
+    },
+    "houttuynia": {
+      "path": "res://modules/restaurant/assets/prepared_food/houttuynia.png",
+      "sha256": "2ca128e7d619fa6528fe1a8a6969d21512cc388769713f8925b3fcd1e7320fbd",
+      "support": [
+        -33.6470603942871,
+        -38.2352981567383,
+        67.2941207885742,
+        76.7254943847656
+      ]
+    },
+    "ice_cream": {
+      "path": "res://modules/restaurant/assets/prepared_food/ice_cream.png",
+      "sha256": "3caf64f660710a8568e2433c982f8f384c5214ea7c2a6d8cf1676c0a6d69a9ac",
+      "support": [
+        -33.9785423278809,
+        -37.660945892334,
+        67.9570846557617,
+        75.6566543579102
+      ]
+    },
+    "ketchup": {
+      "path": "res://modules/restaurant/assets/prepared_food/ketchup.png",
+      "sha256": "58dd4cd4ea110d2480b3967f319f4d3daa87d8520810543012e682cdc10acb61",
+      "support": [
+        -15.401273727417,
+        -39.0,
+        30.802547454834,
+        78.0
+      ]
+    },
+    "lemon": {
+      "path": "res://modules/restaurant/assets/prepared_food/lemon.png",
+      "sha256": "7172c60fd4b88f9f178c17507e30611001afa7f60c06e5b41aa27ecf4699c6ab",
+      "support": [
+        -38.0859375,
+        -32.44921875,
+        76.171875,
+        64.8984375
+      ]
+    },
+    "lettuce": {
+      "path": "res://modules/restaurant/assets/prepared_food/lettuce.png",
+      "sha256": "5583b13e8bb05a7ac64c3c0bcd96dade3e0f04dc6bd372a01a7931ffcc070224",
+      "support": [
+        -38.1760559082031,
+        -34.6056327819824,
+        76.3521118164063,
+        69.2112655639648
+      ]
+    },
+    "lipstick": {
+      "path": "res://modules/restaurant/assets/prepared_food/lipstick.png",
+      "sha256": "b5e29fe3a6d841fc648a2a1c48c74968a37d9b89693aa0232bc2123021ee1932",
+      "support": [
+        -12.6306810379028,
+        -38.7784080505371,
+        25.2613620758057,
+        77.5568161010742
+      ]
+    },
+    "lotus_root": {
+      "path": "res://modules/restaurant/assets/prepared_food/lotus_root.png",
+      "sha256": "46557ae9f72a34357d6f00046d9a4b4f675c1738bd40543a8c22d0605d1a477d",
+      "support": [
+        -38.1169815063477,
+        -26.9320755004883,
+        76.2339630126953,
+        53.8641510009766
+      ]
+    },
+    "mango": {
+      "path": "res://modules/restaurant/assets/prepared_food/mango.png",
+      "sha256": "5fc6f99929866d56b8276ce694d43b1d16b7e9ff84bb55a0077f302c6719ab13",
+      "support": [
+        -38.1034469604492,
+        -34.9655151367188,
+        76.2068939208984,
+        69.9310302734375
+      ]
+    },
+    "mayonnaise": {
+      "path": "res://modules/restaurant/assets/prepared_food/mayonnaise.png",
+      "sha256": "8afb8f0c6f7de63e3332fa2146452a8b67a9ca556eef77594f2531e22ffc2324",
+      "support": [
+        -20.019998550415,
+        -38.2200012207031,
+        40.0399971008301,
+        76.4399948120117
+      ]
+    },
+    "milk": {
+      "path": "res://modules/restaurant/assets/prepared_food/milk.png",
+      "sha256": "31164abf130ab973ad4d9e89ae5e3c2aabdb6433501607d494c0039de8f22c37",
+      "support": [
+        -28.2788867950439,
+        -38.0677299499512,
+        56.5577697753906,
+        76.1354598999023
+      ]
+    },
+    "miso": {
+      "path": "res://modules/restaurant/assets/prepared_food/miso.png",
+      "sha256": "260ad16780686f4417ad5870f45e5b0f8c398dd0248d3a31241ca5665106ac18",
+      "support": [
+        -38.0487823486328,
+        -35.1951217651367,
+        76.0975570678711,
+        70.3902435302734
+      ]
+    },
+    "mushroom": {
+      "path": "res://modules/restaurant/assets/prepared_food/mushroom.png",
+      "sha256": "02d533e7a1146dbda0d8d90b48b5c082dd8a013f368391a728fc5fd47b855cb3",
+      "support": [
+        -39.0,
+        -27.8728809356689,
+        77.7796630859375,
+        55.7457618713379
+      ]
+    },
+    "mussel": {
+      "path": "res://modules/restaurant/assets/prepared_food/mussel.png",
+      "sha256": "94fd84578d20297025f34306e4120ba5dad70ebf5288aa95ef4df35a2637fa81",
+      "support": [
+        -38.1102676391602,
+        -30.6958198547363,
+        76.2205352783203,
+        61.6882171630859
+      ]
+    },
+    "mustard": {
+      "path": "res://modules/restaurant/assets/prepared_food/mustard.png",
+      "sha256": "b1bc5104e1955c3b61a2aed9b33565240b6dc1a87818f56b286e001c6c2b6f5e",
+      "support": [
+        -10.8333330154419,
+        -38.8505744934082,
+        22.7126426696777,
+        77.8505706787109
+      ]
+    },
+    "natto": {
+      "path": "res://modules/restaurant/assets/prepared_food/natto.png",
+      "sha256": "fc0616adea7919a27ff24159e622d368feb1a6c6ff2715e6bd64e2e62120e2c4",
+      "support": [
+        -38.1268653869629,
+        -27.9402980804443,
+        76.2537307739258,
+        55.8805961608887
+      ]
+    },
+    "noodles": {
+      "path": "res://modules/restaurant/assets/prepared_food/noodles.png",
+      "sha256": "634c758834ca91e4e7deebbf18b07099dc98ca1bd28b9df0274a3716184f614a",
+      "support": [
+        -38.195873260498,
+        -26.4020595550537,
+        76.6597900390625,
+        52.8041191101074
+      ]
+    },
+    "oil": {
+      "path": "res://modules/restaurant/assets/prepared_food/oil.png",
+      "sha256": "e1767f444185c2ddb544d0827bb6457540fefca941819bdb6e260c46aa154f98",
+      "support": [
+        -12.3316192626953,
+        -39.0,
+        24.6632385253906,
+        77.7994842529297
+      ]
+    },
+    "onion": {
+      "path": "res://modules/restaurant/assets/prepared_food/onion.png",
+      "sha256": "175ac7b3927c675e77b3ec0e622712440804a4bdb391f8b6de7dec6c13efe8ad",
+      "support": [
+        -19.9148941040039,
+        -34.8510627746582,
+        39.8297920227051,
+        69.7021331787109
+      ]
+    },
+    "paper": {
+      "path": "res://modules/restaurant/assets/prepared_food/paper.png",
+      "sha256": "04a9b990adaf69655771e54cf91603edaaf511b2031412d089c8d2c12ad401ae",
+      "support": [
+        -38.4157295227051,
+        -33.7415733337402,
+        76.5393218994141,
+        67.775276184082
+      ]
+    },
+    "peach": {
+      "path": "res://modules/restaurant/assets/prepared_food/peach.png",
+      "sha256": "61c154dbec105dcec58426d33250919f228ffeee3b3768e5d0faf548752610b1",
+      "support": [
+        -38.0930252075195,
+        -34.7674407958984,
+        76.1860427856445,
+        69.5348815917969
+      ]
+    },
+    "pepper": {
+      "path": "res://modules/restaurant/assets/prepared_food/pepper.png",
+      "sha256": "4d83676614c9ce95d74b13b61bbc792c1d017f3ab1aa0314390692fc5a03d4e2",
+      "support": [
+        -19.4396286010742,
+        -39.0,
+        38.8792572021484,
+        77.7585144042969
+      ]
+    },
+    "perfume": {
+      "path": "res://modules/restaurant/assets/prepared_food/perfume.png",
+      "sha256": "90b6c62e7a503857ed58002c14410bd7e26a66c344ad2ae5a9fc4b3688309ee3",
+      "support": [
+        -26.5909080505371,
+        -38.527271270752,
+        52.9454536437988,
+        77.2909088134766
+      ]
+    },
+    "pork": {
+      "path": "res://modules/restaurant/assets/prepared_food/pork.png",
+      "sha256": "263c5e004ad6d6edce0ba84509e4891dd4f828e8fba7c6f2a148789593e415f8",
+      "support": [
+        -38.1789474487305,
+        -26.957893371582,
+        76.3578948974609,
+        53.9157867431641
+      ]
+    },
+    "potato": {
+      "path": "res://modules/restaurant/assets/prepared_food/potato.png",
+      "sha256": "a81a55acd9c022d805e9799fe32cb7c28ad0b9a1e728ce722170c431f8c08a5b",
+      "support": [
+        -33.0759468078613,
+        -35.0506324768066,
+        66.1518936157227,
+        71.0886077880859
+      ]
+    },
+    "pumpkin": {
+      "path": "res://modules/restaurant/assets/prepared_food/pumpkin.png",
+      "sha256": "b1e08ab3f697df5f25507bce028c08733a8643ef5aa046a014d22a322ea9e4d9",
+      "support": [
+        -38.1846694946289,
+        -33.0209083557129,
+        76.3693389892578,
+        66.0418167114258
+      ]
+    },
+    "resignation_letter": {
+      "path": "res://modules/restaurant/assets/prepared_food/resignation_letter.png",
+      "sha256": "d8600bae055db48aa218acc6b576e6c0e53956888f43e83643f1e361c985064c",
+      "support": [
+        -32.8112144470215,
+        -38.7865943908691,
+        65.729133605957,
+        77.7865905761719
+      ]
+    },
+    "rock": {
+      "path": "res://modules/restaurant/assets/prepared_food/rock.png",
+      "sha256": "a2b8abadd1bd46aff41be9d6115888609b86fdaad3e9c2daa4ee55e4c777758a",
+      "support": [
+        -38.3127746582031,
+        -30.9251098632813,
+        76.2819366455078,
+        61.8502235412598
+      ]
+    },
+    "rubber_duck": {
+      "path": "res://modules/restaurant/assets/prepared_food/rubber_duck.png",
+      "sha256": "355bfaa39a49d86345064e322d0ca484825bb23575aaab3b80ae7066a48f5717",
+      "support": [
+        -37.1603813171387,
+        -38.5094337463379,
+        74.3207626342773,
+        77.0188674926758
+      ]
+    },
+    "salt": {
+      "path": "res://modules/restaurant/assets/prepared_food/salt.png",
+      "sha256": "6952a812a59f38664f2cbb167fee8e9c4151b76d4086955ce7de5cbb7168a6ed",
+      "support": [
+        -26.25,
+        -38.625,
+        52.5,
+        77.625
+      ]
+    },
+    "sausage": {
+      "path": "res://modules/restaurant/assets/prepared_food/sausage.png",
+      "sha256": "3209c00f823ea551668f5b177d448911f707e4b794761718accb2229ce094223",
+      "support": [
+        -38.1846694946289,
+        -27.5853672027588,
+        76.3693389892578,
+        55.1707305908203
+      ]
+    },
+    "seaweed": {
+      "path": "res://modules/restaurant/assets/prepared_food/seaweed.png",
+      "sha256": "af799774c995de5ee61d38b912f37363ae451b7612f2d77d352cba59d97a2b55",
+      "support": [
+        -38.1818199157715,
+        -33.1363677978516,
+        76.363639831543,
+        66.5454559326172
+      ]
+    },
+    "sesame_oil": {
+      "path": "res://modules/restaurant/assets/prepared_food/sesame_oil.png",
+      "sha256": "d764e4b7cb9d621a0051c5db790948ae8c2b4012e25adde9e478bcb32a4347b4",
+      "support": [
+        -14.9499998092651,
+        -38.2200012207031,
+        29.8999996185303,
+        76.1800003051758
+      ]
+    },
+    "shrimp": {
+      "path": "res://modules/restaurant/assets/prepared_food/shrimp.png",
+      "sha256": "e167bdb0684f5c9748b670de07f0fbdeca27e0e5a9ff32ddc1adc72033e4e28b",
+      "support": [
+        -38.0750999450684,
+        -35.6086959838867,
+        76.1501998901367,
+        70.9090957641602
+      ]
+    },
+    "slipper": {
+      "path": "res://modules/restaurant/assets/prepared_food/slipper.png",
+      "sha256": "8d07c33f40924bf2f932e482697f71047f6edb96159ecdaa26f988ca1a5f7f95",
+      "support": [
+        -38.1789474487305,
+        -27.7789459228516,
+        76.3578948974609,
+        55.5578918457031
+      ]
+    },
+    "soap": {
+      "path": "res://modules/restaurant/assets/prepared_food/soap.png",
+      "sha256": "aa612de0eef7f37648a162497a42ad78dd65436ceedbb0976c35d30c950adce7",
+      "support": [
+        -36.3518524169922,
+        -18.4969120025635,
+        75.271598815918,
+        36.9135780334473
+      ]
+    },
+    "soap_smooth": {
+      "path": "res://modules/restaurant/assets/prepared_food/soap_smooth.png",
+      "sha256": "5612d912dcc522241d6cbe8b4a48695c541fb0a91af2b0e8f1b1ed67e5e3d522",
+      "support": [
+        -36.3518524169922,
+        -18.4969120025635,
+        75.271598815918,
+        36.9135780334473
+      ]
+    },
+    "sock": {
+      "path": "res://modules/restaurant/assets/prepared_food/sock.png",
+      "sha256": "d9e5bee5567e532a18106e1ba5cce78f6615ea29567fe88df45ddbae2c39be92",
+      "support": [
+        -24.0782604217529,
+        -38.8643493652344,
+        48.1565208435059,
+        77.7286911010742
+      ]
+    },
+    "soy_sauce": {
+      "path": "res://modules/restaurant/assets/prepared_food/soy_sauce.png",
+      "sha256": "2347d4766d98215dc8156fbdd10495c342df0c3fc9a8cbdfc492d463c06220ee",
+      "support": [
+        -22.7142868041992,
+        -38.1428565979004,
+        45.4285736083984,
+        76.2857208251953
+      ]
+    },
+    "spinach": {
+      "path": "res://modules/restaurant/assets/prepared_food/spinach.png",
+      "sha256": "59859eab9607b0d1817bd5b24a7f1859eaa6326e2820256ec0d5a9c1b0214ceb",
+      "support": [
+        -36.4472694396973,
+        -38.7163619995117,
+        72.8945465087891,
+        76.8654556274414
+      ]
+    },
+    "sponge": {
+      "path": "res://modules/restaurant/assets/prepared_food/sponge.png",
+      "sha256": "a59b5d14a4c80583700b06f15e0eddbca7c09e69ef3dfcd1193553c1acc7eadf",
+      "support": [
+        -39.0,
+        -31.8367347717285,
+        78.0,
+        63.673469543457
+      ]
+    },
+    "spring": {
+      "path": "res://modules/restaurant/assets/prepared_food/spring.png",
+      "sha256": "aa804021afe3734ad31e2bc0b40f057376a52780f7da01fad57118af14a96a18",
+      "support": [
+        -37.9870147705078,
+        -36.4675331115723,
+        75.9740295410156,
+        73.2727355957031
+      ]
+    },
+    "squid": {
+      "path": "res://modules/restaurant/assets/prepared_food/squid.png",
+      "sha256": "012c794a633c0584e9114bb3dca4b9218e62e01d5269cd65b35631505164745c",
+      "support": [
+        -38.7364883422852,
+        -34.5202674865723,
+        76.9459457397461,
+        68.7770233154297
+      ]
+    },
+    "stinky_tofu": {
+      "path": "res://modules/restaurant/assets/prepared_food/stinky_tofu.png",
+      "sha256": "15df6714ede63ccb3cd00fdec8b1d877f326c40e92abb23ea3b645b76dac4389",
+      "support": [
+        -38.0409851074219,
+        -32.9262313842773,
+        76.0819702148438,
+        65.8524627685547
+      ]
+    },
+    "strawberry": {
+      "path": "res://modules/restaurant/assets/prepared_food/strawberry.png",
+      "sha256": "c1d2258020539fb82a08b6719a7f50739d3b20911169997e3e67169b6dddc780",
+      "support": [
+        -31.5505599975586,
+        -38.4157295227051,
+        63.1011199951172,
+        76.5393218994141
+      ]
+    },
+    "sugar": {
+      "path": "res://modules/restaurant/assets/prepared_food/sugar.png",
+      "sha256": "224020cf5289cb706c1f13014040ad74879696ec492cc327be845db98eb2c123",
+      "support": [
+        -27.4142265319824,
+        -38.0209197998047,
+        54.8284530639648,
+        76.0418395996094
+      ]
+    },
+    "tapioca": {
+      "path": "res://modules/restaurant/assets/prepared_food/tapioca.png",
+      "sha256": "0449a2bea11bd0245f539d906b31c0502b31b9b9aeec1880511d26b5b52043d0",
+      "support": [
+        -38.1068687438965,
+        -28.8778610229492,
+        76.213737487793,
+        57.7557220458984
+      ]
+    },
+    "tea": {
+      "path": "res://modules/restaurant/assets/prepared_food/tea.png",
+      "sha256": "4efb47aaf48ffd8401c9b47a04f6e830db1ef6871355b0614a3692d81470efae",
+      "support": [
+        -31.0649356842041,
+        -37.9870147705078,
+        62.1298713684082,
+        75.9740295410156
+      ]
+    },
+    "tennis_ball": {
+      "path": "res://modules/restaurant/assets/prepared_food/tennis_ball.png",
+      "sha256": "d457b67b61b7ab3692de69783f73fdc20c865b8a0e4e31307a16c35014801d1a",
+      "support": [
+        -38.831169128418,
+        -24.6493511199951,
+        77.831169128418,
+        49.2142868041992
+      ]
+    },
+    "tofu": {
+      "path": "res://modules/restaurant/assets/prepared_food/tofu.png",
+      "sha256": "2dace9177434411f1fc693872a3f7856d4c83531b8b1892ef39b40230aa4b9ef",
+      "support": [
+        -38.0714302062988,
+        -33.273811340332,
+        76.1428604125977,
+        66.5476226806641
+      ]
+    },
+    "toilet_paper": {
+      "path": "res://modules/restaurant/assets/prepared_food/toilet_paper.png",
+      "sha256": "1e8fc3ebc543549d9d7808addc8ea4bd6e74d836a4045528be55b78c8b539de7",
+      "support": [
+        -38.8419456481934,
+        -27.7781162261963,
+        77.7629165649414,
+        55.5562286376953
+      ]
+    },
+    "tomato": {
+      "path": "res://modules/restaurant/assets/prepared_food/tomato.png",
+      "sha256": "65acb0a414d342e5f9dc3dffc613a61d1928659ae0aa82d66a88b802448d1fa2",
+      "support": [
+        -36.2424240112305,
+        -30.72727394104,
+        70.9090957641602,
+        62.2424278259277
+      ]
+    },
+    "toothpaste": {
+      "path": "res://modules/restaurant/assets/prepared_food/toothpaste.png",
+      "sha256": "5047fe01ac2449b4dd7fcced0110eb2b3395129342a6426c42fa6e1c801e218e",
+      "support": [
+        -38.9006385803223,
+        -20.9656047821045,
+        77.8012771606445,
+        41.8318481445313
+      ]
+    },
+    "toy_brick": {
+      "path": "res://modules/restaurant/assets/prepared_food/toy_brick.png",
+      "sha256": "f217f4890075922c3a8c32ddabc8662935d8e74e652cf3b7a0e9830f4707bfcd",
+      "support": [
+        -38.0859375,
+        -29.40234375,
+        76.171875,
+        58.8046875
+      ]
+    },
+    "vinegar": {
+      "path": "res://modules/restaurant/assets/prepared_food/vinegar.png",
+      "sha256": "39ca5c5f82291af02425c2eeb33e1fb9b25f55cab9576a4b890dceffeec1a6e3",
+      "support": [
+        -17.9016380310059,
+        -38.2327842712402,
+        35.8032760620117,
+        76.4655685424805
+      ]
+    },
+    "watermelon": {
+      "path": "res://modules/restaurant/assets/prepared_food/watermelon.png",
+      "sha256": "10f1e9d8c65b74424dd44c72ad4f55e61b89f4127a308978a59523756079905b",
+      "support": [
+        -38.1552352905273,
+        -37.4512634277344,
+        76.8736419677734,
+        74.9025268554688
+      ]
+    },
+    "yarn_ball": {
+      "path": "res://modules/restaurant/assets/prepared_food/yarn_ball.png",
+      "sha256": "8ba0ac93c1114c4c6559f0ff234f319d581a03f8cd05211064130361443f7818",
+      "support": [
+        -38.8864631652832,
+        -39.0,
+        77.7729263305664,
+        77.8864593505859
+      ]
+    },
+    "yogurt": {
+      "path": "res://modules/restaurant/assets/prepared_food/yogurt.png",
+      "sha256": "8baa5c1bf6e6a6e0d0b280edfef30b56cf8e0397097c6e6d16219b0ef6f02079",
+      "support": [
+        -37.8358192443848,
+        -36.8656692504883,
+        75.6716461181641,
+        73.7313461303711
+      ]
+    },
+    "zucchini": {
+      "path": "res://modules/restaurant/assets/prepared_food/zucchini.png",
+      "sha256": "87ce04c0bb2a051d99d5a917dbd86f627d0fbe4da8315d50d0337effd52d5756",
+      "support": [
+        -29.1126766204834,
+        -35.7042236328125,
+        56.0281715393066,
+        69.2112655639648
+      ]
+    }
+  },
+  "inputs": {
+    "res://modules/restaurant/assets/derived/tomato.png": "a272899150076014d879f3c58068e848f4e1675690237d8cdc113965ea5e663e",
+    "res://modules/restaurant/assets/handdrawn/alarm_clock.png": "72e4d08e41c3bd7d881ae022a980418179377540744db36b230c6e338bfe4a77",
+    "res://modules/restaurant/assets/handdrawn/confetti.png": "d5ce6d3e16d7159a51042738f537c748b87d525533f47ab21a3fc9caead303e0",
+    "res://modules/restaurant/assets/handdrawn/dentures.png": "bf6fe7e725fbffd432923ac658f95ffe9c0eff3b5f56a61062b8ad1106141b58",
+    "res://modules/restaurant/assets/handdrawn/eraser.png": "893ab1ef31bf204a4113c60dab3fbe276e33f74c32836567817799364f8baa61",
+    "res://modules/restaurant/assets/handdrawn/ketchup.png": "d82f38f79103937bf64aa67550b0043e89894f24fae7e80f75e61ce466aec454",
+    "res://modules/restaurant/assets/handdrawn/mushroom.png": "ebb4bfac6474c93c07c499ab2d26f94cf47ef69e973d61d5b869d028929fa430",
+    "res://modules/restaurant/assets/handdrawn/mustard.png": "57cdc80864b630f395827929c94418202142be82e28786a8e17aaee3b0a5ef74",
+    "res://modules/restaurant/assets/handdrawn/oil.png": "c8bbdea853be77b98115c355d72a037278b2241a1b3679d6f82c81ef13b16bf7",
+    "res://modules/restaurant/assets/handdrawn/pepper.png": "31923c1da7c9ba8ed6165096e2bf42ac40148fbeb7e5c315237294be27b75c4c",
+    "res://modules/restaurant/assets/handdrawn/resignation_letter.png": "d3f5474c09aafeca825e405e553235628a1bca7264c49095f29b3455bdbc9727",
+    "res://modules/restaurant/assets/handdrawn/salt.png": "07a97711c4a9f3e1a308988b344141493cfc0772146317c9baa37d01dcf3ae41",
+    "res://modules/restaurant/assets/handdrawn/soap.png": "6363c9857a5cd45c4772ec6fe7e0be948463d1f59f3fd9a38effc66b91738615",
+    "res://modules/restaurant/assets/handdrawn/soap_smooth.png": "14a05a6e03f58d376225d204b72517c1e51b561c41be9213bd1671537f90bfc5",
+    "res://modules/restaurant/assets/handdrawn/sock.png": "5210fa67fa8d739fe0975004b462d237cb621817c45d6ddaae6cda6d9489aff2",
+    "res://modules/restaurant/assets/handdrawn/sponge.png": "131d595c29ab5a0cd41e5ba76db2086ce435e73c87b3e0edeeabf3385e4d5899",
+    "res://modules/restaurant/assets/handdrawn/tennis_ball.png": "f7ff54dd303bffcd550620a0dc958432349b02443a7bf0918c4acaab16125247",
+    "res://modules/restaurant/assets/handdrawn/toilet_paper.png": "46485ebd0ef7dd8793b57a11453243f0ce196032b23942245f6d5399da0b835d",
+    "res://modules/restaurant/assets/handdrawn/toothpaste.png": "dae3211ee18a3158b9ab50d4fc9c44a6ac84e9f9857c23511c4a637421de8b1e",
+    "res://modules/restaurant/assets/handdrawn/yarn_ball.png": "41a6585b66ab4c268ba251e9bdc5a3e209a0fd7d75dae319223d1493d38782fa",
+    "res://modules/restaurant/assets/handdrawn_manifest.json": "024eb5542249aacc7438f29681438d4986285fb3f97dd0a4390bcb3e1d8131a9",
+    "res://modules/restaurant/assets/supplementary/flat_foods_a.png": "71d1014354bb6d62b5f453d408b0928289e97088e86711b3e094a6cf88b194be",
+    "res://modules/restaurant/assets/supplementary/flat_foods_b.png": "459459ea2bd69199474c397cba2cc7b72ec2e71bb5d1b33017f6be74e98db66e",
+    "res://modules/restaurant/assets/supplementary/flat_foods_c.png": "a4e76a8eb17faf9fe2410d96285bc5d3e7fa24f1f3a747855b55ef04b847edae",
+    "res://modules/restaurant/assets/supplementary/flat_foods_d.png": "05dfccb8fa435f1050500adb2980af8535fa15442e3fcb81024d160e19b25d41",
+    "res://modules/restaurant/assets/supplementary_manifest.json": "b5533d135aed88896a21cf9fafae6f4ea632f74697fadcdf04be8c5a6b792c09",
+    "res://modules/restaurant/assets/team_jpeg_manifest.json": "4d7740734c7a3cf26938f020d134163974582ea5eadd616d16c5c7f87e38b235",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_brown.jpg": "80ace13e648158fe5c367daaf12dc5fbdb194a6d81eee30ca0fa207c18b458bd",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_gold.jpg": "8252e4e90dbb7285f170c0d88b422a0f82fe8edaf9f3dae5418167ecf1cbe05f",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_green.jpg": "73e10163ab3569adcb912b40c7b3ffb27dcc21c8ba641bb0ce3c5b757ff06dbd",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_lavender.jpg": "d44fe67de03b78e691560267516a29f594d1f48e65b16a07824285bdf2a169ca",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_orange.jpg": "f296b9eda2725e889189b83a44798b29244ec7826bc340215386d7ea4f15b809",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_purple.jpg": "44781921b434b4a33ba3340f41ea430cac3d070431f842d1a943f6aa5db03c6e",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_white.jpg": "23922e1af380d341f8076740dc888dff3720465d5b1e8de0c468c6faea9e3df1",
+    "res://modules/restaurant/assets/team_jpeg_originals/bell_pepper_yellow.jpg": "956f1e819bb203cf073518170585684b9edab68580f68a5cd0cee670a6cf5dab",
+    "res://modules/restaurant/assets/team_jpeg_originals/carrot.jpg": "4647450f0b9a85fd9c9e85f04a6e24fc3bf85bcc7e466adf929a8b8824bd0ab6",
+    "res://modules/restaurant/assets/team_jpeg_originals/eggplant.jpg": "c6166b345133ed361dd5556f82517108a1faec874ca7973013ef2dd1cdaa1aa3",
+    "res://modules/restaurant/assets/team_jpeg_originals/onion.jpg": "d0a78e0ac920489d403f0dcfc6c024e24454f5394245ce822506b0dd29c57bca",
+    "res://modules/restaurant/assets/team_jpeg_originals/potato.jpg": "575b47ea0bb843a6daec99c251a2b5b826dbca8eda11690f1fc805fdd85452dc",
+    "res://modules/restaurant/assets/team_jpeg_originals/zucchini.jpg": "1a8ea75b74c55efd2363d1372e35e3199204f81f7e0f661fd19f6726b41f20ca"
+  },
+  "method": "Shared SpriteLibrary display copy: original team silhouettes and interior paint retained, matte fringe RGB repaired; unrelated tiny gutter components removed only from generated supplemental atlases. All source files unchanged."
+}

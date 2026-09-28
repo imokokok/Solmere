@@ -1,0 +1,73 @@
+{
+	"capture": "Actual Godot audio bus; controlled kitchen-state demo, not human listening approval",
+	"stages": [
+		{
+			"label": "煎炒：番茄",
+			"seconds": 0.0
+		},
+		{
+			"label": "煎炒：鸡蛋",
+			"seconds": 2.799
+		},
+		{
+			"label": "煎炒：牛肉",
+			"seconds": 5.617
+		},
+		{
+			"label": "浓酱加热冒泡",
+			"seconds": 8.431
+		},
+		{
+			"label": "清水煮沸",
+			"seconds": 11.448
+		},
+		{
+			"label": "出料：橄榄油",
+			"seconds": 14.466
+		},
+		{
+			"label": "出料：番茄酱",
+			"seconds": 16.98
+		},
+		{
+			"label": "出料：海盐",
+			"seconds": 19.498
+		},
+		{
+			"label": "出料：黑胡椒",
+			"seconds": 22.013
+		},
+		{
+			"label": "实际播放器：egg_crack",
+			"seconds": 24.53
+		},
+		{
+			"label": "实际播放器：stir_wood",
+			"seconds": 26.146
+		},
+		{
+			"label": "实际播放器：stir_metal",
+			"seconds": 27.762
+		},
+		{
+			"label": "实际播放器：stir_water",
+			"seconds": 29.379
+		},
+		{
+			"label": "实际播放器：stir_pasta",
+			"seconds": 30.997
+		},
+		{
+			"label": "实际播放器：chop",
+			"seconds": 32.613
+		},
+		{
+			"label": "实际播放器：bell",
+			"seconds": 34.23
+		},
+		{
+			"label": "静音检验",
+			"seconds": 35.846
+		}
+	]
+}

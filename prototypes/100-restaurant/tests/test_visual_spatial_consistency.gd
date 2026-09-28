@@ -158,14 +158,26 @@ func run() -> void:
 	w._update_food_depth()
 	expect(w._food_at(sauce.position) == null, "opaque pan wall blocks selecting a hidden sauce portion")
 	if DisplayServer.get_name() != "headless":
+		# The liquid renderer projects a puddle away from the rigid body's centre.
+		# Use a known pigment probe at an interior wall point to test occlusion,
+		# independent of the puddle projection or the pan painting's rim colour.
+		var probe := Polygon2D.new()
+		probe.polygon = PackedVector2Array([Vector2(-4,-4), Vector2(4,-4), Vector2(4,4), Vector2(-4,4)])
+		probe.color = Color("e84b35")
+		probe.position = w.pan.point(Vector2(810, 644))
+		probe.z_index = 7
+		w.add_child(probe)
+		await process_frame
 		RenderingServer.force_draw(false)
-		var sample: Vector2i = Vector2i(root.get_final_transform()*w.get_global_transform_with_canvas()*sauce.position)
+		var sample: Vector2i = Vector2i(root.get_final_transform()*w.get_global_transform_with_canvas()*probe.position)
 		var covered := root.get_texture().get_image().get_pixelv(sample)
 		w.pan.pan_front.hide()
 		await process_frame
 		RenderingServer.force_draw(false)
 		var exposed := root.get_texture().get_image().get_pixelv(sample)
-		expect(Vector3(covered.r,covered.g,covered.b).distance_to(Vector3(exposed.r,exposed.g,exposed.b)) > 0.1, "GPU pan wall actually occludes the sauce pixel")
+		print("MEASURED pan wall pixel: ", sample, " covered=", covered, " exposed=", exposed)
+		expect(Vector3(covered.r,covered.g,covered.b).distance_to(Vector3(exposed.r,exposed.g,exposed.b)) > 0.1, "GPU pan wall occludes a known pigment behind its near wall")
+		probe.queue_free()
 		w.pan.pan_front.show()
 		await snapshot("rim")
 	game.queue_free()

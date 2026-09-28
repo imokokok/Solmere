@@ -1,0 +1,17 @@
+GodotSpringDamper by Hyphinett (2026), MIT license.
+Source: https://github.com/Hyphinett/GodotSpringDamper
+Pinned commit: 0da23b9b6c82af5a4d2605671f503a9c2aaa239e
+Original file: addons/springdamper/code/SpringDamper.gd
+Retrieved 2026-09-25. See accompanying LICENSE.txt for complete terms.
+Upstream credits Ryan Juckett's damped springs derivation:
+https://www.ryanjuckett.com/damped-springs/
+
+Local changes: removed the global class_name to avoid host-project collisions;
+changed Object to RefCounted to release the two per-body spring instances
+automatically. The analytic motion equations are unchanged.
+
+Used for soft-packaging grip recovery, transient food contact deformation,
+and the reduced single-mode reaction of contained liquid to hand acceleration.
+This utility is not a rigid-body or fluid physics engine. Godot's existing
+MIT-licensed 2D engine still solves rigid collisions and continuous detection.
+No Rapier or Salva binary or source is included.
