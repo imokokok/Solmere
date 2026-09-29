@@ -21,6 +21,15 @@ func run() -> void:
 		expect(tool.active, tool.kind + " exposed head is selectable at 960 pixels")
 		mouse(Vector2(680,440), "move")
 		mouse(Vector2(680,440), "up")
+		await process_frame
+		expect(tool.releasing, tool.kind + " fast release is still completing its physical movement")
+		var regrip_angle: float = tool.rigid.rotation
+		mouse(tool.to_global(Vector2(-24,0)), "down")
+		await process_frame
+		expect(tool.active and not tool.releasing, tool.kind + " can be regripped immediately during release")
+		expect(absf(wrapf(tool.grip.target_angle-regrip_angle,-PI,PI))<0.1,tool.kind + " regrip retains the current wrist pose")
+		mouse(Vector2(680,440), "move")
+		mouse(Vector2(680,440), "up")
 		await create_timer(1.9).timeout
 		expect(not tool.active and not tool.releasing and not tool.docked, tool.kind + " quick pull remains outside the cup")
 		expect(tool.position.is_finite() and Rect2(40,80,1500,720).has_point(tool.position), tool.kind + " released tool remains reachable")
@@ -31,6 +40,21 @@ func run() -> void:
 		mouse(tool.CUP_MOUTH.get_center(), "up")
 		await create_timer(3.0).timeout
 		expect(tool.docked and not tool.storing, tool.kind + " quick near-cup return completes smoothly")
+		# Native-window discovery: an angled tool laid on the far rim used to
+		# pull the whole skillet across the counter when returned to the cup.
+		var pan_start: Vector2 = w.pan.rigid.position
+		mouse(tool.to_global(Vector2(-24,0)),"down")
+		mouse(w.pan.point(Vector2(948,532)),"move")
+		mouse(w.pan.point(Vector2(948,532)),"up")
+		await create_timer(1.8).timeout
+		mouse(tool.to_global(Vector2(-24,0)),"down")
+		await process_frame
+		expect(tool.active,tool.kind + " remains selectable beside the rim")
+		mouse(tool.CUP_MOUTH.get_center(),"move")
+		mouse(tool.CUP_MOUTH.get_center(),"up")
+		await create_timer(3.0).timeout
+		expect(tool.docked,tool.kind + " lifts clear before returning to the cup")
+		expect(w.pan.rigid.position.distance_to(pan_start)<8,tool.kind + " return does not drag the skillet off its burner")
 	# Quick rack-to-pan release must not strand a lagging lid on the handle.
 	mouse(w.lid.position,"down")
 	await process_frame
@@ -112,6 +136,15 @@ func run() -> void:
 	mouse(pieces[0].position,"down")
 	await process_frame
 	expect(w._drag_group.size()==1,"ordinary pickup includes sibling, excludes unrelated tomato")
+	var carried_mass: float = pieces[0].mass + pieces[1].mass
+	mouse(Vector2(680,400),"move")
+	mouse(Vector2(680,400),"up")
+	await process_frame
+	expect(w._pending_drop,"fast batch release retains its physical destination")
+	mouse(pieces[0].position,"down")
+	await process_frame
+	expect(w._dragging and not w._pending_drop,"touching the moving portion resumes control immediately")
+	expect(w._drag_group.size()==1 and absf(pieces[0].mass+pieces[1].mass-carried_mass)<0.000001,"regripping keeps the sibling and its original mass")
 	w.discard_held()
 	await process_frame
 	expect(w._drag_group.is_empty() and not w.held_grip.enabled and w._foods.get_child_count()==1,"discarding a held portion frees every carried body and grip")

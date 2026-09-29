@@ -5,7 +5,11 @@
     "frequency": 24.0,
     "mass_exponent": 0.16,
     "max_force": 16000.0,
-    "angular_frequency": 12.0
+    "angular_frequency": 12.0,
+    "target_speed_limit": 900.0,
+    "target_velocity_filter": 32.0,
+    "velocity_feedforward": 0.7,
+    "utensil_acceleration_limit": 6000.0
   },
   "pan": {
     "tare_kg": 1.2,

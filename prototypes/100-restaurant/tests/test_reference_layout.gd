@@ -89,7 +89,12 @@ func run() -> void:
 	game._close_modal()
 	game.world.pan.overflow_water_ml = 100
 	game.world.spill_pan_water(100, Vector2(480, 716))
-	await create_timer(0.3).timeout
+	# Wait for actual water contact, not a render timer that may finish before
+	# the physical flight has landed under headless/concurrent test load.
+	for tick in 120:
+		await physics_frame
+		if game.world.pan.runoff.inventory().surface_ml>0: break
+	expect(game.world.pan.runoff.inventory().surface_ml>0,"spill reaches the worktop before the wiping gesture")
 	var sponge = game.world.sponge
 	_mouse(sponge.position, "down")
 	await process_frame
@@ -135,6 +140,9 @@ func _mouse(point: Vector2, kind: String) -> void:
 		button.pressed = kind == "down"
 		button.button_mask = MOUSE_BUTTON_MASK_LEFT if button.pressed else 0
 		Input.parse_input_event(button)
+	# This helper is called from both physics and idle continuations. Dispatch
+	# queued input before observing the state or issuing the next gesture.
+	Input.flush_buffered_events()
 func expect(ok: bool, message: String) -> void:
 	checks += 1
 	if not ok: failures.append(message)

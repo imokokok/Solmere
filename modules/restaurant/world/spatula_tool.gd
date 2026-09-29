@@ -35,7 +35,7 @@ func cooking_angle() -> float:
 	return -0.24 if kind == "spoon" else -0.52
 
 func can_pick(point: Vector2) -> bool:
-	if storing or releasing: return false
+	if storing: return false
 	var local := to_local(world.to_global(point))
 	var exposed := Rect2(-44, -22, 69, 44) if docked else Rect2(-42, -20, 134, 40)
 	var artwork := Rect2(-42, -20, 134, 40)
@@ -59,6 +59,7 @@ func _ready() -> void :
 	z_index = 42
 	rigid = RigidBody2D.new()
 	rigid.mass = Tuning.number("spoon" if kind == "spoon" else "spatula","mass_kg")
+	grip.max_force = minf(grip.max_force,rigid.mass*Tuning.number("grab","utensil_acceleration_limit"))
 	rigid.center_of_mass_mode = RigidBody2D.CENTER_OF_MASS_MODE_CUSTOM
 	rigid.center_of_mass = Vector2(-25,2) if kind == "spoon" else Vector2(-15,9)
 	rigid.inertia = rigid.mass * (520.0 if kind == "spoon" else 285.0)
@@ -140,19 +141,22 @@ func _input(event: InputEvent) -> void :
 			grip.target = world.to_global(destination.clamp(Vector2(80,140), Vector2(1530,785)))
 			release_tool(true)
 			get_viewport().set_input_as_handled()
-		elif event.pressed and world.controls_enabled and not world._knife_held and not world.pan.active and not world.has_active_utensil() and not is_instance_valid(world._held):
+		elif event.pressed and world.controls_enabled and not world._knife_held and not world.pan.active and (not world.has_active_utensil() or releasing) and not is_instance_valid(world._held):
 			var point: Vector2 = world.get_global_transform_with_canvas().affine_inverse() * event.position
 			# Hidden handles overlap inside the cup. Only the exposed end is
 			# selectable at rest, otherwise the last tool steals its neighbour.
 			if can_pick(point):
+				var resuming := releasing
 				active = true
+				releasing = false
+				_release_elapsed = 0.0
 				docked = false
 
 
 				grip.begin(rigid, world.to_global(point))
 				# Keep the pose at the grab point. Picking up must not command a
 				# sudden half-turn; the wheel turns the player's wrist explicitly.
-				grip.target_angle = cooking_angle()
+				if not resuming: grip.target_angle = cooking_angle()
 				_offset = -grip.local_anchor
 				rigid.collision_layer = 1 | 512
 				rigid.collision_mask = 1 | 16 | 64 | 512
@@ -334,10 +338,10 @@ func _physics_process(_delta: float) -> void:
 	stir_feedback = move_toward(stir_feedback, 0.0, _delta * 4.0)
 	if docked or not world.controls_enabled: return
 	if storing: _advance_storage(_delta)
-	elif active: grip.apply(rigid, _delta)
+	elif active: _apply_hand(_delta)
 	elif releasing:
 		_release_elapsed += _delta
-		grip.apply(rigid, _delta)
+		_apply_hand(_delta)
 		if rigid.to_global(grip.local_anchor).distance_to(grip.target) < 14.0 or _release_elapsed > 1.5:
 			_finish_release()
 	position = rigid.position
@@ -374,6 +378,18 @@ func _physics_process(_delta: float) -> void:
 			body.set_meta("container_location", "pan" if world.pan.contains(body.position) else "worktop")
 			continue
 		# Support is solely the three bowl colliders. No magnetic centre attraction.
+
+func _apply_hand(dt: float) -> void:
+	var requested: Vector2 = grip.target
+	var pan_local: Vector2 = world.pan.local_point(rigid.position)
+	# Returning to the upright cup includes lifting the working end out of the
+	# pan. A straight screen-space pull otherwise hooks the rim and drags the
+	# entire skillet. Contacts stay enabled; the hand still uses bounded forces.
+	if CUP_MOUTH.has_point(world.to_local(requested)) and absf(world.pan.angle)<0.35 and Rect2(655,520,325,160).has_point(pan_local):
+		var clear_y: float = world.pan.point(Vector2(pan_local.x,508)).y
+		grip.target = rigid.to_global(grip.local_anchor) + Vector2(0,clear_y-rigid.position.y)
+	grip.apply(rigid,dt)
+	grip.target = requested
 
 func _notification(what: int) -> void :
 	if what == NOTIFICATION_WM_WINDOW_FOCUS_OUT and is_instance_valid(world): release_tool()

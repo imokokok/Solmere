@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+FEEL {"kg":0.1,"settle_seconds":0.175,"tracking_gap_px":29.9174021402995}
+FEEL {"kg":0.5,"settle_seconds":0.225,"tracking_gap_px":38.7228851318359}
+FEEL {"kg":1.2,"settle_seconds":0.258333333333333,"tracking_gap_px":44.5561243693034}

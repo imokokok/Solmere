@@ -456,6 +456,18 @@ func _unhandled_input(event: InputEvent) -> void :
 		if event.pressed:
 			if is_instance_valid(_held):
 				var held_pointer: Vector2 = get_global_transform_with_canvas().affine_inverse() * event.position
+				if _pending_drop and food_hit(_held,held_pointer):
+					# A release in transit is still the player's object. Regrip the
+					# actual pose, retaining all sibling bodies and their hand forces.
+					_pending_drop = false
+					_pending_drop_elapsed = 0.0
+					_dragging = true
+					_food_drag_origin = held_pointer
+					_food_drag_from_storage = false
+					_food_drag_moved = false
+					held_grip.begin(_held,to_global(held_pointer))
+					get_viewport().set_input_as_handled()
+					return
 				if _is_whole_egg(_held) and _egg_tap_target(held_pointer):
 					_tap_egg(held_pointer)
 					get_viewport().set_input_as_handled()

@@ -10,6 +10,7 @@ func expect(ok: bool, label: String) -> void:
 	checks+=1
 	if not ok: failures.append(label)
 func run() -> void:
+	await check_hand_tracking()
 	game=preload("res://modules/restaurant/restaurant.tscn").instantiate()
 	game.configure({"repository_path":"user://physics_force_%s/book.json"%Crypto.new().generate_random_bytes(16).hex_encode(),"shift_seconds":600})
 	root.add_child(game)
@@ -120,3 +121,50 @@ func run() -> void:
 	for f in failures: push_error(f)
 	print("%s: force liquid lid, %d checks"%["PASS" if failures.is_empty() else "FAIL",checks])
 	quit(0 if failures.is_empty() else 1)
+
+func check_hand_tracking() -> void:
+	# Real solver motion, including stop/settle: a responsive hand must not buy
+	# tracking precision with a teleport, unlimited force or a springy overshoot.
+	var original_rate := Engine.physics_ticks_per_second
+	for rate in [60, 120]:
+		Engine.physics_ticks_per_second = rate
+		var dt: float = 1.0 / rate
+		for weight in [0.1, 0.5, 1.2]:
+			var body := RigidBody2D.new()
+			body.mass = weight
+			body.gravity_scale = 0
+			body.collision_layer = 0
+			body.collision_mask = 0
+			body.position = Vector2(300,250)
+			root.add_child(body)
+			await physics_frame
+			var hand = preload("res://modules/restaurant/world/physical_grip.gd").new()
+			hand.begin(body, body.position)
+			var gap := 0.0
+			var peak_force := 0.0
+			var no_teleport := true
+			for i in rate:
+				hand.target = Vector2(300 + (i+1)*400.0*dt,250)
+				var before := body.position
+				hand.apply(body,dt)
+				no_teleport = no_teleport and body.position == before
+				peak_force = maxf(peak_force,hand.last_force.length())
+				await physics_frame
+				if i >= rate/2: gap += body.position.distance_to(hand.target)
+			var overshoot := 0.0
+			var settle := 0.0
+			for i in range(int(rate*1.5)):
+				hand.apply(body,dt)
+				await physics_frame
+				overshoot = maxf(overshoot,body.position.x-hand.target.x)
+				if settle == 0 and body.position.distance_to(hand.target)<5 and body.linear_velocity.length()<30: settle = (i+1)*dt
+			gap /= rate/2.0
+			print("HAND_METRICS ",JSON.stringify({"hz":rate,"kg":weight,"gap_px":gap,"overshoot_px":overshoot,"settle_s":settle,"peak_force":peak_force}))
+			expect(gap<18,"ordinary hand motion tracks within 18 scene pixels at %s Hz / %s kg"%[rate,weight])
+			expect(overshoot<12 and settle>0 and settle<0.35,"stopping settles quickly without exaggerated rebound")
+			expect(peak_force<=hand.max_force+0.01 and not body.freeze,"responsive tracking retains bounded native dynamics")
+			expect(no_teleport,"hand force does not directly change position")
+			hand.release()
+			body.queue_free()
+			await process_frame
+	Engine.physics_ticks_per_second = original_rate

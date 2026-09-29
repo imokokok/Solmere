@@ -8,9 +8,13 @@ var target_angle := 0.0
 var enabled := false
 var last_force := Vector2.ZERO
 var max_force := Tuning.number("grab","max_force")
+var _previous_target := Vector2.ZERO
+var _target_velocity := Vector2.ZERO
 
 func begin(body: RigidBody2D, pointer: Vector2) -> void:
 	target = pointer
+	_previous_target = pointer
+	_target_velocity = Vector2.ZERO
 	local_anchor = body.to_local(pointer)
 	target_angle = body.rotation
 	enabled = true
@@ -21,11 +25,16 @@ func apply(body: RigidBody2D, dt: float) -> void:
 	if not enabled or dt <= 0.0: return
 	var arm := local_anchor.rotated(body.rotation)
 	var point := body.global_position + arm
+	# Follow the hand's motion as well as its position. Bounded, filtered feed
+	# forward removes sustained drag lag without increasing contact-force limits.
+	var motion := ((target - _previous_target) / dt).limit_length(Tuning.number("grab","target_speed_limit"))
+	_previous_target = target
+	_target_velocity = _target_velocity.lerp(motion, 1.0 - exp(-Tuning.number("grab","target_velocity_filter") * dt))
 	var point_velocity := body.linear_velocity + Vector2(-arm.y, arm.x) * body.angular_velocity
 	# Implicit spring gains remain damped at both 60 and 120 Hz. Heavy loads lag.
 	var omega := Tuning.number("grab","frequency") / pow(maxf(body.mass, 0.08) / 0.2, Tuning.number("grab","mass_exponent"))
 	var denominator := 1.0 + 2.0 * omega * dt + omega * omega * dt * dt
-	var accel := ((target - point) * omega * omega - point_velocity * (2.0 * omega + omega * omega * dt)) / denominator
+	var accel := ((target - point) * omega * omega - (point_velocity - _target_velocity * Tuning.number("grab","velocity_feedforward")) * (2.0 * omega + omega * omega * dt)) / denominator
 	last_force = (body.mass * (accel - Vector2(0, 980.0 * body.gravity_scale))).limit_length(max_force)
 	body.apply_force(last_force, arm)
 	# Wrist support acts on orientation, not by locking rotation in the solver.
@@ -42,3 +51,4 @@ func apply(body: RigidBody2D, dt: float) -> void:
 func release() -> void:
 	enabled = false
 	last_force = Vector2.ZERO
+	_target_velocity = Vector2.ZERO

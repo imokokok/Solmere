@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+ERROR: black can be regripped immediately during release
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:160)
+ERROR: wooden can be regripped immediately during release
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:160)
+ERROR: spoon can be regripped immediately during release
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:160)
+ERROR: touching the moving portion resumes control immediately
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://tests/test_quick_gestures.gd:160)
+FAIL: small-window quick gestures, 46 checks

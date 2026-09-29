@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+UTENSIL_CAP {"docked":true,"force":16000.0,"pan_drift":142.398086547852,"tool_pos":[625.0,505.0]}
+UTENSIL_CAP {"docked":false,"force":800.0,"pan_drift":97.1837844848633,"tool_pos":[845.040344238281,705.79443359375]}
+UTENSIL_CAP {"docked":false,"force":480.0,"pan_drift":10.8644237518311,"tool_pos":[929.687133789063,705.789855957031]}
